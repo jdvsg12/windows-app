@@ -1,0 +1,70 @@
+name: ventanas
+description: Skill de ventanería para calcular descuentos, paneles, vidrios y accesorios para ventanas corredizas
+version: 1.0.0
+language: en
+
+commands:
+  - name: sistemas
+    description: Lista los sistemas de ventanas disponibles
+    handler: sistemas
+
+  - name: descuentos
+    description: Muestra los descuentos de un sistema específico
+    params:
+      - name: sistema
+        type: string
+        required: false
+        description: Sistema (5020, 744, 8025, 7038)
+    handler: descuentos
+
+  - name: calcular-paneles
+    description: Calcula la distribución de paneles con validación de 1m mínimo y 10cm extra en primera hoja
+    params:
+      - name: ancho
+        type: number
+        required: true
+        description: Ancho total de la ventana en mm
+      - name: cantidad
+        type: number
+        required: true
+        description: Cantidad de paneles/hojas
+    handler: calcularPaneles
+
+  - name: calcular-vidrio
+    description: Calcula las dimensiones del vidrio con descuentos aplicados
+    params:
+      - name: ancho
+        type: number
+        required: true
+        description: Ancho de la ventana en mm
+      - name: alto
+        type: number
+        required: true
+        description: Alto de la ventana en mm
+      - name: sistema
+        type: string
+        required: false
+        description: Sistema (5020, 744, 8025, 7038)
+    handler: calcularVidrio
+
+  - name: accesorios
+    description: Lista los accesorios necesarios según el tipo de ventana
+    params:
+      - name: tipo
+        type: string
+        required: true
+        description: Tipo de ventana (2hojas, 3hojas, 4hojas, 5hojas, 6hojas)
+    handler: accesorios
+
+  - name: debug
+    description: Muestra el breakdown de descuentos para medidas 100x100
+    params:
+      - name: ancho
+        type: number
+        required: false
+        description: Ancho en mm (default 100)
+      - name: alto
+        type: number
+        required: false
+        description: Alto en mm (default 100)
+    handler: debug
