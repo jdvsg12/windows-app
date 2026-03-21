@@ -1,6 +1,6 @@
 "use client"
 
-import { useState, useEffect, useMemo } from "react"
+import { Suspense, useState, useEffect, useMemo } from "react"
 import { useRouter, useSearchParams } from "next/navigation"
 import { Button } from "@/components/ui/button"
 import { Input } from "@/components/ui/input"
@@ -20,7 +20,15 @@ import {
 } from "@/lib/calculos"
 import type { Proyecto, Ventana, TipoVentana, SistemaVentana } from "@/lib/types"
 
-export default function CalculadorPage() {
+export default function CalculadorPageWrapper() {
+    return (
+        <Suspense fallback={<div>Cargando...</div>}>
+            <CalculadorPage />
+        </Suspense>
+    )
+}
+
+function CalculadorPage() {
     const router = useRouter()
     const searchParams = useSearchParams()
     const proyectoId = searchParams.get("id")
