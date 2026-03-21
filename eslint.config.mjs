@@ -2,6 +2,7 @@ import js from "@eslint/js";
 import globals from "globals";
 import tseslint from "typescript-eslint";
 import pluginReact from "eslint-plugin-react";
+import pluginNext from "@next/eslint-plugin-next";
 import { defineConfig } from "eslint/config";
 
 
@@ -11,13 +12,19 @@ export default defineConfig([
   tseslint.configs.recommended,
   pluginReact.configs.flat.recommended,
   {
+    plugins: {
+      "@next/next": pluginNext,
+    },
+    rules: {
+      ...pluginNext.configs.recommended.rules,
+      "react/react-in-jsx-scope": "off",
+    },
+  },
+  {
     settings: {
       react: {
         version: "detect"
       }
     },
-    rules: {
-      "react/react-in-jsx-scope": "off"
-    }
   }
 ]);
