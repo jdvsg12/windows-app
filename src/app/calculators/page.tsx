@@ -8,7 +8,7 @@ import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card"
 import { Label } from "@/components/ui/label"
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs"
 import { Badge } from "@/components/ui/badge"
-import { ArrowLeft, Plus, Pencil, Trash2, FileSpreadsheet, Ruler, Package, Grid3X3, Settings, X } from "lucide-react"
+import { ArrowLeft, Plus, Pencil, Trash2, FileSpreadsheet, Ruler, Package, Grid3X3, X } from "lucide-react"
 import * as DialogPrimitive from "@radix-ui/react-dialog"
 import * as XLSX from "xlsx"
 import { obtenerProyectoPorId, actualizarProyecto, crearProyecto, eliminarProyecto } from "@/lib/storage"
@@ -210,7 +210,7 @@ export default function CalculadorPage() {
                                             Eliminar Proyecto
                                         </DialogPrimitive.Title>
                                         <DialogPrimitive.Description className="text-sm text-muted-foreground">
-                                            ¿Estás seguro de que deseas eliminar el proyecto "{proyecto.nombre}"? Esta acción no se puede deshacer.
+                                            ¿Estás seguro de que deseas eliminar el proyecto &ldquo;{proyecto.nombre}&rdquo;? Esta acción no se puede deshacer.
                                         </DialogPrimitive.Description>
                                     </div>
                                     <div className="flex flex-col-reverse sm:flex-row sm:justify-end sm:space-x-2">
