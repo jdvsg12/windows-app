@@ -1,4 +1,5 @@
-import type { Proyecto, DatosEmpresa, DatosBancarios, ConfiguracionPrecios } from "./types"
+import type { Proyecto, ConfiguracionPrecios } from "./types"
+import { ProyectoSchema, ConfiguracionEmpresaSchema, ConfiguracionPreciosSchema } from "./schemas"
 
 const STORAGE_KEYS = {
     PROYECTOS: "ventanas_proyectos",
@@ -9,127 +10,109 @@ const STORAGE_KEYS = {
     PRECIOS: "ventanas_precios",
 }
 
-// Datos por defecto de la empresa
-export const DATOS_EMPRESA_DEFAULT: DatosEmpresa = {
+const CONFIGURACION_DEFAULT = {
     nombre: "ALUVE",
     nit: "79717122-6",
     direccion: "CARRERA 5 47B 91",
-    telefono: "3112877130 / 3168297417",
-    email: "ALUVE_03@hotmail.com",
     ciudad: "GIRARDOT CUNDINAMARCA",
-    nombreRepresentante: "Oscar Velandia Malagón",
-    cedulaRepresentante: "79'717.122 de Bta.",
+    telefonos: "3112877130 / 3168297417",
+    email: "ALUVE_03@hotmail.com",
+    representante: "Oscar Velandia Malagón",
+    cedula: "79'717.122 de Bta.",
+    logo: "",
+    datosBancarios: `PARA CONSIGNACIÓN EN EFECTIVO:
+Número de cuenta: En Girardot 24076716113 Cuenta de Ahorros Banco Caja Social
+En Bogotá 24085462744 Cuenta de Ahorros Banco Caja Social
+Titular: Oscar Velandia
+
+BANCOLOMBIA, TITULAR: DIANA MARCELA GUARIN CC. 1070590109 
+CUENTA DE AHORROS 65969220461 DE GIRARDOT.
+
+Nequi y daviplata 3168297417
+
+Nota: En caso de consignación, se debe enviar fotografía al WhatsApp 3168297417`,
 }
 
-export const DATOS_BANCARIOS_DEFAULT: DatosBancarios = {
-    cuentas: [
-        {
-            banco: "Banco Caja Social",
-            tipoCuenta: "Cuenta de Ahorros",
-            numeroCuenta: "24076716113",
-            titular: "Oscar Velandia",
-            ciudad: "Girardot",
-        },
-        {
-            banco: "Banco Caja Social",
-            tipoCuenta: "Cuenta de Ahorros",
-            numeroCuenta: "24085462744",
-            titular: "Oscar Velandia",
-            ciudad: "Bogotá",
-        },
-        {
-            banco: "Bancolombia",
-            tipoCuenta: "Cuenta de Ahorros",
-            numeroCuenta: "65969220461",
-            titular: "Diana Marcela Guarin - CC. 1070590109",
-            ciudad: "Girardot",
-        },
-    ],
-    nequi: "3168297417",
-    daviplata: "3168297417",
+const PRECIOS_DEFAULT: ConfiguracionPrecios = {
+    precioCabezal: 90000,
+    precioSillar: 90000,
+    precioJamba: 72000,
+    precioEnganche: 72000,
+    precioTraslape: 72000,
+    precioHorizontalSuperior: 60000,
+    precioHorizontalInferior: 60000,
+    precioGuia: 2000,
+    precioRodachina: 8000,
+    precioCerradura: 25000,
+    precioTornillo8mm: 500,
+    precioTornillo10mm: 600,
+    precioEmpaque: 3000,
+    precioVidrioLamina: 180000,
+    tamanoLamina: "2500x3600",
+    manoDeObra: 30,
+    transporte: 50000,
+    utilidad: 20,
+    otros: 0,
+    costosIndirectos: 0,
+    costosAdicionales: [],
 }
 
-// Proyectos
-export const guardarProyectos = (proyectos: Proyecto[]) => {
-    if (typeof window !== "undefined") {
-        localStorage.setItem(STORAGE_KEYS.PROYECTOS, JSON.stringify(proyectos))
+function safeGet<T>(key: string, fallback: T, validator?: (data: unknown) => T): T {
+    if (typeof window === "undefined") return fallback
+    try {
+        const raw = localStorage.getItem(key)
+        if (!raw) return fallback
+        const parsed = JSON.parse(raw)
+        return validator ? validator(parsed) : parsed as T
+    } catch {
+        return fallback
     }
 }
 
-export const obtenerProyectos = (): Proyecto[] => {
-    if (typeof window !== "undefined") {
-        const data = localStorage.getItem(STORAGE_KEYS.PROYECTOS)
-        if (data) {
-            try {
-                return JSON.parse(data)
-            } catch (error) {
-                console.error("Error parsing proyectos:", error)
-                return []
-            }
-        }
+function safeSet(key: string, value: unknown): void {
+    if (typeof window === "undefined") return
+    try {
+        localStorage.setItem(key, JSON.stringify(value))
+    } catch (error) {
+        console.error("Error saving to localStorage:", error)
     }
-    return []
 }
+
+function validateProyectos(data: unknown): Proyecto[] {
+    const result = z.array(ProyectoSchema).safeParse(data)
+    return result.success ? result.data : []
+}
+
+function validateConfiguracion(data: unknown) {
+    const result = ConfiguracionEmpresaSchema.safeParse(data)
+    return result.success ? result.data : CONFIGURACION_DEFAULT
+}
+
+function validatePrecios(data: unknown): ConfiguracionPrecios {
+    const result = ConfiguracionPreciosSchema.safeParse(data)
+    return result.success ? result.data : PRECIOS_DEFAULT
+}
+
+import { z } from "zod"
+
+export const obtenerProyectos = (): Proyecto[] => 
+    safeGet(STORAGE_KEYS.PROYECTOS, [], validateProyectos)
+
+export const guardarProyectos = (proyectos: Proyecto[]) => 
+    safeSet(STORAGE_KEYS.PROYECTOS, proyectos)
 
 export const guardarProyectoActual = (proyectoId: string | null) => {
-    if (typeof window !== "undefined") {
-        if (proyectoId) {
-            localStorage.setItem(STORAGE_KEYS.PROYECTO_ACTUAL, proyectoId)
-        } else {
-            localStorage.removeItem(STORAGE_KEYS.PROYECTO_ACTUAL)
-        }
+    if (typeof window === "undefined") return
+    if (proyectoId) {
+        localStorage.setItem(STORAGE_KEYS.PROYECTO_ACTUAL, proyectoId)
+    } else {
+        localStorage.removeItem(STORAGE_KEYS.PROYECTO_ACTUAL)
     }
 }
 
 export const obtenerProyectoActual = (): string | null => {
-    if (typeof window !== "undefined") {
-        return localStorage.getItem(STORAGE_KEYS.PROYECTO_ACTUAL)
-    }
-    return null
-}
-
-// Datos de empresa
-export const guardarDatosEmpresa = (datos: DatosEmpresa) => {
-    if (typeof window !== "undefined") {
-        localStorage.setItem(STORAGE_KEYS.DATOS_EMPRESA, JSON.stringify(datos))
-    }
-}
-
-export const obtenerDatosEmpresa = (): DatosEmpresa => {
-    if (typeof window !== "undefined") {
-        const data = localStorage.getItem(STORAGE_KEYS.DATOS_EMPRESA)
-        if (data) {
-            try {
-                return JSON.parse(data)
-            } catch (error) {
-                console.error("Error parsing datos empresa:", error)
-                return DATOS_EMPRESA_DEFAULT
-            }
-        }
-    }
-    return DATOS_EMPRESA_DEFAULT
-}
-
-// Datos bancarios
-export const guardarDatosBancarios = (datos: DatosBancarios) => {
-    if (typeof window !== "undefined") {
-        localStorage.setItem(STORAGE_KEYS.DATOS_BANCARIOS, JSON.stringify(datos))
-    }
-}
-
-export const obtenerDatosBancarios = (): DatosBancarios => {
-    if (typeof window !== "undefined") {
-        const data = localStorage.getItem(STORAGE_KEYS.DATOS_BANCARIOS)
-        if (data) {
-            try {
-                return JSON.parse(data)
-            } catch (error) {
-                console.error("Error parsing datos bancarios:", error)
-                return DATOS_BANCARIOS_DEFAULT
-            }
-        }
-    }
-    return DATOS_BANCARIOS_DEFAULT
+    if (typeof window === "undefined") return null
+    return localStorage.getItem(STORAGE_KEYS.PROYECTO_ACTUAL)
 }
 
 export const getProyectos = obtenerProyectos
@@ -174,107 +157,14 @@ export const obtenerProyectoPorId = (id: string): Proyecto | null => {
     return proyectos.find((p) => p.id === id) || null
 }
 
-const CONFIGURACION_DEFAULT = {
-    nombre: "ALUVE",
-    nit: "79717122-6",
-    direccion: "CARRERA 5 47B 91",
-    ciudad: "GIRARDOT CUNDINAMARCA",
-    telefonos: "3112877130 / 3168297417",
-    email: "ALUVE_03@hotmail.com",
-    representante: "Oscar Velandia Malagón",
-    cedula: "79'717.122 de Bta.",
-    logo: "",
-    datosBancarios: `PARA CONSIGNACIÓN EN EFECTIVO:
-Número de cuenta: En Girardot 24076716113 Cuenta de Ahorros Banco Caja Social
-En Bogotá 24085462744 Cuenta de Ahorros Banco Caja Social
-Titular: Oscar Velandia
+export const obtenerConfiguracion = () => 
+    safeGet(STORAGE_KEYS.CONFIGURACION, CONFIGURACION_DEFAULT, validateConfiguracion)
 
-BANCOLOMBIA, TITULAR: DIANA MARCELA GUARIN CC. 1070590109 
-CUENTA DE AHORROS 65969220461 DE GIRARDOT.
+export const guardarConfiguracion = (config: Record<string, string | undefined>) => 
+    safeSet(STORAGE_KEYS.CONFIGURACION, config)
 
-Nequi y daviplata 3168297417
+export const obtenerPrecios = (): ConfiguracionPrecios => 
+    safeGet(STORAGE_KEYS.PRECIOS, PRECIOS_DEFAULT, validatePrecios)
 
-Nota: En caso de consignación, se debe enviar fotografía al WhatsApp 3168297417`,
-}
-
-export const obtenerConfiguracion = () => {
-    if (typeof window !== "undefined") {
-        const data = localStorage.getItem(STORAGE_KEYS.CONFIGURACION)
-        if (data) {
-            try {
-                return JSON.parse(data)
-            } catch (error) {
-                console.error("Error parsing configuracion:", error)
-                return CONFIGURACION_DEFAULT
-            }
-        }
-    }
-    return CONFIGURACION_DEFAULT
-}
-
-export const guardarConfiguracion = (config: Record<string, string | undefined>) => {
-    if (typeof window !== "undefined") {
-        localStorage.setItem(STORAGE_KEYS.CONFIGURACION, JSON.stringify(config))
-    }
-}
-
-const PRECIOS_DEFAULT = {
-    precioCabezal: 90000, // por barra de 6m
-    precioSillar: 90000, // por barra de 6m
-    precioJamba: 72000, // por barra de 6m
-    precioEnganche: 72000, // por barra de 6m
-    precioTraslape: 72000, // por barra de 6m
-    precioHorizontalSuperior: 60000, // por barra de 6m
-    precioHorizontalInferior: 60000, // por barra de 6m
-
-    precioVidrio: 85000, // por m²
-    precioVidrioLamina: 180000, // por lamina
-    tamanoLamina: "2500x3600" as const,
-
-    // Precios de accesorios por unidad
-    precioGuia: 2000,
-    precioRodachina: 8000,
-    precioCerradura: 25000,
-    precioTornillo8mm: 500,
-    precioTornillo10mm: 600,
-    precioEmpaque: 3000, // por metro
-
-    // Costos adicionales fijos
-    manoDeObra: 30, // 30%
-    transporte: 50000,
-    utilidad: 20, // 20%
-    otros: 0,
-    costosIndirectos: 0, // valor fijo
-
-    costosAdicionales: [] as Array<{
-        id: string
-        nombre: string
-        valor: number
-        tipo: "fijo" | "porcentaje"
-    }>,
-}
-
-export const obtenerPrecios = () => {
-    if (typeof window !== "undefined") {
-        const data = localStorage.getItem(STORAGE_KEYS.PRECIOS)
-        if (data) {
-            try {
-                const precios = JSON.parse(data)
-                if (!precios.costosAdicionales) {
-                    precios.costosAdicionales = []
-                }
-                return precios
-            } catch (error) {
-                console.error("Error parsing precios:", error)
-                return PRECIOS_DEFAULT
-            }
-        }
-    }
-    return PRECIOS_DEFAULT
-}
-
-export const guardarPrecios = (precios: ConfiguracionPrecios) => {
-    if (typeof window !== "undefined") {
-        localStorage.setItem(STORAGE_KEYS.PRECIOS, JSON.stringify(precios))
-    }
-}
+export const guardarPrecios = (precios: ConfiguracionPrecios) => 
+    safeSet(STORAGE_KEYS.PRECIOS, precios)
