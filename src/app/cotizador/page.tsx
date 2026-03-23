@@ -3,6 +3,8 @@
 import type React from "react"
 import { useState, Suspense } from "react"
 import { useRouter, useSearchParams } from "next/navigation"
+import { format } from "date-fns"
+import { es } from "date-fns/locale"
 import { Button } from "@/components/ui/button"
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs"
 import { ArrowLeft, Download } from "lucide-react"
@@ -21,11 +23,10 @@ function CotizadorContent() {
     const proyectoId = searchParams.get("id")
 
     const { proyecto } = useProyecto(proyectoId)
-    const { config, precios, costosCalculados, updateConfig, updatePrecios } = useCotizador(proyecto)
+    const { config, precios, costosCalculados, updateConfig, updatePrecios, updateCliente } = useCotizador(proyecto)
 
-    const [fecha, setFecha] = useState(
-        new Date().toLocaleDateString("es-CO", { year: "numeric", month: "long", day: "numeric" })
-    )
+    const [fecha, setFecha] = useState<Date>(new Date())
+    const [clienteLocal, setClienteLocal] = useState(proyecto?.cliente || "")
     const [descripcion, setDescripcion] = useState("")
     const [mostrarMedidas, setMostrarMedidas] = useState(true)
     const [mostrarValores, setMostrarValores] = useState(true)
@@ -46,13 +47,19 @@ function CotizadorContent() {
         updateConfig({ [field]: value })
     }
 
+    const handleClienteChange = (cliente: string) => {
+        setClienteLocal(cliente)
+        updateCliente(cliente)
+    }
+
     const handleGenerarPDF = async () => {
         if (!proyecto || !config) return
+        const fechaFormateada = format(fecha, "PPP", { locale: es })
         await generarPDF(proyecto, config, costosCalculados, {
             mostrarMedidas,
             mostrarValores,
             descripcion,
-            fecha,
+            fecha: fechaFormateada,
         })
     }
 
@@ -99,11 +106,12 @@ function CotizadorContent() {
                     <TabsContent value="contenido">
                         <ContenidoTab
                             fecha={fecha}
-                            proyecto={proyecto}
+                            cliente={clienteLocal}
                             descripcion={descripcion}
                             mostrarMedidas={mostrarMedidas}
                             mostrarValores={mostrarValores}
                             onFechaChange={setFecha}
+                            onClienteChange={handleClienteChange}
                             onDescripcionChange={setDescripcion}
                             onMostrarMedidasChange={setMostrarMedidas}
                             onMostrarValoresChange={setMostrarValores}
@@ -123,7 +131,7 @@ function CotizadorContent() {
                             config={config}
                             logo={config.logo || ""}
                             proyecto={proyecto}
-                            fecha={fecha}
+                            fecha={format(fecha, "PPP", { locale: es })}
                             descripcion={descripcion}
                             mostrarMedidas={mostrarMedidas}
                             mostrarValores={mostrarValores}

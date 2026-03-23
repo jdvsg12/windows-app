@@ -4,6 +4,7 @@ import {
     guardarConfiguracion,
     obtenerPrecios,
     guardarPrecios,
+    actualizarProyecto,
 } from "@/lib/storage"
 import {
     optimizarCortes,
@@ -46,12 +47,19 @@ export function useCotizador(proyecto: Proyecto | null) {
         guardarPrecios(newPrecios)
     }, [])
 
+    const updateCliente = useCallback((cliente: string) => {
+        if (!proyecto) return
+        const proyectoActualizado = { ...proyecto, cliente }
+        actualizarProyecto(proyectoActualizado)
+    }, [proyecto])
+
     return {
         config,
         precios,
         costosCalculados,
         updateConfig,
         updatePrecios,
+        updateCliente,
     }
 }
 
