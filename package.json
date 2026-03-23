@@ -6,7 +6,7 @@
     "dev": "next dev --turbopack",
     "build": "next build",
     "start": "next start",
-    "lint": "eslint . --ext .ts,.tsx,.js,.jsx"
+    "lint": "eslint . --ext .ts,.tsx,.js,.jsx --ignore-pattern .next --ignore-pattern node_modules"
   },
   "dependencies": {
     "@hookform/resolvers": "^5.1.1",

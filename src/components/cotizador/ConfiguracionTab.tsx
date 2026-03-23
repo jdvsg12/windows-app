@@ -6,7 +6,7 @@ import { Input } from "@/components/ui/input"
 import { Label } from "@/components/ui/label"
 
 interface Props {
-    config: any
+    config: Record<string, string>
     logo: string
     onConfigChange: (field: string, value: string) => void
     onLogoUpload: (e: React.ChangeEvent<HTMLInputElement>) => void

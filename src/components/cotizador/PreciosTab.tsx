@@ -8,9 +8,9 @@ import { DollarSign, Plus, X } from "lucide-react"
 import { TAMANOS_LAMINA } from "@/lib/types"
 
 interface Props {
-    precios: any
-    costosCalculados: any
-    onUpdatePrecios: (precios: any) => void
+    precios: Record<string, unknown>
+    costosCalculados: Record<string, unknown> | null
+    onUpdatePrecios: (precios: Record<string, string | number | unknown[]>) => void
 }
 
 export function PreciosTab({ precios, costosCalculados, onUpdatePrecios }: Props) {
@@ -185,7 +185,7 @@ export function PreciosTab({ precios, costosCalculados, onUpdatePrecios }: Props
                             </Button>
                         </div>
                         <div className="space-y-2">
-                            {(precios.costosAdicionales || []).map((costo: any, index: number) => (
+                            {(precios.costosAdicionales || []).map((costo: { id: string; nombre: string; valor: number; tipo: string }, index: number) => (
                                 <div key={costo.id} className="flex gap-2 items-center">
                                     <Input
                                         placeholder="Nombre del costo"
@@ -224,7 +224,7 @@ export function PreciosTab({ precios, costosCalculados, onUpdatePrecios }: Props
                                         size="icon"
                                         variant="ghost"
                                         onClick={() => {
-                                            const nuevosCostos = precios.costosAdicionales.filter((c: any) => c.id !== costo.id)
+                                            const nuevosCostos = precios.costosAdicionales.filter((c: { id: string }) => c.id !== costo.id)
                                             onUpdatePrecios({ ...precios, costosAdicionales: nuevosCostos })
                                         }}
                                     >

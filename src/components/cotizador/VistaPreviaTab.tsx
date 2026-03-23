@@ -3,14 +3,14 @@
 import { Card, CardContent } from "@/components/ui/card"
 
 interface Props {
-    config: any
+    config: Record<string, string>
     logo: string
-    proyecto: any
+    proyecto: { nombre: string; cliente: string; ventanas: Array<{ id: string; nombre: string; tipoVentana: string; ancho: number; alto: number }> }
     fecha: string
     descripcion: string
     mostrarMedidas: boolean
     mostrarValores: boolean
-    costosCalculados: any
+    costosCalculados: Record<string, unknown> | null
 }
 
 export function VistaPreviaTab({
@@ -77,8 +77,8 @@ export function VistaPreviaTab({
                             </tr>
                         </thead>
                         <tbody>
-                            {proyecto.ventanas.map((ventana: any) => {
-                                const valorVentana = costosCalculados?.valoresPorVentana?.find((v: any) => v.id === ventana.id)
+                            {proyecto.ventanas.map((ventana: { id: string; nombre: string; tipoVentana: string; ancho: number; alto: number }) => {
+                                const valorVentana = costosCalculados?.valoresPorVentana?.find((v: { id: string; area?: number; valor?: number }) => v.id === ventana.id)
                                 return (
                                     <tr key={ventana.id}>
                                         <td className="border border-gray-800 p-2">{ventana.nombre}</td>

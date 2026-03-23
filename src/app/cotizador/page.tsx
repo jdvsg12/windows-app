@@ -1,7 +1,7 @@
 "use client"
 
 import type React from "react"
-import { useEffect, useState, useRef, Suspense } from "react"
+import { useEffect, useState, Suspense } from "react"
 import { useRouter, useSearchParams } from "next/navigation"
 import { Button } from "@/components/ui/button"
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs"
@@ -20,7 +20,6 @@ import {
     ORDEN_PERFILES,
     optimizarCortesVidrio,
 } from "@/lib/calculos"
-import { TAMANOS_LAMINA, type TamanoLamina } from "@/lib/types"
 import { ConfiguracionTab } from "@/components/cotizador/ConfiguracionTab"
 import { ContenidoTab } from "@/components/cotizador/ContenidoTab"
 import { PreciosTab } from "@/components/cotizador/PreciosTab"
@@ -32,9 +31,9 @@ function CotizadorContent() {
     const searchParams = useSearchParams()
     const proyectoId = searchParams.get("id")
 
-    const [proyecto, setProyecto] = useState<any | null>(null)
-    const [config, setConfig] = useState<any | null>(null)
-    const [precios, setPrecios] = useState<any | null>(null)
+    const [proyecto, setProyecto] = useState<Record<string, unknown> | null>(null)
+    const [config, setConfig] = useState<Record<string, unknown> | null>(null)
+    const [precios, setPrecios] = useState<Record<string, unknown> | null>(null)
     const [logo, setLogo] = useState<string>("")
     const [fecha, setFecha] = useState(
         new Date().toLocaleDateString("es-CO", { year: "numeric", month: "long", day: "numeric" })
@@ -42,7 +41,7 @@ function CotizadorContent() {
     const [descripcion, setDescripcion] = useState("")
     const [mostrarMedidas, setMostrarMedidas] = useState(true)
     const [mostrarValores, setMostrarValores] = useState(true)
-    const [costosCalculados, setCostosCalculados] = useState<any>(null)
+    const [costosCalculados, setCostosCalculados] = useState<Record<string, unknown> | null>(null)
 
     useEffect(() => {
         if (proyectoId) {
@@ -97,7 +96,7 @@ function CotizadorContent() {
         }
     }
 
-    const updatePrecios = (newPrecios: any) => {
+    const updatePrecios = (newPrecios: Record<string, string | number | unknown[]>) => {
         setPrecios(newPrecios)
         guardarPrecios(newPrecios)
     }
@@ -105,7 +104,7 @@ function CotizadorContent() {
     const calcularCostos = () => {
         if (!proyecto || !precios) return
 
-        const areaTotalVentanas = proyecto.ventanas.reduce((acc: number, v: any) => acc + (v.ancho * v.alto) / 1000000, 0)
+        const areaTotalVentanas = proyecto.ventanas.reduce((acc: number, v: { ancho: number; alto: number }) => acc + (v.ancho * v.alto) / 1000000, 0)
 
         let costoPerfiles = 0
         const optimizacion = optimizarCortes(proyecto.ventanas)
@@ -142,11 +141,10 @@ function CotizadorContent() {
 
         const vidrios = calcularVidrios(proyecto.ventanas)
         let metrosEmpaque = 0
-        vidrios.forEach((v: any) => {
+        vidrios.forEach((v: { empaque?: number }) => {
             metrosEmpaque += v.empaque || 0
         })
 
-        const tamanoLamina = (precios.tamanoLamina || "2500x3600") as TamanoLamina
         const laminasVidrio = optimizarCortesVidrio(proyecto.ventanas)
         const numLaminas = laminasVidrio.length
         const costoVidrio = numLaminas * (precios.precioVidrioLamina || 0)
@@ -158,7 +156,7 @@ function CotizadorContent() {
         const costoIndirectos = precios.costosIndirectos || 0
 
         let costosAdicionalesTotal = 0
-        const costosAdicionalesDetalle = (precios.costosAdicionales || []).map((costo: any) => {
+        const costosAdicionalesDetalle = (precios.costosAdicionales || []).map((costo: { tipo: string; valor: number }) => {
             const valor = costo.tipo === "porcentaje" ? costoMateriales * (costo.valor / 100) : costo.valor
             costosAdicionalesTotal += valor
             return { ...costo, valorCalculado: valor }
@@ -169,7 +167,7 @@ function CotizadorContent() {
         const precioFinal = costoDirecto + utilidadMonto
         const precioPorM2 = areaTotalVentanas > 0 ? precioFinal / areaTotalVentanas : 0
 
-        const valoresPorVentana = proyecto.ventanas.map((v: any) => {
+        const valoresPorVentana = proyecto.ventanas.map((v: { id: string; ancho: number; alto: number }) => {
             const area = (v.ancho * v.alto) / 1000000
             return { id: v.id, area, valor: area * precioPorM2 }
         })
@@ -246,8 +244,8 @@ function CotizadorContent() {
                                 </tr>
                             </thead>
                             <tbody>
-                                ${proyecto.ventanas.map((ventana: any) => {
-                                    const valorVentana = costosCalculados?.valoresPorVentana?.find((v: any) => v.id === ventana.id)
+                                ${proyecto.ventanas.map((ventana: { nombre: string; tipoVentana: string; ancho: number; alto: number; id: string }) => {
+                                    const valorVentana = costosCalculados?.valoresPorVentana?.find((v: { id: string; ancho: number; alto: number }) => v.id === ventana.id)
                                     return `<tr>
                                         <td style="border: 1px solid rgb(51, 51, 51); padding: 8px; color: rgb(0, 0, 0);">${ventana.nombre}</td>
                                         <td style="border: 1px solid rgb(51, 51, 51); padding: 8px; color: rgb(0, 0, 0);">${ventana.tipoVentana === "2hojas" ? "2 Hojas Normal" : ventana.tipoVentana}</td>

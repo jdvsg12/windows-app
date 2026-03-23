@@ -1,5 +1,5 @@
 import { getDescuentos, getSistemasDisponibles } from "./descuentos"
-import type { DescuentosSistema, SistemaVentana } from "./types"
+import type { DescuentosSistema } from "./types"
 
 export class CalculadoraSistema {
   protected descuentos: DescuentosSistema

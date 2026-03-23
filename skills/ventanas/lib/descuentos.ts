@@ -1,4 +1,4 @@
-import type { Descuentos, SistemaVentana, DescuentosSistema } from "./types"
+import type { Descuentos, DescuentosSistema } from "./types"
 
 export const descuentos: Descuentos = {
   "5020": {

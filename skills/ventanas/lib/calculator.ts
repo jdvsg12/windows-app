@@ -1,5 +1,5 @@
-import type { Panel, ResultadoPaneles, ResultadoVidrio, DebugDescuento, SistemaVentana } from "./types"
-import { getDescuentos, getSistemasDisponibles } from "./descuentos"
+import type { Panel, ResultadoPaneles, ResultadoVidrio, DebugDescuento } from "./types"
+import { getSistemasDisponibles } from "./descuentos"
 import { crearCalculadora } from "./factory"
 
 const MIN_PANEL = 1000
@@ -18,7 +18,6 @@ export function calcularPaneles(ancho: number, cantidad: number): ResultadoPanel
 
   const paneles: Panel[] = []
   const tieneFijaParche = cantidad >= 3
-  const hojasMoviles = cantidad - (tieneFijaParche ? 1 : 0)
 
   for (let i = 0; i < cantidad; i++) {
     const numero = i + 1

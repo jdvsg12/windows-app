@@ -8,7 +8,7 @@ import { EditorTextoEnriquecido } from "@/components/editor-texto-enriquecido"
 
 interface Props {
     fecha: string
-    proyecto: any
+    proyecto: { cliente: string; nombre: string }
     descripcion: string
     mostrarMedidas: boolean
     mostrarValores: boolean
