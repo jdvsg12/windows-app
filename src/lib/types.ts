@@ -3,42 +3,6 @@
 export type TipoVentana = "2hojas" | "3hojas" | "4hojas" | "5hojas" | "6hojas"
 export type SistemaVentana = "5020" | "744" | "8025" | "7038"
 
-export type WindowType = "corrediza" | "batiente" | "fija" | "oscilobatiente"
-export type ProjectStatus = "draft" | "active" | "completed"
-export type MaterialType = "perfil" | "vidrio" | "herraje" | "sellante" | "accesorio"
-
-export interface Material {
-    id: string
-    name: string
-    type: MaterialType
-    unit: string
-    pricePerUnit: number
-    quantity: number
-    totalPrice: number
-}
-
-export interface Window {
-    id: string
-    windowType: WindowType
-    width: number
-    height: number
-    materials: Material[]
-}
-
-export interface Project {
-    id: string
-    projectName: string
-    client: string
-    description?: string
-    createAt: string
-    updatedAt?: string
-    status: ProjectStatus
-    totalMaterialCost: number
-    notes?: string
-    numberOfWindows: number
-    windows: Window[]
-}
-
 export interface DatosEmpresa {
     nombre: string
     nit: string
@@ -68,7 +32,7 @@ export interface Ventana {
     ancho: number // mm
     alto: number // mm
     tipoVentana: TipoVentana
-    sistema?: SistemaVentana // Sistema de ventana (5020, 744, 8025, 7038)
+    sistema?: SistemaVentana
 }
 
 export interface Corte {
@@ -76,7 +40,7 @@ export interface Corte {
     medida: number // metros
     cantidad: number
     ventana: string
-    sistema?: string // Sistema de ventana (5020, 744, 8025, 7038)
+    sistema?: string
 }
 
 export interface Proyecto {
@@ -102,7 +66,6 @@ export interface ConfiguracionEmpresa {
 }
 
 export interface ConfiguracionPrecios {
-    // Precios de perfiles (por metro)
     precioCabezal: number
     precioSillar: number
     precioJamba: number
@@ -110,25 +73,19 @@ export interface ConfiguracionPrecios {
     precioTraslape: number
     precioHorizontalSuperior: number
     precioHorizontalInferior: number
-
-    // Precios de accesorios (por unidad)
     precioGuia: number
     precioRodachina: number
     precioCerradura: number
     precioTornillo8mm: number
     precioTornillo10mm: number
-    precioEmpaque: number // por metro
-
-    // Precios de vidrio
-    precioVidrioLamina: number // por lámina
+    precioEmpaque: number
+    precioVidrioLamina: number
     tamanoLamina: TamanoLamina
-
-    // Costos adicionales
-    manoDeObra: number // porcentaje
-    transporte: number // valor fijo
-    utilidad: number // porcentaje
-    otros: number // valor fijo
-    costosIndirectos: number // valor fijo
+    manoDeObra: number
+    transporte: number
+    utilidad: number
+    otros: number
+    costosIndirectos: number
     costosAdicionales: CostoAdicional[]
 }
 
@@ -196,15 +153,6 @@ export interface CostosCalculados {
     }>
 }
 
-export const TAMANOS_LAMINA = {
-    "2440x3660": { label: "2440 x 3660 mm", ancho: 2440, alto: 3660 },
-    "2500x3600": { label: "2500 x 3600 mm", ancho: 2500, alto: 3600 },
-    "2440x3050": { label: "2440 x 3050 mm", ancho: 2440, alto: 3050 },
-    "2140x3300": { label: "2140 x 3300 mm", ancho: 2140, alto: 3300 },
-} as const
-
-export type TamanoLamina = keyof typeof TAMANOS_LAMINA
-
 export interface CostosCalculadosCotizador {
     costoPerfiles: number
     costoAccesorios: number
@@ -226,3 +174,12 @@ export interface CostosCalculadosCotizador {
         valor: number
     }>
 }
+
+export const TAMANOS_LAMINA = {
+    "2440x3660": { label: "2440 x 3660 mm", ancho: 2440, alto: 3660 },
+    "2500x3600": { label: "2500 x 3600 mm", ancho: 2500, alto: 3600 },
+    "2440x3050": { label: "2440 x 3050 mm", ancho: 2440, alto: 3050 },
+    "2140x3300": { label: "2140 x 3300 mm", ancho: 2140, alto: 3300 },
+} as const
+
+export type TamanoLamina = keyof typeof TAMANOS_LAMINA

@@ -1,0 +1,4 @@
+export { VentanasTab } from "./VentanasTab"
+export { MaterialesTab } from "./MaterialesTab"
+export { OptimizacionTab } from "./OptimizacionTab"
+export { DeleteProjectDialog } from "./DeleteProjectDialog"
