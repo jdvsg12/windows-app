@@ -68,7 +68,6 @@ export function useVentanas(proyectoId: string | null) {
 
     const eliminarVentana = useCallback((id: string) => {
         if (!proyecto) return
-        if (!confirm("¿Eliminar esta ventana?")) return
 
         const nuevasVentanas = ventanas.filter((v) => v.id !== id)
         setVentanas(nuevasVentanas)
@@ -84,6 +83,13 @@ export function useVentanas(proyectoId: string | null) {
         router.push("/")
     }, [proyecto, router])
 
+    const actualizarCliente = useCallback((cliente: string) => {
+        if (!proyecto) return
+        const proyectoActualizado = { ...proyecto, cliente }
+        actualizarProyecto(proyectoActualizado)
+        setProyecto(proyectoActualizado)
+    }, [proyecto])
+
     return {
         proyecto,
         ventanas,
@@ -94,5 +100,6 @@ export function useVentanas(proyectoId: string | null) {
         agregarVentana,
         eliminarVentana,
         eliminarProyectoActual,
+        actualizarCliente,
     }
 }

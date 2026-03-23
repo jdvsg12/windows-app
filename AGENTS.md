@@ -513,6 +513,37 @@ npm run lint      # ESLint check
 
 ---
 
+
+## Git Workflow
+
+### Branch Naming
+- `feature/[nombre]` — Nuevas funcionalidades
+- `fix/[nombre]` — Corrección de bugs
+- `refactor/[nombre]` — Refactorización
+- `chore/[nombre]` — Tareas de mantenimiento
+
+### Commit Convention
+- `feat:` — Nueva funcionalidad
+- `fix:` — Corrección de bug
+- `refactor:` — Refactorización sin cambio de comportamiento
+- `chore:` — Mantenimiento (dependencias, config)
+- `docs:` — Documentación
+
+### Flujo de trabajo
+1. Crear branch desde `stage`
+2. Hacer cambios y commits
+3. Push y crear PR a `stage`
+4. Esperar aprobación del usuario
+
+### Reglas
+- Nunca commitear a `main` directamente
+- Trabajar siempre desde branches
+- Un commit = un cambio lógico
+- Mensajes en inglés, imperativo presente
+- Nunca usar `confirm()` o `alert()` — usar componentes Dialog
+
+---
+
 ## How You Respond
 
 - **Code first** — If the task is clear, go straight to code.

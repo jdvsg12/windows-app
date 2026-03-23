@@ -6,7 +6,8 @@ import { Input } from "@/components/ui/input"
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card"
 import { Label } from "@/components/ui/label"
 import { Badge } from "@/components/ui/badge"
-import { Plus, Pencil, Trash2, Grid3X3 } from "lucide-react"
+import { Plus, Pencil, Grid3X3 } from "lucide-react"
+import { DeleteWindowDialog } from "./DeleteWindowDialog"
 import type { Ventana, TipoVentana, SistemaVentana } from "@/lib/types"
 
 interface Props {
@@ -133,9 +134,10 @@ export function VentanasTab({ ventanas, onAgregar, onEliminar }: Props) {
                                         <Pencil className="h-4 w-4 mr-1" />
                                         Editar
                                     </Button>
-                                    <Button variant="outline" size="sm" onClick={() => onEliminar(ventana.id)} className="text-destructive hover:text-destructive">
-                                        <Trash2 className="h-4 w-4" />
-                                    </Button>
+                                    <DeleteWindowDialog
+                                        windowName={ventana.nombre}
+                                        onConfirm={() => onEliminar(ventana.id)}
+                                    />
                                 </div>
                             </CardContent>
                         </Card>
