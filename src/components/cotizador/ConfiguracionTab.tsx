@@ -1,14 +1,15 @@
 "use client"
 
 import type React from "react"
+import type { ConfiguracionEmpresa } from "@/lib/types"
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card"
 import { Input } from "@/components/ui/input"
 import { Label } from "@/components/ui/label"
 
 interface Props {
-    config: Record<string, string>
+    config: ConfiguracionEmpresa
     logo: string
-    onConfigChange: (field: string, value: string) => void
+    onConfigChange: (field: keyof ConfiguracionEmpresa, value: string) => void
     onLogoUpload: (e: React.ChangeEvent<HTMLInputElement>) => void
 }
 

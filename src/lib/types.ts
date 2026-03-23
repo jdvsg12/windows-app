@@ -204,3 +204,25 @@ export const TAMANOS_LAMINA = {
 } as const
 
 export type TamanoLamina = keyof typeof TAMANOS_LAMINA
+
+export interface CostosCalculadosCotizador {
+    costoPerfiles: number
+    costoAccesorios: number
+    costoVidrio: number
+    costoEmpaque: number
+    costoMateriales: number
+    costoManoObra: number
+    costoIndirectos: number
+    costosAdicionalesDetalle: Array<CostoAdicional & { valorCalculado: number }>
+    costosAdicionalesTotal: number
+    costoDirecto: number
+    utilidadMonto: number
+    total: number
+    areaTotal: number
+    precioPorM2: number
+    valoresPorVentana: Array<{
+        id: string
+        area: number
+        valor: number
+    }>
+}

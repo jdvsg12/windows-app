@@ -1,16 +1,17 @@
 "use client"
 
 import { Card, CardContent } from "@/components/ui/card"
+import type { ConfiguracionEmpresa, Proyecto, CostosCalculadosCotizador } from "@/lib/types"
 
 interface Props {
-    config: Record<string, string>
+    config: ConfiguracionEmpresa
     logo: string
-    proyecto: { nombre: string; cliente: string; ventanas: Array<{ id: string; nombre: string; tipoVentana: string; ancho: number; alto: number }> }
+    proyecto: Proyecto
     fecha: string
     descripcion: string
     mostrarMedidas: boolean
     mostrarValores: boolean
-    costosCalculados: Record<string, unknown> | null
+    costosCalculados: CostosCalculadosCotizador | null
 }
 
 export function VistaPreviaTab({
@@ -78,7 +79,7 @@ export function VistaPreviaTab({
                         </thead>
                         <tbody>
                             {proyecto.ventanas.map((ventana: { id: string; nombre: string; tipoVentana: string; ancho: number; alto: number }) => {
-                                const valorVentana = (costosCalculados?.valoresPorVentana as Array<{ id: string; area: number; valor: number }> | undefined)?.find((v) => v.id === ventana.id)
+                                const valorVentana = costosCalculados?.valoresPorVentana?.find((v) => v.id === ventana.id)
                                 return (
                                     <tr key={ventana.id}>
                                         <td className="border border-gray-800 p-2">{ventana.nombre}</td>
@@ -107,11 +108,11 @@ export function VistaPreviaTab({
                     <div>
                         <p className="font-bold">Total de ventanas: {proyecto.ventanas.length}</p>
                         {mostrarMedidas && costosCalculados && (
-                            <p className="mt-1">Área total: {((costosCalculados.areaTotal as number) || 0).toFixed(2)} m²</p>
+                            <p className="mt-1">Área total: {(costosCalculados?.areaTotal || 0).toFixed(2)} m²</p>
                         )}
                         {mostrarValores && costosCalculados && (
                             <p className="mt-2 text-lg font-bold">
-                                VALOR TOTAL: ${((costosCalculados.total as number) || 0).toLocaleString("es-CO", { maximumFractionDigits: 0 })}
+                                VALOR TOTAL: ${(costosCalculados?.total || 0).toLocaleString("es-CO", { maximumFractionDigits: 0 })}
                             </p>
                         )}
                     </div>

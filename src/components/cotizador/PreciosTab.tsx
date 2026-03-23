@@ -5,11 +5,11 @@ import { Button } from "@/components/ui/button"
 import { Input } from "@/components/ui/input"
 import { Label } from "@/components/ui/label"
 import { DollarSign, Plus, X } from "lucide-react"
-import { TAMANOS_LAMINA, type ConfiguracionPrecios, type CostoAdicional } from "@/lib/types"
+import { TAMANOS_LAMINA, type ConfiguracionPrecios, type CostoAdicional, type CostosCalculadosCotizador } from "@/lib/types"
 
 interface Props {
     precios: ConfiguracionPrecios
-    costosCalculados: Record<string, number> | null
+    costosCalculados: CostosCalculadosCotizador | null
     onUpdatePrecios: (precios: ConfiguracionPrecios) => void
 }
 
@@ -136,7 +136,7 @@ export function PreciosTab({ precios, costosCalculados, onUpdatePrecios }: Props
                                     />
                                 </div>
                                 <p className="text-xs text-muted-foreground">
-                                    Se multiplicará por el área total ({(costosCalculados?.areaTotal as number)?.toFixed(2) || 0} m²)
+                                    Se multiplicará por el área total ({costosCalculados?.areaTotal?.toFixed(2) || 0} m²)
                                 </p>
                             </div>
                             <div className="space-y-2">

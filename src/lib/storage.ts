@@ -5,6 +5,8 @@ const STORAGE_KEYS = {
     PROYECTO_ACTUAL: "ventanas_proyecto_actual",
     DATOS_EMPRESA: "ventanas_datos_empresa",
     DATOS_BANCARIOS: "ventanas_datos_bancarios",
+    CONFIGURACION: "ventanas_configuracion",
+    PRECIOS: "ventanas_precios",
 }
 
 // Datos por defecto de la empresa
@@ -197,7 +199,7 @@ Nota: En caso de consignación, se debe enviar fotografía al WhatsApp 316829741
 
 export const obtenerConfiguracion = () => {
     if (typeof window !== "undefined") {
-        const data = localStorage.getItem("ventanas_configuracion")
+        const data = localStorage.getItem(STORAGE_KEYS.CONFIGURACION)
         if (data) {
             try {
                 return JSON.parse(data)
@@ -210,9 +212,9 @@ export const obtenerConfiguracion = () => {
     return CONFIGURACION_DEFAULT
 }
 
-export const guardarConfiguracion = (config: Record<string, unknown>) => {
+export const guardarConfiguracion = (config: Record<string, string | undefined>) => {
     if (typeof window !== "undefined") {
-        localStorage.setItem("ventanas_configuracion", JSON.stringify(config))
+        localStorage.setItem(STORAGE_KEYS.CONFIGURACION, JSON.stringify(config))
     }
 }
 
@@ -254,7 +256,7 @@ const PRECIOS_DEFAULT = {
 
 export const obtenerPrecios = () => {
     if (typeof window !== "undefined") {
-        const data = localStorage.getItem("ventanas_precios")
+        const data = localStorage.getItem(STORAGE_KEYS.PRECIOS)
         if (data) {
             try {
                 const precios = JSON.parse(data)
@@ -273,6 +275,6 @@ export const obtenerPrecios = () => {
 
 export const guardarPrecios = (precios: ConfiguracionPrecios) => {
     if (typeof window !== "undefined") {
-        localStorage.setItem("ventanas_precios", JSON.stringify(precios))
+        localStorage.setItem(STORAGE_KEYS.PRECIOS, JSON.stringify(precios))
     }
 }
