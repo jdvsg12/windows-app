@@ -226,6 +226,8 @@ const PRECIOS_DEFAULT = {
     precioHorizontalInferior: 60000, // por barra de 6m
 
     precioVidrio: 85000, // por m²
+    precioVidrioLamina: 180000, // por lamina
+    tamanoLamina: "2500x3600" as const,
 
     // Precios de accesorios por unidad
     precioGuia: 2000,
@@ -240,6 +242,7 @@ const PRECIOS_DEFAULT = {
     transporte: 50000,
     utilidad: 20, // 20%
     otros: 0,
+    costosIndirectos: 0, // valor fijo
 
     costosAdicionales: [] as Array<{
         id: string

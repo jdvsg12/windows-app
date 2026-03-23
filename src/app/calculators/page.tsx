@@ -8,7 +8,7 @@ import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card"
 import { Label } from "@/components/ui/label"
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs"
 import { Badge } from "@/components/ui/badge"
-import { ArrowLeft, Plus, Pencil, Trash2, FileSpreadsheet, Ruler, Package, Grid3X3, X } from "lucide-react"
+import { ArrowLeft, Plus, Pencil, Trash2, FileSpreadsheet, Ruler, Package, Grid3X3, X, DollarSign } from "lucide-react"
 import * as DialogPrimitive from "@radix-ui/react-dialog"
 import * as XLSX from "xlsx"
 import { obtenerProyectoPorId, actualizarProyecto, crearProyecto, eliminarProyecto } from "@/lib/storage"
@@ -202,6 +202,12 @@ function CalculadorPage() {
                             <Button variant="outline" onClick={exportarExcel}>
                                 <FileSpreadsheet className="h-4 w-4 mr-2" />
                                 Exportar
+                            </Button>
+                        )}
+                        {ventanas.length > 0 && (
+                            <Button onClick={() => router.push(`/cotizador?id=${proyectoId}`)}>
+                                <DollarSign className="h-4 w-4 mr-2" />
+                                Cotizar
                             </Button>
                         )}
                         <DialogPrimitive.Root open={mostrarConfirmacionEliminar} onOpenChange={setMostrarConfirmacionEliminar}>

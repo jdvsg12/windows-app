@@ -607,3 +607,17 @@ export function calcularCostos(
         valoresPorVentana,
     }
 }
+// === ORDEN DE PERFILES (para iterar en el cotizador) ===
+export const ORDEN_PERFILES = [
+    "Cabezal",
+    "Sillar",
+    "Jamba Izquierda",
+    "Jamba Derecha",
+    "Enganche",
+    "Traslape",
+    "Horizontal Superior",
+    "Horizontal Inferior",
+] as const
+
+// === ALIAS PARA COMPATIBILIDAD ===
+export const optimizarCortesVidrio = optimizarLaminasVidrio

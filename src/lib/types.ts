@@ -119,11 +119,16 @@ export interface ConfiguracionPrecios {
     precioTornillo10mm: number
     precioEmpaque: number // por metro
 
+    // Precios de vidrio
+    precioVidrioLamina: number // por lámina
+    tamanoLamina: TamanoLamina
+
     // Costos adicionales
     manoDeObra: number // porcentaje
     transporte: number // valor fijo
     utilidad: number // porcentaje
     otros: number // valor fijo
+    costosIndirectos: number // valor fijo
     costosAdicionales: CostoAdicional[]
 }
 
@@ -190,3 +195,12 @@ export interface CostosCalculados {
         valor: number
     }>
 }
+
+export const TAMANOS_LAMINA = {
+    "2440x3660": { label: "2440 x 3660 mm", ancho: 2440, alto: 3660 },
+    "2500x3600": { label: "2500 x 3600 mm", ancho: 2500, alto: 3600 },
+    "2440x3050": { label: "2440 x 3050 mm", ancho: 2440, alto: 3050 },
+    "2140x3300": { label: "2140 x 3300 mm", ancho: 2140, alto: 3300 },
+} as const
+
+export type TamanoLamina = keyof typeof TAMANOS_LAMINA
