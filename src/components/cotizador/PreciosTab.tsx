@@ -5,12 +5,12 @@ import { Button } from "@/components/ui/button"
 import { Input } from "@/components/ui/input"
 import { Label } from "@/components/ui/label"
 import { DollarSign, Plus, X } from "lucide-react"
-import { TAMANOS_LAMINA } from "@/lib/types"
+import { TAMANOS_LAMINA, type ConfiguracionPrecios, type CostoAdicional } from "@/lib/types"
 
 interface Props {
-    precios: Record<string, unknown>
-    costosCalculados: Record<string, unknown> | null
-    onUpdatePrecios: (precios: Record<string, string | number | unknown[]>) => void
+    precios: ConfiguracionPrecios
+    costosCalculados: Record<string, number> | null
+    onUpdatePrecios: (precios: ConfiguracionPrecios) => void
 }
 
 export function PreciosTab({ precios, costosCalculados, onUpdatePrecios }: Props) {
@@ -44,7 +44,7 @@ export function PreciosTab({ precios, costosCalculados, onUpdatePrecios }: Props
                                         <Input
                                             type="number"
                                             className="pl-8"
-                                            value={precios[key] ?? 0}
+                                            value={(precios as unknown as Record<string, number>)[key] ?? 0}
                                             onChange={(e) => update(key, Number(e.target.value))}
                                         />
                                     </div>
@@ -112,7 +112,7 @@ export function PreciosTab({ precios, costosCalculados, onUpdatePrecios }: Props
                                         <Input
                                             type="number"
                                             className="pl-8"
-                                            value={precios[key] ?? 0}
+                                            value={(precios as unknown as Record<string, number>)[key] ?? 0}
                                             onChange={(e) => update(key, Number(e.target.value))}
                                         />
                                     </div>
@@ -136,7 +136,7 @@ export function PreciosTab({ precios, costosCalculados, onUpdatePrecios }: Props
                                     />
                                 </div>
                                 <p className="text-xs text-muted-foreground">
-                                    Se multiplicará por el área total ({costosCalculados?.areaTotal?.toFixed(2) || 0} m²)
+                                    Se multiplicará por el área total ({(costosCalculados?.areaTotal as number)?.toFixed(2) || 0} m²)
                                 </p>
                             </div>
                             <div className="space-y-2">
@@ -173,9 +173,9 @@ export function PreciosTab({ precios, costosCalculados, onUpdatePrecios }: Props
                                 size="sm"
                                 variant="outline"
                                 onClick={() => {
-                                    const nuevosCostos = [
+                                    const nuevosCostos: CostoAdicional[] = [
                                         ...(precios.costosAdicionales || []),
-                                        { id: Date.now().toString(), nombre: "", valor: 0, tipo: "fijo" },
+                                        { id: Date.now().toString(), nombre: "", valor: 0, tipo: "fijo" as const },
                                     ]
                                     onUpdatePrecios({ ...precios, costosAdicionales: nuevosCostos })
                                 }}
@@ -192,7 +192,7 @@ export function PreciosTab({ precios, costosCalculados, onUpdatePrecios }: Props
                                         value={costo.nombre}
                                         onChange={(e) => {
                                             const nuevosCostos = [...(precios.costosAdicionales || [])]
-                                            nuevosCostos[index] = { ...costo, nombre: e.target.value }
+                                            nuevosCostos[index] = { ...costo, nombre: e.target.value } as CostoAdicional
                                             onUpdatePrecios({ ...precios, costosAdicionales: nuevosCostos })
                                         }}
                                         className="flex-1"
@@ -203,7 +203,7 @@ export function PreciosTab({ precios, costosCalculados, onUpdatePrecios }: Props
                                         value={costo.valor}
                                         onChange={(e) => {
                                             const nuevosCostos = [...(precios.costosAdicionales || [])]
-                                            nuevosCostos[index] = { ...costo, valor: Number(e.target.value) }
+                                            nuevosCostos[index] = { ...costo, valor: Number(e.target.value) } as CostoAdicional
                                             onUpdatePrecios({ ...precios, costosAdicionales: nuevosCostos })
                                         }}
                                         className="w-32"
@@ -212,7 +212,7 @@ export function PreciosTab({ precios, costosCalculados, onUpdatePrecios }: Props
                                         value={costo.tipo}
                                         onChange={(e) => {
                                             const nuevosCostos = [...(precios.costosAdicionales || [])]
-                                            nuevosCostos[index] = { ...costo, tipo: e.target.value }
+                                            nuevosCostos[index] = { ...costo, tipo: e.target.value as "fijo" | "porcentaje" } as CostoAdicional
                                             onUpdatePrecios({ ...precios, costosAdicionales: nuevosCostos })
                                         }}
                                         className="flex h-10 w-full rounded-md border border-input bg-background px-3 py-2 text-sm"

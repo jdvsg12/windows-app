@@ -78,7 +78,7 @@ export function VistaPreviaTab({
                         </thead>
                         <tbody>
                             {proyecto.ventanas.map((ventana: { id: string; nombre: string; tipoVentana: string; ancho: number; alto: number }) => {
-                                const valorVentana = costosCalculados?.valoresPorVentana?.find((v: { id: string; area?: number; valor?: number }) => v.id === ventana.id)
+                                const valorVentana = (costosCalculados?.valoresPorVentana as Array<{ id: string; area: number; valor: number }> | undefined)?.find((v) => v.id === ventana.id)
                                 return (
                                     <tr key={ventana.id}>
                                         <td className="border border-gray-800 p-2">{ventana.nombre}</td>
@@ -107,11 +107,11 @@ export function VistaPreviaTab({
                     <div>
                         <p className="font-bold">Total de ventanas: {proyecto.ventanas.length}</p>
                         {mostrarMedidas && costosCalculados && (
-                            <p className="mt-1">Área total: {(costosCalculados.areaTotal || 0).toFixed(2)} m²</p>
+                            <p className="mt-1">Área total: {((costosCalculados.areaTotal as number) || 0).toFixed(2)} m²</p>
                         )}
                         {mostrarValores && costosCalculados && (
                             <p className="mt-2 text-lg font-bold">
-                                VALOR TOTAL: ${(costosCalculados.total || 0).toLocaleString("es-CO", { maximumFractionDigits: 0 })}
+                                VALOR TOTAL: ${((costosCalculados.total as number) || 0).toLocaleString("es-CO", { maximumFractionDigits: 0 })}
                             </p>
                         )}
                     </div>
