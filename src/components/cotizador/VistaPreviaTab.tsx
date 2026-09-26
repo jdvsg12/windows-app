@@ -30,7 +30,7 @@ export function VistaPreviaTab({
                 <div className="flex justify-between items-start mb-8 border-b-2 border-black pb-4">
                     {logo && (
                         <div className="w-32 h-32">
-                            <img src={logo || "/placeholder.svg"} alt="Logo" className="w-full h-full object-contain" />
+                            <img src={logo || "/placeholder.svg"} alt={`${config.nombre} - logo`} className="w-full h-full object-contain" />
                         </div>
                     )}
                     <div className="text-right text-sm leading-relaxed">

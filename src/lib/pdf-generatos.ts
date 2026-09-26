@@ -95,7 +95,7 @@ function generarHTMLParaPDF(
     return `
         <div style="background-color: rgb(255, 255, 255); color: rgb(0, 0, 0); padding: 32px; font-family: Arial, sans-serif; font-size: 14px; line-height: 1.5;">
             <div style="display: flex; justify-content: space-between; align-items: flex-start; margin-bottom: 32px; border-bottom: 2px solid rgb(0, 0, 0); padding-bottom: 16px;">
-                ${config.logo ? `<div style="width: 128px; height: 128px;"><img src="${config.logo}" alt="Logo" style="width: 100%; height: 100%; object-fit: contain;" /></div>` : ""}
+                ${config.logo ? `<div style="width: 128px; height: 128px;"><img src="${config.logo}" alt="${config.nombre} - logo" style="width: 100%; height: 100%; object-fit: contain;" /></div>` : ""}
                 <div style="text-align: right; font-size: 14px; line-height: 1.6; color: rgb(0, 0, 0);">
                     <p style="font-weight: bold; margin-bottom: 4px; color: rgb(0, 0, 0); margin: 0 0 4px 0;">${config.nombre}</p>
                     <p style="margin: 2px 0; color: rgb(0, 0, 0);">NIT: ${config.nit}</p>
@@ -130,7 +130,7 @@ function generarHTMLParaPDF(
                             const valorVentana = costos?.valoresPorVentana.find((v) => v.id === ventana.id)
                             return `<tr>
                                 <td style="border: 1px solid rgb(51, 51, 51); padding: 8px; color: rgb(0, 0, 0);">${ventana.nombre}</td>
-                                <td style="border: 1px solid rgb(51, 51, 51); padding: 8px; color: rgb(0, 0, 0);">${ventana.tipoVentana === "2hojas" ? "2 Hojas Normal" : ventana.tipoVentana}</td>
+                                <td style="border: 1px solid rgb(51, 51, 51); padding: 8px; color: rgb(0, 0, 0);">${ventana.tipoVentana === "2hojas" ? "2 Hojas Normal" : ventana.tipoVentana === "2hojas_mixto" ? "1 Móvil + 1 Fija" : ventana.tipoVentana}</td>
                                 ${mostrarMedidas ? `<td style="border: 1px solid rgb(51, 51, 51); padding: 8px; color: rgb(0, 0, 0);">${ventana.ancho}</td><td style="border: 1px solid rgb(51, 51, 51); padding: 8px; color: rgb(0, 0, 0);">${ventana.alto}</td><td style="border: 1px solid rgb(51, 51, 51); padding: 8px; text-align: right; color: rgb(0, 0, 0);">${valorVentana?.area.toFixed(2) || "0.00"}</td>` : ""}
                                 ${mostrarValores && costos ? `<td style="border: 1px solid rgb(51, 51, 51); padding: 8px; text-align: right; color: rgb(0, 0, 0);">$${(valorVentana?.valor || 0).toLocaleString("es-CO", { maximumFractionDigits: 0 })}</td>` : ""}
                             </tr>`
