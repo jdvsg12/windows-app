@@ -11,7 +11,7 @@ import { Form, FormControl, FormField, FormItem, FormLabel, FormMessage } from "
 import { Input } from "@/components/ui/input"
 import { NativeSelect } from "@/components/common/NativeSelect"
 import { VentanaFormSchema, type VentanaFormValues } from "@/lib/schemas"
-import { TIPOS_VENTANA, opcionesSistema, sistemaParaVentanaNueva, type Ventana } from "@/lib/types"
+import { opcionesSistema, opcionesTipo, sistemaParaVentanaNueva, type Ventana } from "@/lib/types"
 
 interface VentanaFormProps {
     editingVentana: Ventana | null
@@ -119,8 +119,8 @@ export function VentanaForm({ editingVentana, onSubmit, onCancelEdit }: VentanaF
                                         <FormLabel>Tipo</FormLabel>
                                         <FormControl>
                                             <NativeSelect {...field}>
-                                                {TIPOS_VENTANA.map(({ value, label }) => (
-                                                    <option key={value} value={value}>
+                                                {opcionesTipo(editingVentana?.tipoVentana).map(({ value, label, disabled }) => (
+                                                    <option key={value} value={value} disabled={disabled}>
                                                         {label}
                                                     </option>
                                                 ))}

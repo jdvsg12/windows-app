@@ -12,6 +12,30 @@ export const TIPOS_VENTANA: readonly { value: TipoVentana; label: string }[] = [
     { value: "6hojas", label: "6 Hojas" },
 ]
 
+// "1 movable + 1 fixed" is not offered for new windows: every window carries a single lock on its last leaf.
+// The engine still supports the type so windows already saved keep calculating.
+export const TIPOS_HABILITADOS: readonly TipoVentana[] = TIPOS_VENTANA.map(({ value }) => value).filter(
+    (value) => value !== "2hojas_mixto"
+)
+
+export interface OpcionTipo {
+    value: TipoVentana
+    label: string
+    disabled: boolean
+}
+
+// A saved window of a type that is no longer offered keeps it as a disabled option,
+// so editing it never silently switches its type (and its cuts) to another one.
+export function opcionesTipo(actual?: TipoVentana): OpcionTipo[] {
+    const opciones: OpcionTipo[] = TIPOS_VENTANA.filter(({ value }) => TIPOS_HABILITADOS.includes(value)).map(
+        ({ value, label }) => ({ value, label, disabled: false })
+    )
+    if (actual && !TIPOS_HABILITADOS.includes(actual)) {
+        opciones.push({ value: actual, label: `${getTipoVentanaLabel(actual)} (no disponible)`, disabled: true })
+    }
+    return opciones
+}
+
 export const SISTEMAS_VENTANA: readonly SistemaVentana[] = ["5020", "744", "8025", "7038"]
 
 // Only validated references can be chosen for new windows (D1). The engine registry replaces this in F3.
