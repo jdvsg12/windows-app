@@ -39,7 +39,7 @@ export default function AdminPanelPage() {
                         </Link>
                     </Button>
                     <div>
-                        <h1 className="text-2xl font-bold">Panel de Administración</h1>
+                        <h1 className="text-title font-bold tracking-tight">Panel de Administración</h1>
                         <p className="text-sm text-muted-foreground">
                             Configuración de precios y descuentos del sistema
                         </p>

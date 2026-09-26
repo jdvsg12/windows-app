@@ -17,7 +17,7 @@ export function MaterialesTab({ accesorios, vidrios }: Props) {
                         <CardTitle className="text-sm font-medium text-muted-foreground">Rodachinas</CardTitle>
                     </CardHeader>
                     <CardContent>
-                        <p className="text-2xl font-bold">{accesorios?.rodachinas || 0}</p>
+                        <p className="text-metric font-bold tabular-nums">{accesorios?.rodachinas || 0}</p>
                     </CardContent>
                 </Card>
                 <Card>
@@ -25,7 +25,7 @@ export function MaterialesTab({ accesorios, vidrios }: Props) {
                         <CardTitle className="text-sm font-medium text-muted-foreground">Guías</CardTitle>
                     </CardHeader>
                     <CardContent>
-                        <p className="text-2xl font-bold">{(accesorios?.guiasSuperior || 0) + (accesorios?.guiasInferior || 0)}</p>
+                        <p className="text-metric font-bold tabular-nums">{(accesorios?.guiasSuperior || 0) + (accesorios?.guiasInferior || 0)}</p>
                     </CardContent>
                 </Card>
                 <Card>
@@ -33,7 +33,7 @@ export function MaterialesTab({ accesorios, vidrios }: Props) {
                         <CardTitle className="text-sm font-medium text-muted-foreground">Cerraduras</CardTitle>
                     </CardHeader>
                     <CardContent>
-                        <p className="text-2xl font-bold">{accesorios?.cerraduras || 0}</p>
+                        <p className="text-metric font-bold tabular-nums">{accesorios?.cerraduras || 0}</p>
                     </CardContent>
                 </Card>
                 <Card>
@@ -41,7 +41,7 @@ export function MaterialesTab({ accesorios, vidrios }: Props) {
                         <CardTitle className="text-sm font-medium text-muted-foreground">Empaque</CardTitle>
                     </CardHeader>
                     <CardContent>
-                        <p className="text-2xl font-bold">{accesorios?.empaqueTotal.toFixed(1) || 0} m</p>
+                        <p className="text-metric font-bold tabular-nums">{accesorios?.empaqueTotal.toFixed(1) || 0} m</p>
                     </CardContent>
                 </Card>
             </div>

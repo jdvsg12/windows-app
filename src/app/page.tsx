@@ -39,7 +39,7 @@ export default function Home() {
             {/* Header de Página */}
             <div className="flex flex-col md:flex-row md:items-center md:justify-between gap-4 mb-8">
                 <div>
-                    <h1 className="text-3xl font-bold tracking-tight">Dashboard</h1>
+                    <h1 className="text-title font-bold tracking-tight">Dashboard</h1>
                     <p className="text-muted-foreground">
                         Gestiona tus proyectos de ventanería
                     </p>
@@ -60,7 +60,7 @@ export default function Home() {
                         <FolderOpen className="h-4 w-4 text-muted-foreground" />
                     </CardHeader>
                     <CardContent>
-                        <div className="text-2xl font-bold">{proyectos.length}</div>
+                        <div className="text-metric font-bold tabular-nums">{proyectos.length}</div>
                     </CardContent>
                 </Card>
                 <Card>
@@ -71,7 +71,7 @@ export default function Home() {
                         <LayoutGrid className="h-4 w-4 text-muted-foreground" />
                     </CardHeader>
                     <CardContent>
-                        <div className="text-2xl font-bold">{totalVentanas}</div>
+                        <div className="text-metric font-bold tabular-nums">{totalVentanas}</div>
                     </CardContent>
                 </Card>
                 <Card>
@@ -82,7 +82,7 @@ export default function Home() {
                         <Ruler className="h-4 w-4 text-muted-foreground" />
                     </CardHeader>
                     <CardContent>
-                        <div className="text-2xl font-bold">
+                        <div className="text-metric font-bold tabular-nums">
                             {areaTotal.toLocaleString("es-CO", { maximumFractionDigits: 1 })}
                             <span className="text-sm font-normal text-muted-foreground ml-1">m²</span>
                         </div>
@@ -96,7 +96,7 @@ export default function Home() {
                         <Layers className="h-4 w-4 text-muted-foreground" />
                     </CardHeader>
                     <CardContent>
-                        <div className="text-2xl font-bold">
+                        <div className="text-metric font-bold tabular-nums">
                             {ventanasPorProyecto.toLocaleString("es-CO", { maximumFractionDigits: 1 })}
                             <span className="text-sm font-normal text-muted-foreground ml-1">ventanas</span>
                         </div>

@@ -116,7 +116,7 @@ function CalculadorPage() {
                         <ArrowLeft className="h-5 w-5" />
                     </Button>
                     <div>
-                        <h1 className="text-2xl font-bold tracking-tight">{proyecto.nombre}</h1>
+                        <h1 className="text-title font-bold tracking-tight">{proyecto.nombre}</h1>
                         <p className="text-sm text-muted-foreground">
                             {proyecto.cliente ? `Cliente: ${proyecto.cliente}` : "Sin cliente"}
                         </p>

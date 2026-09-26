@@ -75,7 +75,7 @@ function CotizadorContent() {
                         <ArrowLeft className="h-5 w-5" />
                     </Button>
                     <div>
-                        <h1 className="text-2xl font-bold tracking-tight">Cotizador</h1>
+                        <h1 className="text-title font-bold tracking-tight">Cotizador</h1>
                         <p className="text-sm text-muted-foreground">Proyecto: {proyecto.nombre}</p>
                     </div>
                 </div>
