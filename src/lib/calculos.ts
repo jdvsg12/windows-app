@@ -271,10 +271,10 @@ export function optimizarCortes(ventanas: Ventana[]): Record<string, Optimizacio
 const CONFIG_ACCESORIOS = {
     "2hojas": { rodachinas: 4, cerraduras: 1, guias: 4, tornillosHoja: 4 },
     "2hojas_mixto": { rodachinas: 2, cerraduras: 1, guias: 2, tornillosHoja: 4 },
-    "3hojas": { rodachinas: 4, cerraduras: 2, guias: 4, tornillosHoja: 4 },
+    "3hojas": { rodachinas: 4, cerraduras: 1, guias: 4, tornillosHoja: 4 },
     "4hojas": { rodachinas: 6, cerraduras: 1, guias: 6, tornillosHoja: 4 },
     "5hojas": { rodachinas: 8, cerraduras: 1, guias: 8, tornillosHoja: 4 },
-    "6hojas": { rodachinas: 10, cerraduras: 2, guias: 10, tornillosHoja: 4 },
+    "6hojas": { rodachinas: 10, cerraduras: 1, guias: 10, tornillosHoja: 4 },
 } as const
 
 /**
