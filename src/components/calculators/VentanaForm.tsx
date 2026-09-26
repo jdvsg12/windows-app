@@ -11,7 +11,7 @@ import { Form, FormControl, FormField, FormItem, FormLabel, FormMessage } from "
 import { Input } from "@/components/ui/input"
 import { NativeSelect } from "@/components/common/NativeSelect"
 import { VentanaFormSchema, type VentanaFormValues } from "@/lib/schemas"
-import { SISTEMAS_VENTANA, TIPOS_VENTANA, type Ventana } from "@/lib/types"
+import { TIPOS_VENTANA, opcionesSistema, sistemaParaVentanaNueva, type Ventana } from "@/lib/types"
 
 interface VentanaFormProps {
     editingVentana: Ventana | null
@@ -24,7 +24,7 @@ const EMPTY_VALUES: VentanaFormValues = {
     ancho: "",
     alto: "",
     tipoVentana: "2hojas",
-    sistema: "5020",
+    sistema: "8025",
 }
 
 const toFormValues = (ventana: Ventana): VentanaFormValues => ({
@@ -54,12 +54,12 @@ export function VentanaForm({ editingVentana, onSubmit, onCancelEdit }: VentanaF
     const handleValidSubmit = (values: VentanaFormValues) => {
         onSubmit(values)
         // Keep the chosen system: users usually enter several windows of the same system in a row.
-        reset({ ...EMPTY_VALUES, sistema: getValues("sistema") })
+        reset({ ...EMPTY_VALUES, sistema: sistemaParaVentanaNueva(getValues("sistema")) })
         setFocus("nombre")
     }
 
     const handleCancel = () => {
-        reset({ ...EMPTY_VALUES, sistema: getValues("sistema") })
+        reset({ ...EMPTY_VALUES, sistema: sistemaParaVentanaNueva(getValues("sistema")) })
         onCancelEdit()
     }
 
@@ -138,9 +138,9 @@ export function VentanaForm({ editingVentana, onSubmit, onCancelEdit }: VentanaF
                                         <FormLabel>Sistema</FormLabel>
                                         <FormControl>
                                             <NativeSelect {...field}>
-                                                {SISTEMAS_VENTANA.map((sistema) => (
-                                                    <option key={sistema} value={sistema}>
-                                                        {sistema}
+                                                {opcionesSistema(editingVentana?.sistema).map(({ value, label, disabled }) => (
+                                                    <option key={value} value={value} disabled={disabled}>
+                                                        {label}
                                                     </option>
                                                 ))}
                                             </NativeSelect>

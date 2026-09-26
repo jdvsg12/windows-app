@@ -14,6 +14,30 @@ export const TIPOS_VENTANA: readonly { value: TipoVentana; label: string }[] = [
 
 export const SISTEMAS_VENTANA: readonly SistemaVentana[] = ["5020", "744", "8025", "7038"]
 
+// Only validated references can be chosen for new windows (D1). The engine registry replaces this in F3.
+export const SISTEMAS_HABILITADOS: readonly SistemaVentana[] = ["8025"]
+
+export interface OpcionSistema {
+    value: SistemaVentana
+    label: string
+    disabled: boolean
+}
+
+// The form remembers the last system so several windows of one system can be entered in a row,
+// but it must never carry over a system that is not enabled (e.g. after editing a legacy window).
+export const sistemaParaVentanaNueva = (recordado?: SistemaVentana): SistemaVentana =>
+    recordado && SISTEMAS_HABILITADOS.includes(recordado) ? recordado : SISTEMAS_HABILITADOS[0]
+
+// A window saved with a system that is not enabled keeps it as a disabled option, so editing
+// never silently switches its system (and therefore its cuts) to another one.
+export function opcionesSistema(actual?: SistemaVentana): OpcionSistema[] {
+    const opciones: OpcionSistema[] = SISTEMAS_HABILITADOS.map((value) => ({ value, label: value, disabled: false }))
+    if (actual && !SISTEMAS_HABILITADOS.includes(actual)) {
+        opciones.push({ value: actual, label: `${actual} (no validado)`, disabled: true })
+    }
+    return opciones
+}
+
 export const getTipoVentanaLabel = (tipo: TipoVentana): string =>
     TIPOS_VENTANA.find((item) => item.value === tipo)?.label ?? tipo
 
