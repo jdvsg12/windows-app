@@ -112,7 +112,7 @@ export function EditorTextoEnriquecido({ value, onChange, placeholder, id, ariaL
               __html: `
         [contenteditable]:empty:before {
           content: attr(data-placeholder);
-          color: #9ca3af;
+          color: hsl(var(--muted-foreground));
         }
       `
             }} />
