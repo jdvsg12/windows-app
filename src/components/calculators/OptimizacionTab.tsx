@@ -3,6 +3,9 @@
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card"
 import { Label } from "@/components/ui/label"
 import { NativeSelect } from "@/components/common/NativeSelect"
+import { PiezaBadge } from "./PiezaBadge"
+import { ESTILOS_HOJA, obtenerEstiloPerfil, obtenerTipoHoja } from "@/lib/design/piezas"
+import { cn } from "@/lib/utils"
 import type { OptimizacionPerfil, LaminaVidrio, TamanoLamina } from "@/lib/types"
 import { TAMANOS_LAMINA } from "@/lib/types"
 
@@ -13,23 +16,6 @@ interface Props {
     onTamanoLaminaChange: (tamano: TamanoLamina) => void
 }
 
-const COLORS = [
-    "bg-blue-100 border-blue-400 text-blue-800",
-    "bg-emerald-100 border-emerald-400 text-emerald-800",
-    "bg-amber-100 border-amber-400 text-amber-800",
-    "bg-purple-100 border-purple-400 text-purple-800",
-    "bg-rose-100 border-rose-400 text-rose-800",
-    "bg-cyan-100 border-cyan-400 text-cyan-800",
-    "bg-orange-100 border-orange-400 text-orange-800",
-    "bg-teal-100 border-teal-400 text-teal-800",
-    "bg-pink-100 border-pink-400 text-pink-800",
-    "bg-lime-100 border-lime-400 text-lime-800",
-    "bg-indigo-100 border-indigo-400 text-indigo-800",
-    "bg-violet-100 border-violet-400 text-violet-800",
-    "bg-yellow-100 border-yellow-400 text-yellow-800",
-    "bg-sky-100 border-sky-400 text-sky-800",
-]
-
 export function OptimizacionTab({ optimizacion, laminasVidrio, tamanoLamina, onTamanoLaminaChange }: Props) {
     return (
         <div className="space-y-4">
@@ -39,7 +25,7 @@ export function OptimizacionTab({ optimizacion, laminasVidrio, tamanoLamina, onT
                         <CardTitle className="text-sm font-medium text-muted-foreground">Barras 6m</CardTitle>
                     </CardHeader>
                     <CardContent>
-                        <p className="text-2xl font-bold">
+                        <p className="text-metric font-bold tabular-nums">
                             {Object.values(optimizacion).reduce((sum, opt) => sum + opt.barras.length, 0)}
                         </p>
                     </CardContent>
@@ -49,7 +35,7 @@ export function OptimizacionTab({ optimizacion, laminasVidrio, tamanoLamina, onT
                         <CardTitle className="text-sm font-medium text-muted-foreground">Metros Totales</CardTitle>
                     </CardHeader>
                     <CardContent>
-                        <p className="text-2xl font-bold">
+                        <p className="text-metric font-bold tabular-nums">
                             {Object.values(optimizacion).reduce((sum, opt) => sum + opt.metrosUsados, 0).toFixed(2)} m
                         </p>
                     </CardContent>
@@ -59,7 +45,7 @@ export function OptimizacionTab({ optimizacion, laminasVidrio, tamanoLamina, onT
                         <CardTitle className="text-sm font-medium text-muted-foreground">Láminas Vidrio</CardTitle>
                     </CardHeader>
                     <CardContent>
-                        <p className="text-2xl font-bold">{laminasVidrio.length}</p>
+                        <p className="text-metric font-bold tabular-nums">{laminasVidrio.length}</p>
                     </CardContent>
                 </Card>
             </div>
@@ -72,14 +58,17 @@ export function OptimizacionTab({ optimizacion, laminasVidrio, tamanoLamina, onT
                     {Object.entries(optimizacion).map(([tipo, opt]) => (
                         <div key={tipo} className="border-b last:border-0 pb-4 last:pb-0">
                             <div className="flex justify-between items-center mb-2">
-                                <h3 className="font-medium">{tipo}</h3>
+                                <div className="flex items-center gap-2">
+                                    <PiezaBadge estilo={obtenerEstiloPerfil(tipo)} />
+                                    <h3 className="font-medium">{tipo}</h3>
+                                </div>
                                 <span className="text-sm text-muted-foreground">{opt.barras.length} barras</span>
                             </div>
                             <div className="space-y-1">
                                 {opt.barras.map((barra, i) => (
                                     <div key={i} className="flex gap-1">
                                         {barra.map((medida, j) => (
-                                            <div key={j} className="bg-primary text-primary-foreground px-2 py-1 rounded text-xs" style={{ width: `${(medida / 6) * 100}%` }}>
+                                            <div key={j} className={cn("border px-2 py-1 rounded text-xs", obtenerEstiloPerfil(tipo).clases)} style={{ width: `${(medida / 6) * 100}%` }}>
                                                 {medida.toFixed(3)}m
                                             </div>
                                         ))}
@@ -94,7 +83,7 @@ export function OptimizacionTab({ optimizacion, laminasVidrio, tamanoLamina, onT
             {laminasVidrio.length > 0 && (
                 <Card>
                     <CardHeader>
-                        <div className="flex items-center justify-between">
+                        <div className="flex flex-wrap items-center justify-between gap-2">
                             <CardTitle>Láminas de Vidrio</CardTitle>
                             <div className="flex items-center gap-2">
                                 <Label htmlFor="lamina-size" className="text-sm text-muted-foreground">Tamaño lámina:</Label>
@@ -112,6 +101,14 @@ export function OptimizacionTab({ optimizacion, laminasVidrio, tamanoLamina, onT
                         </div>
                     </CardHeader>
                     <CardContent>
+                        <div className="mb-4 flex flex-wrap items-center gap-4 text-sm text-muted-foreground">
+                            {(["fija", "movil"] as const).map((tipo) => (
+                                <span key={tipo} className="inline-flex items-center gap-2">
+                                    <PiezaBadge estilo={ESTILOS_HOJA[tipo]} />
+                                    Hoja {ESTILOS_HOJA[tipo].nombre.toLowerCase()}
+                                </span>
+                            ))}
+                        </div>
                         <div className="space-y-6">
                             {laminasVidrio.map((lamina) => {
                                 const aspectRatio = lamina.anchoLamina / lamina.altoLamina
@@ -130,7 +127,7 @@ export function OptimizacionTab({ optimizacion, laminasVidrio, tamanoLamina, onT
                                             style={{ width: `${width}px`, height: `${height}px` }}
                                         >
                                             {lamina.vidrios.map((item, i) => {
-                                                const colorClass = COLORS[i % COLORS.length]
+                                                const hoja = ESTILOS_HOJA[obtenerTipoHoja(item.vidrio.tipo)]
                                                 const left = (item.x / lamina.anchoLamina) * 100
                                                 const top = (item.y / lamina.altoLamina) * 100
                                                 const w = (item.vidrio.ancho / lamina.anchoLamina) * 100
@@ -138,7 +135,7 @@ export function OptimizacionTab({ optimizacion, laminasVidrio, tamanoLamina, onT
                                                 return (
                                                     <div
                                                         key={i}
-                                                        className={`absolute border ${colorClass} flex flex-col items-center justify-center text-center p-0.5 overflow-hidden`}
+                                                        className={cn("absolute border flex flex-col items-center justify-center text-center p-0.5 overflow-hidden", hoja.clases)}
                                                         style={{
                                                             left: `${left}%`,
                                                             top: `${top}%`,
@@ -149,8 +146,8 @@ export function OptimizacionTab({ optimizacion, laminasVidrio, tamanoLamina, onT
                                                         }}
                                                         title={`${item.vidrio.ventana} - ${item.vidrio.tipo}\n${item.vidrio.ancho.toFixed(0)}×${item.vidrio.alto.toFixed(0)} mm${item.rotado ? " (rotado)" : ""}`}
                                                     >
-                                                        <span className="truncate w-full leading-tight">{item.vidrio.ventana}</span>
-                                                        <span className="truncate w-full leading-tight opacity-75">
+                                                        <span className="truncate w-full leading-tight font-semibold">#{i + 1} {item.vidrio.ventana}</span>
+                                                        <span className="truncate w-full leading-tight">
                                                             {item.vidrio.ancho.toFixed(0)}×{item.vidrio.alto.toFixed(0)}
                                                             {item.rotado && <span className="ml-0.5">↻</span>}
                                                         </span>
@@ -160,12 +157,13 @@ export function OptimizacionTab({ optimizacion, laminasVidrio, tamanoLamina, onT
                                         </div>
                                         <div className="space-y-1">
                                             {lamina.vidrios.map((item, i) => {
-                                                const colorClass = COLORS[i % COLORS.length]
+                                                const hoja = ESTILOS_HOJA[obtenerTipoHoja(item.vidrio.tipo)]
                                                 return (
-                                                    <div key={i} className={`flex items-center justify-between p-2 rounded text-sm ${colorClass}`}>
-                                                        <div className="flex items-center gap-2">
-                                                            <span className="w-3 h-3 rounded inline-block border" style={{ backgroundColor: "currentColor" }} />
-                                                            <span>{item.vidrio.ventana} - {item.vidrio.tipo}</span>
+                                                    <div key={i} className="flex flex-wrap items-center justify-between gap-x-4 gap-y-1 rounded border bg-card p-2 text-sm">
+                                                        <div className="flex min-w-0 items-center gap-2">
+                                                            <span className="w-7 shrink-0 text-right font-mono text-caption text-muted-foreground">#{i + 1}</span>
+                                                            <PiezaBadge estilo={hoja} />
+                                                            <span className="truncate">{item.vidrio.ventana} - {item.vidrio.tipo}</span>
                                                         </div>
                                                         <span className="text-muted-foreground">
                                                             ({item.x.toFixed(0)}, {item.y.toFixed(0)}) {item.vidrio.ancho.toFixed(0)}×{item.vidrio.alto.toFixed(0)} mm
