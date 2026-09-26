@@ -14,6 +14,7 @@ import { crearProyecto } from "@/lib/storage"
 import { optimizarCortes } from "@/lib/calculos"
 import { useVentanas } from "@/hooks/useVentanas"
 import { VentanasTab, MaterialesTab, OptimizacionTab, DeleteProjectDialog } from "@/components/calculators"
+import type { TamanoLamina } from "@/lib/types"
 
 export default function CalculadorPageWrapper() {
     return (
@@ -28,6 +29,7 @@ function CalculadorPage() {
     const searchParams = useSearchParams()
     const proyectoId = searchParams.get("id")
 
+    const [tamanoLamina, setTamanoLamina] = useState<TamanoLamina>("2500x3600")
     const {
         proyecto,
         ventanas,
@@ -38,15 +40,16 @@ function CalculadorPage() {
         agregarVentana,
         eliminarVentana,
         eliminarProyectoActual,
-    } = useVentanas(proyectoId)
+    } = useVentanas(proyectoId, tamanoLamina)
 
     const [nombreNuevo, setNombreNuevo] = useState("")
 
     const crearNuevoProyecto = useCallback(() => {
         if (!nombreNuevo.trim()) return
-        crearProyecto(nombreNuevo.trim())
+        const nuevo = crearProyecto(nombreNuevo.trim())
         setNombreNuevo("")
-    }, [nombreNuevo])
+        router.push(`/calculators?id=${nuevo.id}`)
+    }, [nombreNuevo, router])
 
     const exportarExcel = useCallback(() => {
         if (!ventanas.length || !proyecto) return
@@ -73,118 +76,116 @@ function CalculadorPage() {
 
     if (!proyecto) {
         return (
-            <div className="min-h-screen bg-background">
-                <div className="container max-w-md mx-auto py-16">
-                    <Card>
-                        <CardHeader>
-                            <CardTitle>Crear Nuevo Proyecto</CardTitle>
-                        </CardHeader>
-                        <CardContent className="space-y-4">
-                            <div className="space-y-2">
-                                <Label htmlFor="nombre">Nombre del Proyecto</Label>
-                                <Input
-                                    id="nombre"
-                                    value={nombreNuevo}
-                                    onChange={(e) => setNombreNuevo(e.target.value)}
-                                    placeholder="Ej: Casa López"
-                                    onKeyDown={(e) => {
-                                        if (e.key === "Enter") crearNuevoProyecto()
-                                    }}
-                                />
-                            </div>
-                            <Button onClick={crearNuevoProyecto} className="w-full">
-                                <Plus className="h-4 w-4 mr-2" />
-                                Crear y Continuar
-                            </Button>
-                            <Button variant="outline" onClick={() => router.push("/")} className="w-full">
-                                Volver al Dashboard
-                            </Button>
-                        </CardContent>
-                    </Card>
-                </div>
+            <div className="max-w-md mx-auto py-8">
+                <Card>
+                    <CardHeader>
+                        <CardTitle>Crear Nuevo Proyecto</CardTitle>
+                    </CardHeader>
+                    <CardContent className="space-y-4">
+                        <div className="space-y-2">
+                            <Label htmlFor="nombre">Nombre del Proyecto</Label>
+                            <Input
+                                id="nombre"
+                                value={nombreNuevo}
+                                onChange={(e) => setNombreNuevo(e.target.value)}
+                                placeholder="Ej: Casa López"
+                                onKeyDown={(e) => {
+                                    if (e.key === "Enter") crearNuevoProyecto()
+                                }}
+                            />
+                        </div>
+                        <Button onClick={crearNuevoProyecto} className="w-full">
+                            <Plus className="h-4 w-4 mr-2" />
+                            Crear y Continuar
+                        </Button>
+                        <Button variant="outline" onClick={() => router.push("/")} className="w-full">
+                            Volver al Dashboard
+                        </Button>
+                    </CardContent>
+                </Card>
             </div>
         )
     }
 
     return (
-        <div className="min-h-screen bg-background">
-            <div className="container mx-auto py-6">
-                {/* Header */}
-                <div className="flex flex-col md:flex-row md:items-center md:justify-between gap-4 mb-6">
-                    <div className="flex items-center gap-4">
-                        <Button variant="ghost" size="icon" onClick={() => router.push("/")}>
-                            <ArrowLeft className="h-5 w-5" />
-                        </Button>
-                        <div>
-                            <h1 className="text-2xl font-bold tracking-tight">{proyecto.nombre}</h1>
-                            <p className="text-sm text-muted-foreground">
-                                {proyecto.cliente ? `Cliente: ${proyecto.cliente}` : "Sin cliente"}
-                            </p>
-                        </div>
-                    </div>
-                    <div className="flex gap-2">
-                        <Badge variant="secondary" className="text-sm">
-                            {ventanas.length} ventanas
-                        </Badge>
-                        {ventanas.length > 0 && (
-                            <Button variant="outline" onClick={exportarExcel}>
-                                <FileSpreadsheet className="h-4 w-4 mr-2" />
-                                Exportar
-                            </Button>
-                        )}
-                        {ventanas.length > 0 && (
-                            <Button onClick={() => router.push(`/cotizador?id=${proyectoId}`)}>
-                                <DollarSign className="h-4 w-4 mr-2" />
-                                Cotizar
-                            </Button>
-                        )}
-                        <DeleteProjectDialog
-                            projectName={proyecto.nombre}
-                            onConfirm={eliminarProyectoActual}
-                        />
+        <div>
+            {/* Header */}
+            <div className="flex flex-col md:flex-row md:items-center md:justify-between gap-4 mb-6">
+                <div className="flex items-center gap-4">
+                    <Button variant="ghost" size="icon" aria-label="Volver al dashboard" onClick={() => router.push("/")}>
+                        <ArrowLeft className="h-5 w-5" />
+                    </Button>
+                    <div>
+                        <h1 className="text-2xl font-bold tracking-tight">{proyecto.nombre}</h1>
+                        <p className="text-sm text-muted-foreground">
+                            {proyecto.cliente ? `Cliente: ${proyecto.cliente}` : "Sin cliente"}
+                        </p>
                     </div>
                 </div>
-
-                {/* Tabs */}
-                <Tabs defaultValue="ventanas" className="space-y-4">
-                    <TabsList>
-                        <TabsTrigger value="ventanas" className="gap-2">
-                            <Grid3X3 className="h-4 w-4" />
-                            Ventanas
-                        </TabsTrigger>
-                        <TabsTrigger value="materiales" className="gap-2">
-                            <Package className="h-4 w-4" />
-                            Materiales
-                        </TabsTrigger>
-                        <TabsTrigger value="cortes" className="gap-2">
-                            <Ruler className="h-4 w-4" />
-                            Optimización
-                        </TabsTrigger>
-                    </TabsList>
-
-                    <TabsContent value="ventanas">
-                        <VentanasTab
-                            ventanas={ventanas}
-                            onAgregar={agregarVentana}
-                            onEliminar={eliminarVentana}
-                        />
-                    </TabsContent>
-
-                    <TabsContent value="materiales">
-                        <MaterialesTab
-                            accesorios={accesorios}
-                            vidrios={vidrios}
-                        />
-                    </TabsContent>
-
-                    <TabsContent value="cortes">
-                        <OptimizacionTab
-                            optimizacion={optimizacion}
-                            laminasVidrio={laminasVidrio}
-                        />
-                    </TabsContent>
-                </Tabs>
+                <div className="flex flex-wrap items-center gap-2">
+                    <Badge variant="secondary" className="text-sm">
+                        {ventanas.length} ventanas
+                    </Badge>
+                    {ventanas.length > 0 && (
+                        <Button variant="outline" onClick={exportarExcel}>
+                            <FileSpreadsheet className="h-4 w-4 mr-2" />
+                            Exportar
+                        </Button>
+                    )}
+                    {ventanas.length > 0 && (
+                        <Button onClick={() => router.push(`/cotizador?id=${proyectoId}`)}>
+                            <DollarSign className="h-4 w-4 mr-2" />
+                            Cotizar
+                        </Button>
+                    )}
+                    <DeleteProjectDialog
+                        projectName={proyecto.nombre}
+                        onConfirm={eliminarProyectoActual}
+                    />
+                </div>
             </div>
+
+            {/* Tabs */}
+            <Tabs defaultValue="ventanas" className="space-y-4">
+                <TabsList>
+                    <TabsTrigger value="ventanas" className="gap-2">
+                        <Grid3X3 className="h-4 w-4" />
+                        Ventanas
+                    </TabsTrigger>
+                    <TabsTrigger value="materiales" className="gap-2">
+                        <Package className="h-4 w-4" />
+                        Materiales
+                    </TabsTrigger>
+                    <TabsTrigger value="cortes" className="gap-2">
+                        <Ruler className="h-4 w-4" />
+                        Optimización
+                    </TabsTrigger>
+                </TabsList>
+
+                <TabsContent value="ventanas">
+                    <VentanasTab
+                        ventanas={ventanas}
+                        onAgregar={agregarVentana}
+                        onEliminar={eliminarVentana}
+                    />
+                </TabsContent>
+
+                <TabsContent value="materiales">
+                    <MaterialesTab
+                        accesorios={accesorios}
+                        vidrios={vidrios}
+                    />
+                </TabsContent>
+
+                <TabsContent value="cortes">
+                    <OptimizacionTab
+                        optimizacion={optimizacion}
+                        laminasVidrio={laminasVidrio}
+                        tamanoLamina={tamanoLamina}
+                        onTamanoLaminaChange={setTamanoLamina}
+                    />
+                </TabsContent>
+            </Tabs>
         </div>
     )
 }

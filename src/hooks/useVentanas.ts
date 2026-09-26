@@ -11,12 +11,16 @@ import {
     calcularVidrios,
     optimizarLaminasVidrio,
 } from "@/lib/calculos"
-import type { Proyecto, Ventana, TipoVentana, SistemaVentana } from "@/lib/types"
+import type { Proyecto, Ventana, TipoVentana, SistemaVentana, TamanoLamina } from "@/lib/types"
+import { TAMANOS_LAMINA } from "@/lib/types"
 
-export function useVentanas(proyectoId: string | null) {
+export function useVentanas(proyectoId: string | null, tamanoLamina?: TamanoLamina) {
     const router = useRouter()
     const [proyecto, setProyecto] = useState<Proyecto | null>(null)
     const [ventanas, setVentanas] = useState<Ventana[]>([])
+
+    const actualTamano = tamanoLamina || "2500x3600"
+    const { ancho: laminaAncho, alto: laminaAlto } = TAMANOS_LAMINA[actualTamano]
 
     useEffect(() => {
         if (!proyectoId) return
@@ -30,7 +34,7 @@ export function useVentanas(proyectoId: string | null) {
     const optimizacion = useMemo(() => ventanas.length > 0 ? optimizarCortes(ventanas) : {}, [ventanas])
     const accesorios = useMemo(() => ventanas.length > 0 ? calcularAccesorios(ventanas) : null, [ventanas])
     const vidrios = useMemo(() => ventanas.length > 0 ? calcularVidrios(ventanas) : [], [ventanas])
-    const laminasVidrio = useMemo(() => ventanas.length > 0 ? optimizarLaminasVidrio(ventanas) : [], [ventanas])
+    const laminasVidrio = useMemo(() => ventanas.length > 0 ? optimizarLaminasVidrio(ventanas, laminaAncho, laminaAlto) : [], [ventanas, laminaAncho, laminaAlto])
 
     const agregarVentana = useCallback((
         nombre: string,

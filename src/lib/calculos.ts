@@ -9,34 +9,39 @@ import type {
     ConfiguracionPrecios,
     CostosCalculados,
 } from "./types"
+import { DESCUNTOS_DEFAULT, type DescuentosPorSistema, type DescuentosSistema } from "./types"
+import { obtenerDescuentos } from "./storage"
 
-// === DESCUENTOS POR SISTEMA ===
-// Valores en mm
-const DESCuentOS = {
-    "5020": { jamba: 15, enganche: 30, traslape: 30, hInfSup: 15, anchoVidrio: 44 },
-    "744": { jamba: 12, enganche: 24, traslape: 24, hInfSup: 0, anchoVidrio: 45 },
-    "8025": { jamba: 12, enganche: 28, traslape: 28, hInfSup: 0, anchoVidrio: 46 },
-    "7038": { jamba: 25, enganche: 41, traslape: 41, hInfSup: -10, anchoVidrio: 39.8 },
-} as const
+let descuentosCache: DescuentosPorSistema | null = null
 
-type SistemaKey = keyof typeof DESCuentOS
-const SISTEMA_DEFAULT: SistemaKey = "5020"
+export function refreshDescuentosCache() {
+    descuentosCache = null
+}
 
-function getDescuentos(sistema?: string) {
-    return DESCuentOS[sistema as SistemaKey] || DESCuentOS[SISTEMA_DEFAULT]
+function getDescuentos(sistema?: string): DescuentosSistema {
+    if (!descuentosCache) {
+        try {
+            descuentosCache = obtenerDescuentos()
+        } catch {
+            descuentosCache = DESCUNTOS_DEFAULT
+        }
+    }
+    const descuentos = descuentosCache!
+    const sistemaKey = sistema as keyof DescuentosPorSistema
+    return descuentos[sistemaKey] || DESCUNTOS_DEFAULT[sistemaKey] || DESCUNTOS_DEFAULT["5020"]
 }
 
 // === CONSTANTES ===
 const LONGITUD_BARRA = 6 // metros
 const LAMINA_ANCHO = 2500 // mm
 const LAMINA_ALTO = 3600 // mm
-const LAMINA_AREA = (LAMINA_ANCHO * LAMINA_ALTO) / 1000000 // m²
 const MARGEN_CORTE = 5 // mm
 
 // === CÁLCULO DE CORTES ===
 
 const CONFIG_PANELES = {
     "2hojas": { moviles: 2, fijas: 0, tieneFijaParche: false },
+    "2hojas_mixto": { moviles: 1, fijas: 1, tieneFijaParche: true },
     "3hojas": { moviles: 2, fijas: 1, tieneFijaParche: true },
     "4hojas": { moviles: 3, fijas: 1, tieneFijaParche: true },
     "5hojas": { moviles: 4, fijas: 1, tieneFijaParche: true },
@@ -48,6 +53,10 @@ const CONFIG_PANELES = {
  * @param ventana - Ventana a calcular
  * @returns Array de cortes con tipo, medida, cantidad y referencia
  */
+export function calcularAreaTotalM2(ventanas: readonly Ventana[]): number {
+    return ventanas.reduce((sum, v) => sum + (v.ancho * v.alto) / 1_000_000, 0)
+}
+
 export function calcularCortesVentana(ventana: Ventana): Corte[] {
     const { ancho, alto, tipoVentana, nombre, sistema = "5020" } = ventana
     const anchoM = ancho / 1000
@@ -57,13 +66,13 @@ export function calcularCortesVentana(ventana: Ventana): Corte[] {
     const config = CONFIG_PANELES[tipoVentana] || CONFIG_PANELES["2hojas"]
 
     // Alturas para enganches y traslapes
-    const alturaEngancheNormal = altoM - (descuentos.enganche / 1000)
-    const alturaEngancheParche = altoM - 0.005
-    const alturaTraslapeNormal = altoM - (descuentos.traslape / 1000)
-    const alturaTraslapeParche = altoM - 0.005
+    const alturaEngancheNormal = altoM - (descuentos.engancheNormal / 1000)
+    const alturaEngancheParche = altoM - (descuentos.engancheParche / 1000)
+    const alturaTraslapeNormal = altoM - (descuentos.traslapeNormal / 1000)
+    const alturaTraslapeParche = altoM - (descuentos.traslapeParche / 1000)
 
     const anchoHoja = anchoM / parseInt(tipoVentana)
-    const anchoHorizontal = anchoHoja - (descuentos.hInfSup / 1000)
+    const anchoHorizontal = anchoHoja + 0.01 // ancho/hojas + 10mm
 
     // Marco (común para todos los tipos)
     cortes.push(
@@ -147,10 +156,48 @@ export function calcularCortesVentana(ventana: Ventana): Corte[] {
         }
 
         // Horizontales para todas las hojas
-        cortes.push(
-            { tipo: "Horizontal Superior", medida: anchoHorizontal, cantidad: cantidadHojas, ventana: nombre, sistema },
-            { tipo: "Horizontal Inferior", medida: anchoHorizontal, cantidad: cantidadHojas, ventana: nombre, sistema }
-        )
+        if (sistema === "8025" && (tipoVentana === "3hojas" || tipoVentana === "4hojas")) {
+            let traslapeTotal = 0
+            let desfaseFija = 0
+            let desfaseCerradura = 0
+
+            if (tipoVentana === "3hojas") {
+                traslapeTotal = 0.045
+                desfaseFija = 0.010
+                desfaseCerradura = 0.080
+            } else {
+                traslapeTotal = 0.080
+                desfaseFija = 0.009
+                desfaseCerradura = 0.075
+            }
+
+            const x = (anchoM + traslapeTotal - desfaseFija - desfaseCerradura) / cantidadHojas
+
+            const anchoFija = x + desfaseFija
+            const anchoCerradura = x + desfaseCerradura
+            const anchoCentral = x
+
+            cortes.push(
+                { tipo: "Horizontal Superior", medida: anchoFija, cantidad: 1, ventana: `${nombre} (Fija)`, sistema },
+                { tipo: "Horizontal Inferior", medida: anchoFija, cantidad: 1, ventana: `${nombre} (Fija)`, sistema }
+            )
+            cortes.push(
+                { tipo: "Horizontal Superior", medida: anchoCerradura, cantidad: 1, ventana: `${nombre} (Cerradura)`, sistema },
+                { tipo: "Horizontal Inferior", medida: anchoCerradura, cantidad: 1, ventana: `${nombre} (Cerradura)`, sistema }
+            )
+            const numCentrales = cantidadHojas - 2
+            if (numCentrales > 0) {
+                cortes.push(
+                    { tipo: "Horizontal Superior", medida: anchoCentral, cantidad: numCentrales, ventana: `${nombre} (Centrales)`, sistema },
+                    { tipo: "Horizontal Inferior", medida: anchoCentral, cantidad: numCentrales, ventana: `${nombre} (Centrales)`, sistema }
+                )
+            }
+        } else {
+            cortes.push(
+                { tipo: "Horizontal Superior", medida: anchoHorizontal, cantidad: cantidadHojas, ventana: nombre, sistema },
+                { tipo: "Horizontal Inferior", medida: anchoHorizontal, cantidad: cantidadHojas, ventana: nombre, sistema }
+            )
+        }
     }
 
     return cortes
@@ -223,6 +270,7 @@ export function optimizarCortes(ventanas: Ventana[]): Record<string, Optimizacio
 
 const CONFIG_ACCESORIOS = {
     "2hojas": { rodachinas: 4, cerraduras: 1, guias: 4, tornillosHoja: 4 },
+    "2hojas_mixto": { rodachinas: 2, cerraduras: 1, guias: 2, tornillosHoja: 4 },
     "3hojas": { rodachinas: 4, cerraduras: 2, guias: 4, tornillosHoja: 4 },
     "4hojas": { rodachinas: 6, cerraduras: 1, guias: 6, tornillosHoja: 4 },
     "5hojas": { rodachinas: 8, cerraduras: 1, guias: 8, tornillosHoja: 4 },
@@ -298,31 +346,57 @@ export function calcularVidrios(ventanas: Ventana[]): VidrioCorte[] {
         const cantidadHojas = parseInt(ventana.tipoVentana)
         const config = CONFIG_PANELES[ventana.tipoVentana] || CONFIG_PANELES["2hojas"]
 
-        const anchoHoja = ventana.ancho / cantidadHojas
-        const anchoVidrio = anchoHoja - descuentos.anchoVidrio
         const altoVidrio = ventana.alto - descuentos.jamba
-        const area = (anchoVidrio * altoVidrio) / 1000000
 
-        const moviles = config.moviles
-        for (let i = 0; i < moviles; i++) {
-            vidrios.push({
-                ventana: ventana.nombre,
-                tipo: `Hoja Móvil ${i + 1}`,
-                ancho: anchoVidrio,
-                alto: altoVidrio,
-                area,
-            })
-        }
+        if (ventana.sistema === "8025" && (ventana.tipoVentana === "3hojas" || ventana.tipoVentana === "4hojas")) {
+            let traslapeTotal = 0
+            let desfaseFija = 0
+            let desfaseCerradura = 0
 
-        if (config.fijas > 0) {
-            for (let i = 0; i < config.fijas; i++) {
+            if (ventana.tipoVentana === "3hojas") {
+                traslapeTotal = 45; desfaseFija = 10; desfaseCerradura = 80
+            } else {
+                traslapeTotal = 80; desfaseFija = 9; desfaseCerradura = 75
+            }
+
+            const x_mm = (ventana.ancho + traslapeTotal - desfaseFija - desfaseCerradura) / cantidadHojas
+
+            const anchoVidrioFija = (x_mm + desfaseFija) - descuentos.anchoVidrio
+            const anchoVidrioCerradura = (x_mm + desfaseCerradura) - descuentos.anchoVidrio
+            const anchoVidrioCentral = x_mm - descuentos.anchoVidrio
+
+            vidrios.push({ ventana: ventana.nombre, tipo: "Hoja Fija (Parche)", ancho: anchoVidrioFija, alto: altoVidrio, area: (anchoVidrioFija * altoVidrio) / 1000000 })
+            vidrios.push({ ventana: ventana.nombre, tipo: "Hoja Móvil (Cerradura)", ancho: anchoVidrioCerradura, alto: altoVidrio, area: (anchoVidrioCerradura * altoVidrio) / 1000000 })
+
+            for (let i = 0; i < cantidadHojas - 2; i++) {
+                vidrios.push({ ventana: ventana.nombre, tipo: `Hoja Móvil (Central ${i + 1})`, ancho: anchoVidrioCentral, alto: altoVidrio, area: (anchoVidrioCentral * altoVidrio) / 1000000 })
+            }
+        } else {
+            const anchoHoja = ventana.ancho / cantidadHojas
+            const anchoVidrio = anchoHoja - descuentos.anchoVidrio
+            const area = (anchoVidrio * altoVidrio) / 1000000
+
+            const moviles = config.moviles
+            for (let i = 0; i < moviles; i++) {
                 vidrios.push({
                     ventana: ventana.nombre,
-                    tipo: `Hoja Fija ${i + 1}`,
+                    tipo: `Hoja Móvil ${i + 1}`,
                     ancho: anchoVidrio,
                     alto: altoVidrio,
                     area,
                 })
+            }
+
+            if (config.fijas > 0) {
+                for (let i = 0; i < config.fijas; i++) {
+                    vidrios.push({
+                        ventana: ventana.nombre,
+                        tipo: `Hoja Fija ${i + 1}`,
+                        ancho: anchoVidrio,
+                        alto: altoVidrio,
+                        area,
+                    })
+                }
             }
         }
     })
@@ -341,6 +415,9 @@ interface EspacioLibre {
 
 interface LaminaExtendida {
     numero: number
+    anchoLamina: number
+    altoLamina: number
+    areaLamina: number
     vidrios: Array<{
         vidrio: VidrioCorte
         x: number
@@ -403,7 +480,7 @@ function procesarVidrioEnLamina(
 
     lamina.vidrios.push({ vidrio: vidrioFinal, x: espacio.x, y: espacio.y, rotado })
     lamina.areaUsada += vidrio.area
-    lamina.areaSobrante = LAMINA_AREA - lamina.areaUsada
+    lamina.areaSobrante = lamina.areaLamina - lamina.areaUsada
     lamina.espaciosLibres.splice(indice, 1)
 
     // Algoritmo Guillotine Cut: crear nuevos espacios libres
@@ -433,31 +510,39 @@ function procesarVidrioEnLamina(
     return true
 }
 
-function crearNuevaLamina(vidrio: VidrioCorte, numero: number): LaminaExtendida {
+function crearNuevaLamina(
+    vidrio: VidrioCorte,
+    numero: number,
+    laminaAncho: number = LAMINA_ANCHO,
+    laminaAlto: number = LAMINA_ALTO
+): LaminaExtendida {
+    const areaLamina = (laminaAncho * laminaAlto) / 1000000
     const nuevaLamina: LaminaExtendida = {
         numero,
+        anchoLamina: laminaAncho,
+        altoLamina: laminaAlto,
+        areaLamina,
         vidrios: [{ vidrio, x: 0, y: 0, rotado: false }],
         areaUsada: vidrio.area,
-        areaSobrante: LAMINA_AREA - vidrio.area,
+        areaSobrante: areaLamina - vidrio.area,
         espaciosLibres: [],
     }
 
-    // Crear espacios libres iniciales
-    if (LAMINA_ANCHO > vidrio.ancho + MARGEN_CORTE) {
+    if (laminaAncho > vidrio.ancho + MARGEN_CORTE) {
         nuevaLamina.espaciosLibres.push({
             x: vidrio.ancho + MARGEN_CORTE,
             y: 0,
-            ancho: LAMINA_ANCHO - vidrio.ancho - MARGEN_CORTE,
+            ancho: laminaAncho - vidrio.ancho - MARGEN_CORTE,
             alto: vidrio.alto + MARGEN_CORTE,
         })
     }
 
-    if (LAMINA_ALTO > vidrio.alto + MARGEN_CORTE) {
+    if (laminaAlto > vidrio.alto + MARGEN_CORTE) {
         nuevaLamina.espaciosLibres.push({
             x: 0,
             y: vidrio.alto + MARGEN_CORTE,
-            ancho: LAMINA_ANCHO,
-            alto: LAMINA_ALTO - vidrio.alto - MARGEN_CORTE,
+            ancho: laminaAncho,
+            alto: laminaAlto - vidrio.alto - MARGEN_CORTE,
         })
     }
 
@@ -465,11 +550,17 @@ function crearNuevaLamina(vidrio: VidrioCorte, numero: number): LaminaExtendida 
 }
 
 /**
- * Optimiza el corte de vidrios en láminas de 2500x3600mm usando algoritmo Guillotine Cut
+ * Optimiza el corte de vidrios en láminas usando algoritmo Guillotine Cut
  * @param ventanas - Array de ventanas
+ * @param laminaAncho - Ancho de la lámina en mm (default: 2500)
+ * @param laminaAlto - Alto de la lámina en mm (default: 3600)
  * @returns Array de láminas con vidrios colocados
  */
-export function optimizarLaminasVidrio(ventanas: Ventana[]): LaminaVidrio[] {
+export function optimizarLaminasVidrio(
+    ventanas: Ventana[],
+    laminaAncho: number = LAMINA_ANCHO,
+    laminaAlto: number = LAMINA_ALTO
+): LaminaVidrio[] {
     const vidrios = calcularVidrios(ventanas)
     const vidriosOrdenados = [...vidrios].sort((a, b) => b.area - a.area)
 
@@ -479,7 +570,6 @@ export function optimizarLaminasVidrio(ventanas: Ventana[]): LaminaVidrio[] {
         const anchoConMargen = vidrio.ancho + MARGEN_CORTE
         const altoConMargen = vidrio.alto + MARGEN_CORTE
 
-        // Intentar colocar en láminas existentes
         let colocado = false
         for (const lamina of laminas) {
             if (procesarVidrioEnLamina(lamina, vidrio, anchoConMargen, altoConMargen)) {
@@ -488,9 +578,8 @@ export function optimizarLaminasVidrio(ventanas: Ventana[]): LaminaVidrio[] {
             }
         }
 
-        // Si no cabe en ninguna lámina, crear nueva
         if (!colocado) {
-            laminas.push(crearNuevaLamina(vidrio, laminas.length + 1))
+            laminas.push(crearNuevaLamina(vidrio, laminas.length + 1, laminaAncho, laminaAlto))
         }
     })
 
@@ -575,9 +664,7 @@ export function calcularCostos(
     const total = totalSinUtilidad + utilidadMonto
 
     // Cálculo de área total y precio por m²
-    const areaTotal = ventanas.reduce((sum, v) =>
-        sum + (v.ancho * v.alto) / 1000000, 0
-    )
+    const areaTotal = calcularAreaTotalM2(ventanas)
     const precioPorM2 = areaTotal > 0 ? total / areaTotal : 0
 
     // Calcular valor individual por ventana
