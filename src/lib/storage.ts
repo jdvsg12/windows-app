@@ -13,27 +13,23 @@ const STORAGE_KEYS = {
     ADMIN_AUTH: "admin_auth",
 }
 
+// Real company/banking data lives in Vercel env vars (NEXT_PUBLIC_COMPANY_*), not in
+// source: it used to be hardcoded here and shipped in the git history and the bundle
+// for anyone to read. NEXT_PUBLIC_ vars are still inlined into the client bundle (this
+// data has to be readable in the browser to prefill the form), so this only keeps it
+// out of the repo and lets it differ per Vercel environment — it does not by itself
+// hide it from someone with access to the deployed app. See .env.example.
 const CONFIGURACION_DEFAULT = {
-    nombre: "ALUVE",
-    nit: "79717122-6",
-    direccion: "CARRERA 5 47B 91",
-    ciudad: "GIRARDOT CUNDINAMARCA",
-    telefonos: "3112877130 / 3168297417",
-    email: "ALUVE_03@hotmail.com",
-    representante: "Oscar Velandia Malagón",
-    cedula: "79'717.122 de Bta.",
+    nombre: process.env.NEXT_PUBLIC_COMPANY_NOMBRE ?? "",
+    nit: process.env.NEXT_PUBLIC_COMPANY_NIT ?? "",
+    direccion: process.env.NEXT_PUBLIC_COMPANY_DIRECCION ?? "",
+    ciudad: process.env.NEXT_PUBLIC_COMPANY_CIUDAD ?? "",
+    telefonos: process.env.NEXT_PUBLIC_COMPANY_TELEFONOS ?? "",
+    email: process.env.NEXT_PUBLIC_COMPANY_EMAIL ?? "",
+    representante: process.env.NEXT_PUBLIC_COMPANY_REPRESENTANTE ?? "",
+    cedula: process.env.NEXT_PUBLIC_COMPANY_CEDULA ?? "",
     logo: "",
-    datosBancarios: `PARA CONSIGNACIÓN EN EFECTIVO:
-Número de cuenta: En Girardot 24076716113 Cuenta de Ahorros Banco Caja Social
-En Bogotá 24085462744 Cuenta de Ahorros Banco Caja Social
-Titular: Oscar Velandia
-
-BANCOLOMBIA, TITULAR: DIANA MARCELA GUARIN CC. 1070590109 
-CUENTA DE AHORROS 65969220461 DE GIRARDOT.
-
-Nequi y daviplata 3168297417
-
-Nota: En caso de consignación, se debe enviar fotografía al WhatsApp 3168297417`,
+    datosBancarios: process.env.NEXT_PUBLIC_COMPANY_DATOS_BANCARIOS ?? "",
 }
 
 const PRECIOS_DEFAULT: ConfiguracionPrecios = {
