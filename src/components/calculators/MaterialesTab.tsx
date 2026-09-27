@@ -1,6 +1,9 @@
 "use client"
 
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card"
+import { StatCard } from "@/components/common/StatCard"
+import { formatArea, formatCount } from "@/lib/format"
+import { Cog, DoorOpen, Lock, Ruler } from "lucide-react"
 import type { Accesorios, VidrioCorte } from "@/lib/types"
 
 interface Props {
@@ -12,38 +15,14 @@ export function MaterialesTab({ accesorios, vidrios }: Props) {
     return (
         <div className="space-y-4">
             <div className="grid grid-cols-2 md:grid-cols-4 gap-4">
-                <Card>
-                    <CardHeader className="pb-2">
-                        <CardTitle className="text-sm font-medium text-muted-foreground">Rodachinas</CardTitle>
-                    </CardHeader>
-                    <CardContent>
-                        <p className="text-metric font-bold tabular-nums">{accesorios?.rodachinas || 0}</p>
-                    </CardContent>
-                </Card>
-                <Card>
-                    <CardHeader className="pb-2">
-                        <CardTitle className="text-sm font-medium text-muted-foreground">Guías</CardTitle>
-                    </CardHeader>
-                    <CardContent>
-                        <p className="text-metric font-bold tabular-nums">{(accesorios?.guiasSuperior || 0) + (accesorios?.guiasInferior || 0)}</p>
-                    </CardContent>
-                </Card>
-                <Card>
-                    <CardHeader className="pb-2">
-                        <CardTitle className="text-sm font-medium text-muted-foreground">Cerraduras</CardTitle>
-                    </CardHeader>
-                    <CardContent>
-                        <p className="text-metric font-bold tabular-nums">{accesorios?.cerraduras || 0}</p>
-                    </CardContent>
-                </Card>
-                <Card>
-                    <CardHeader className="pb-2">
-                        <CardTitle className="text-sm font-medium text-muted-foreground">Empaque</CardTitle>
-                    </CardHeader>
-                    <CardContent>
-                        <p className="text-metric font-bold tabular-nums">{accesorios?.empaqueTotal.toFixed(1) || 0} m</p>
-                    </CardContent>
-                </Card>
+                <StatCard label="Rodachinas" value={accesorios?.rodachinas || 0} icon={Cog} />
+                <StatCard
+                    label="Guías"
+                    value={(accesorios?.guiasSuperior || 0) + (accesorios?.guiasInferior || 0)}
+                    icon={DoorOpen}
+                />
+                <StatCard label="Cerraduras" value={accesorios?.cerraduras || 0} icon={Lock} />
+                <StatCard label="Empaque" value={formatCount(accesorios?.empaqueTotal)} unit="m" icon={Ruler} />
             </div>
 
             <Card>
@@ -56,10 +35,12 @@ export function MaterialesTab({ accesorios, vidrios }: Props) {
                             <div key={i} className="flex items-center justify-between p-3 bg-muted rounded-lg">
                                 <div>
                                     <p className="font-medium">{v.ventana} - {v.tipo}</p>
-                                    <p className="text-sm text-muted-foreground">{v.ancho.toFixed(0)} × {v.alto.toFixed(0)} mm</p>
+                                    <p className="text-sm text-muted-foreground">
+                                        {v.ancho.toFixed(0)} × {v.alto.toFixed(0)} mm
+                                    </p>
                                 </div>
                                 <div className="text-right">
-                                    <p className="font-medium">{v.area.toFixed(3)} m²</p>
+                                    <p className="font-medium">{formatArea(v.area, 3)}</p>
                                 </div>
                             </div>
                         ))}
