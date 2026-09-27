@@ -3,19 +3,17 @@
 import { Suspense, useState, useCallback } from "react"
 import { useRouter, useSearchParams } from "next/navigation"
 import { Button } from "@/components/ui/button"
-import { Input } from "@/components/ui/input"
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card"
-import { Label } from "@/components/ui/label"
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs"
 import { Badge } from "@/components/ui/badge"
 import { PageHeader } from "@/components/common/PageHeader"
-import { Plus, FileSpreadsheet, Ruler, Package, Grid3X3, DollarSign } from "lucide-react"
+import { CreateProjectForm } from "@/components/common/CreateProjectForm"
+import { FileSpreadsheet, Ruler, Package, Grid3X3, DollarSign } from "lucide-react"
 import * as XLSX from "xlsx"
-import { crearProyecto } from "@/lib/storage"
 import { optimizarCortes } from "@/lib/calculos"
 import { useVentanas } from "@/hooks/useVentanas"
 import { VentanasTab, MaterialesTab, OptimizacionTab, DeleteProjectDialog } from "@/components/calculators"
-import { getTipoVentanaLabel, type TamanoLamina } from "@/lib/types"
+import { getTipoVentanaLabel, type Proyecto, type TamanoLamina } from "@/lib/types"
 
 export default function CalculadorPageWrapper() {
     return (
@@ -43,14 +41,10 @@ function CalculadorPage() {
         eliminarProyectoActual,
     } = useVentanas(proyectoId, tamanoLamina)
 
-    const [nombreNuevo, setNombreNuevo] = useState("")
-
-    const crearNuevoProyecto = useCallback(() => {
-        if (!nombreNuevo.trim()) return
-        const nuevo = crearProyecto(nombreNuevo.trim())
-        setNombreNuevo("")
-        router.push(`/calculators?id=${nuevo.id}`)
-    }, [nombreNuevo, router])
+    const handleProjectCreated = useCallback(
+        (nuevo: Proyecto) => router.push(`/calculators?id=${nuevo.id}`),
+        [router]
+    )
 
     const exportarExcel = useCallback(() => {
         if (!ventanas.length || !proyecto) return
@@ -83,22 +77,7 @@ function CalculadorPage() {
                         <CardTitle>Crear Nuevo Proyecto</CardTitle>
                     </CardHeader>
                     <CardContent className="space-y-4">
-                        <div className="space-y-2">
-                            <Label htmlFor="nombre">Nombre del Proyecto</Label>
-                            <Input
-                                id="nombre"
-                                value={nombreNuevo}
-                                onChange={(e) => setNombreNuevo(e.target.value)}
-                                placeholder="Ej: Casa López"
-                                onKeyDown={(e) => {
-                                    if (e.key === "Enter") crearNuevoProyecto()
-                                }}
-                            />
-                        </div>
-                        <Button onClick={crearNuevoProyecto} className="w-full">
-                            <Plus className="h-4 w-4 mr-2" />
-                            Crear y Continuar
-                        </Button>
+                        <CreateProjectForm onCreated={handleProjectCreated} submitLabel="Crear y Continuar" />
                         <Button variant="outline" onClick={() => router.push("/")} className="w-full">
                             Volver al Dashboard
                         </Button>

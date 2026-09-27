@@ -5,12 +5,11 @@ import Link from "next/link"
 import { Button } from "@/components/ui/button"
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card"
 import { Badge } from "@/components/ui/badge"
-import { Input } from "@/components/ui/input"
-import { Label } from "@/components/ui/label"
 import { PageHeader } from "@/components/common/PageHeader"
 import { StatCard } from "@/components/common/StatCard"
 import { EmptyState } from "@/components/common/EmptyState"
-import { obtenerProyectos, crearProyecto } from "@/lib/storage"
+import { CreateProjectForm } from "@/components/common/CreateProjectForm"
+import { obtenerProyectos } from "@/lib/storage"
 import { calcularAreaTotalM2 } from "@/lib/calculos"
 import { formatCount, formatDate } from "@/lib/format"
 import { Plus, FolderOpen, Ruler, Layers, LayoutGrid } from "lucide-react"
@@ -18,19 +17,14 @@ import type { Proyecto } from "@/lib/types"
 
 export default function Home() {
     const [proyectos, setProyectos] = useState<Proyecto[]>([])
-    const [newProjectName, setNewProjectName] = useState("")
     const [showCreateForm, setShowCreateForm] = useState(false)
 
     useEffect(() => {
         setProyectos(obtenerProyectos())
     }, [])
 
-    const handleCreateProject = () => {
-        if (!newProjectName.trim()) return
-
-        const nuevo = crearProyecto(newProjectName.trim())
-        setProyectos([nuevo, ...proyectos])
-        setNewProjectName("")
+    const handleProjectCreated = (nuevo: Proyecto) => {
+        setProyectos((prev) => [nuevo, ...prev])
         setShowCreateForm(false)
     }
 
@@ -65,35 +59,17 @@ export default function Home() {
                 />
             </div>
 
-            {/* Formulario de Crear (Dialog style) */}
+            {/* Formulario de Crear */}
             {showCreateForm && (
                 <Card className="mb-8 animate-in fade-in duration-200">
                     <CardHeader>
                         <CardTitle>Crear Nuevo Proyecto</CardTitle>
                     </CardHeader>
-                    <CardContent className="space-y-4">
-                        <div className="space-y-2">
-                            <Label htmlFor="new-project-name">Nombre del proyecto</Label>
-                            <div className="flex flex-col sm:flex-row gap-2">
-                                <Input
-                                    id="new-project-name"
-                                    placeholder="Ej: Casa López"
-                                    value={newProjectName}
-                                    onChange={(e) => setNewProjectName(e.target.value)}
-                                    onKeyDown={(e) => {
-                                        if (e.key === "Enter") handleCreateProject()
-                                        if (e.key === "Escape") setShowCreateForm(false)
-                                    }}
-                                    autoFocus
-                                />
-                                <Button onClick={handleCreateProject} disabled={!newProjectName.trim()}>
-                                    Crear
-                                </Button>
-                                <Button variant="outline" onClick={() => setShowCreateForm(false)}>
-                                    Cancelar
-                                </Button>
-                            </div>
-                        </div>
+                    <CardContent>
+                        <CreateProjectForm
+                            onCreated={handleProjectCreated}
+                            onCancel={() => setShowCreateForm(false)}
+                        />
                     </CardContent>
                 </Card>
             )}
