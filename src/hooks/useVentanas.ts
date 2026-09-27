@@ -4,13 +4,14 @@ import {
     obtenerProyectoPorId,
     actualizarProyecto,
     eliminarProyecto,
+    obtenerDescuentos,
 } from "@/lib/storage"
 import {
     optimizarCortes,
     calcularAccesorios,
     calcularVidrios,
     optimizarLaminasVidrio,
-} from "@/lib/calculos"
+} from "@/lib/calculo/motor-8025"
 import type { Proyecto, Ventana, TipoVentana, SistemaVentana, TamanoLamina } from "@/lib/types"
 import { TAMANOS_LAMINA } from "@/lib/types"
 
@@ -31,10 +32,13 @@ export function useVentanas(proyectoId: string | null, tamanoLamina?: TamanoLami
         }
     }, [proyectoId])
 
-    const optimizacion = useMemo(() => ventanas.length > 0 ? optimizarCortes(ventanas) : {}, [ventanas])
-    const accesorios = useMemo(() => ventanas.length > 0 ? calcularAccesorios(ventanas) : null, [ventanas])
-    const vidrios = useMemo(() => ventanas.length > 0 ? calcularVidrios(ventanas) : [], [ventanas])
-    const laminasVidrio = useMemo(() => ventanas.length > 0 ? optimizarLaminasVidrio(ventanas, laminaAncho, laminaAlto) : [], [ventanas, laminaAncho, laminaAlto])
+    // No module-level cache anymore (removed in F3.1): read fresh on every recompute.
+    const descuentos = useMemo(() => obtenerDescuentos(), [])
+
+    const optimizacion = useMemo(() => ventanas.length > 0 ? optimizarCortes(ventanas, descuentos) : {}, [ventanas, descuentos])
+    const accesorios = useMemo(() => ventanas.length > 0 ? calcularAccesorios(ventanas, descuentos) : null, [ventanas, descuentos])
+    const vidrios = useMemo(() => ventanas.length > 0 ? calcularVidrios(ventanas, descuentos) : [], [ventanas, descuentos])
+    const laminasVidrio = useMemo(() => ventanas.length > 0 ? optimizarLaminasVidrio(ventanas, descuentos, laminaAncho, laminaAlto) : [], [ventanas, descuentos, laminaAncho, laminaAlto])
 
     const agregarVentana = useCallback((
         nombre: string,

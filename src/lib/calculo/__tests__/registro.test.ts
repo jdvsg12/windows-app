@@ -1,6 +1,6 @@
 import { describe, expect, it } from "vitest"
 
-import { SISTEMAS_HABILITADOS, opcionesSistema, sistemaParaVentanaNueva } from "@/lib/types"
+import { SISTEMAS_HABILITADOS, opcionesSistema, sistemaParaVentanaNueva } from "../registro"
 
 describe("sistemas habilitados en el formulario", () => {
     it("solo 8025 está habilitado", () => {

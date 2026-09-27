@@ -1,7 +1,6 @@
 import { useEffect, useState } from "react"
 
 import { obtenerPrecios, guardarPrecios } from "@/lib/storage"
-import { refreshDescuentosCache } from "@/lib/calculos"
 import type { ConfiguracionPrecios, TamanoLamina } from "@/lib/types"
 import { useSaveFeedback } from "./useSaveFeedback"
 
@@ -92,7 +91,6 @@ export function usePreciosForm() {
     // (e.g. costosAdicionales, managed in the cotizador) are preserved.
     const handleSave = () => {
         guardarPrecios({ ...obtenerPrecios(), ...formData })
-        refreshDescuentosCache()
         markSaved()
     }
 
