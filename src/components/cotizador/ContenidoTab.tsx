@@ -44,8 +44,9 @@ export function ContenidoTab({
                         <DatePicker value={fecha} onChange={onFechaChange} />
                     </div>
                     <div className="space-y-2">
-                        <Label>Cliente</Label>
+                        <Label htmlFor="cotizador-cliente">Cliente</Label>
                         <Input
+                            id="cotizador-cliente"
                             value={cliente}
                             onChange={(e) => onClienteChange(e.target.value)}
                             placeholder="Nombre del cliente"
@@ -54,18 +55,23 @@ export function ContenidoTab({
                 </div>
 
                 <div className="space-y-2">
-                    <Label>Descripción / Introducción</Label>
-                    <EditorTextoEnriquecido value={descripcion} onChange={onDescripcionChange} />
+                    <Label htmlFor="cotizador-descripcion">Descripción / Introducción</Label>
+                    <EditorTextoEnriquecido
+                        id="cotizador-descripcion"
+                        ariaLabel="Descripción / Introducción de la cotización"
+                        value={descripcion}
+                        onChange={onDescripcionChange}
+                    />
                 </div>
 
-                <div className="flex items-center gap-8 py-4">
+                <div className="flex flex-wrap items-center gap-x-8 gap-y-3 py-4">
                     <div className="flex items-center gap-2">
-                        <Switch checked={mostrarMedidas} onCheckedChange={onMostrarMedidasChange} />
-                        <Label>Mostrar medidas y área</Label>
+                        <Switch id="mostrar-medidas" checked={mostrarMedidas} onCheckedChange={onMostrarMedidasChange} />
+                        <Label htmlFor="mostrar-medidas">Mostrar medidas y área</Label>
                     </div>
                     <div className="flex items-center gap-2">
-                        <Switch checked={mostrarValores} onCheckedChange={onMostrarValoresChange} />
-                        <Label>Mostrar valores</Label>
+                        <Switch id="mostrar-valores" checked={mostrarValores} onCheckedChange={onMostrarValoresChange} />
+                        <Label htmlFor="mostrar-valores">Mostrar valores</Label>
                     </div>
                 </div>
             </CardContent>

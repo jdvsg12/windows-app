@@ -68,78 +68,76 @@ function CotizadorContent() {
     }
 
     return (
-        <div className="min-h-screen bg-background p-4 md:p-8">
-            <div className="max-w-7xl mx-auto space-y-6">
-                <div className="flex items-center justify-between">
-                    <div className="flex items-center gap-4">
-                        <Button variant="ghost" size="icon" onClick={() => router.push(`/calculators?id=${proyectoId}`)}>
-                            <ArrowLeft className="h-5 w-5" />
-                        </Button>
-                        <div>
-                            <h1 className="text-3xl font-bold">Cotizador</h1>
-                            <p className="text-muted-foreground">Proyecto: {proyecto.nombre}</p>
-                        </div>
-                    </div>
-                    <Button onClick={handleGenerarPDF}>
-                        <Download className="h-4 w-4 mr-2" />
-                        Descargar PDF
+        <div className="space-y-6">
+            <div className="flex flex-wrap items-center justify-between gap-4">
+                <div className="flex items-center gap-4">
+                    <Button variant="ghost" size="icon" aria-label="Volver a la calculadora" onClick={() => router.push(`/calculators?id=${proyectoId}`)}>
+                        <ArrowLeft className="h-5 w-5" />
                     </Button>
+                    <div>
+                        <h1 className="text-title font-bold tracking-tight">Cotizador</h1>
+                        <p className="text-sm text-muted-foreground">Proyecto: {proyecto.nombre}</p>
+                    </div>
                 </div>
-
-                <Tabs defaultValue="configuracion" className="space-y-4">
-                    <TabsList>
-                        <TabsTrigger value="configuracion">Configuración</TabsTrigger>
-                        <TabsTrigger value="contenido">Contenido</TabsTrigger>
-                        <TabsTrigger value="precios">Precios</TabsTrigger>
-                        <TabsTrigger value="vista-previa">Vista Previa</TabsTrigger>
-                    </TabsList>
-
-                    <TabsContent value="configuracion">
-                        <ConfiguracionTab
-                            config={config}
-                            logo={config.logo || ""}
-                            onConfigChange={handleConfigChange}
-                            onLogoUpload={handleLogoUpload}
-                        />
-                    </TabsContent>
-
-                    <TabsContent value="contenido">
-                        <ContenidoTab
-                            fecha={fecha}
-                            cliente={clienteLocal}
-                            descripcion={descripcion}
-                            mostrarMedidas={mostrarMedidas}
-                            mostrarValores={mostrarValores}
-                            onFechaChange={setFecha}
-                            onClienteChange={handleClienteChange}
-                            onDescripcionChange={setDescripcion}
-                            onMostrarMedidasChange={setMostrarMedidas}
-                            onMostrarValoresChange={setMostrarValores}
-                        />
-                    </TabsContent>
-
-                    <TabsContent value="precios">
-                        <PreciosTab
-                            precios={precios}
-                            costosCalculados={costosCalculados}
-                            onUpdatePrecios={updatePrecios}
-                        />
-                    </TabsContent>
-
-                    <TabsContent value="vista-previa">
-                        <VistaPreviaTab
-                            config={config}
-                            logo={config.logo || ""}
-                            proyecto={proyecto}
-                            fecha={format(fecha, "PPP", { locale: es })}
-                            descripcion={descripcion}
-                            mostrarMedidas={mostrarMedidas}
-                            mostrarValores={mostrarValores}
-                            costosCalculados={costosCalculados}
-                        />
-                    </TabsContent>
-                </Tabs>
+                <Button onClick={handleGenerarPDF}>
+                    <Download className="h-4 w-4 mr-2" />
+                    Descargar PDF
+                </Button>
             </div>
+
+            <Tabs defaultValue="configuracion" className="space-y-4">
+                <TabsList className="grid h-auto w-full grid-cols-2 sm:inline-flex sm:w-fit">
+                    <TabsTrigger value="configuracion">Configuración</TabsTrigger>
+                    <TabsTrigger value="contenido">Contenido</TabsTrigger>
+                    <TabsTrigger value="precios">Precios</TabsTrigger>
+                    <TabsTrigger value="vista-previa">Vista Previa</TabsTrigger>
+                </TabsList>
+
+                <TabsContent value="configuracion">
+                    <ConfiguracionTab
+                        config={config}
+                        logo={config.logo || ""}
+                        onConfigChange={handleConfigChange}
+                        onLogoUpload={handleLogoUpload}
+                    />
+                </TabsContent>
+
+                <TabsContent value="contenido">
+                    <ContenidoTab
+                        fecha={fecha}
+                        cliente={clienteLocal}
+                        descripcion={descripcion}
+                        mostrarMedidas={mostrarMedidas}
+                        mostrarValores={mostrarValores}
+                        onFechaChange={setFecha}
+                        onClienteChange={handleClienteChange}
+                        onDescripcionChange={setDescripcion}
+                        onMostrarMedidasChange={setMostrarMedidas}
+                        onMostrarValoresChange={setMostrarValores}
+                    />
+                </TabsContent>
+
+                <TabsContent value="precios">
+                    <PreciosTab
+                        precios={precios}
+                        costosCalculados={costosCalculados}
+                        onUpdatePrecios={updatePrecios}
+                    />
+                </TabsContent>
+
+                <TabsContent value="vista-previa">
+                    <VistaPreviaTab
+                        config={config}
+                        logo={config.logo || ""}
+                        proyecto={proyecto}
+                        fecha={format(fecha, "PPP", { locale: es })}
+                        descripcion={descripcion}
+                        mostrarMedidas={mostrarMedidas}
+                        mostrarValores={mostrarValores}
+                        costosCalculados={costosCalculados}
+                    />
+                </TabsContent>
+            </Tabs>
         </div>
     )
 }

@@ -14,7 +14,23 @@ You are a senior frontend developer specialized in **Next.js**, with an architec
 - **Tailwind CSS 4** — mobile-first, semantic variables, no hardcoded colors
 - **shadcn/ui + Radix** — correct variants, never override base styles
 - **react-hook-form + Zod** — validation lives in the schema, not in the component
-- **localStorage** — always SSR-safe, always through the abstraction layer in `lib/storage.ts`
+- **Persistence** — always through the abstraction layer in `lib/storage.ts` (localStorage today, SSR-safe). Target: IndexedDB as the on-device source of truth with eventual sync to Supabase
+- **pnpm** — the only package manager (keep `pnpm-lock.yaml`; never run `npm install` or `yarn`)
+- **Vitest** — unit and characterization tests for the calculation engine and design tokens
+
+---
+
+## Architecture — Offline-First
+
+The workshop works without internet. Everything the user needs to quote a job must work offline.
+
+- **Calculation and PDF run in the client.** No Route Handler or network call may be required to calculate or to generate a PDF. A Route Handler is optional, only when there is network.
+- **The engine is a pure, isomorphic TypeScript module.** No `storage` imports, no module-level caches or mutable state (in a multi-workshop setup a cache would leak between organizations). Everything it needs — discounts, prices, sheet size, parameters — is injected as an argument.
+- **Split despiece from pricing.** Each window reference has its own engine behind a common `EntradaCalculo`/`SalidaCalculo` contract and a registry; pricing and the cost cascade are shared by all references. Only validated references (today `8025`) are enabled through the registry.
+- **Snapshot on issue.** Issuing a quote freezes prices, overhead rates, percentages and the cutting plan.
+- **Local-first data.** The device is the source of truth; Supabase is backup and collaboration. Key tables carry `organization_id` from day one.
+- **Types come from Zod** (`z.infer`); do not keep a parallel interface in `types.ts`.
+- **Characterization first.** Before changing engine behavior, capture the current outputs in tests.
 
 ---
 
@@ -42,9 +58,11 @@ src/
 │   ├── useDebounce.ts            # Debounce values
 │   └── useMediaQuery.ts          # Responsive breakpoints
 ├── lib/
-│   ├── types.ts                  # ALL TypeScript interfaces
+│   ├── types.ts                  # ALL TypeScript types (derived from Zod where a schema exists)
 │   ├── calculos.ts               # Pure calculation functions
-│   ├── storage.ts                # localStorage abstraction
+│   ├── storage.ts                # localStorage abstraction (IndexedDB repositories planned)
+│   ├── calculo/                  # Pure isomorphic engine (planned; today lib/calculos.ts)
+│   ├── design/tokens.ts          # Hex mirror of the CSS design tokens, for the PDF
 │   ├── utils.ts                  # Utility functions (cn, etc.)
 │   └── constants.ts              # App-wide constants
 ├── context/                      # React Context providers
@@ -456,10 +474,11 @@ import { ConfiguracionTab, PreciosTab } from "@/components/cotizador"
 When asked to build a new feature, always follow this order:
 
 ```
-1. Type in lib/types.ts           — Define the data shape
-2. Logic in lib/calculos.ts       — Pure, testable functions
-3. Persistence in lib/storage.ts  — Only if it needs to be saved
-4. Hook in hooks/use[Feature].ts  — State + logic + persistence together
+1. Types (derived from Zod)       — Define the data shape once, with z.infer
+2. Engine (pure, isomorphic)      — lib/calculo/: no storage, no caches, inputs injected
+3. Module                         — Orchestration around the engine: pricing cascade,
+                                    snapshots, persistence adapters (lib/storage.ts today)
+4. Hook in hooks/use[Feature].ts  — State + calls to the module
 5. Component in components/       — Presentation only, consumes the hook
 6. Page in app/                   — Final assembly
 ```
@@ -489,6 +508,9 @@ export const getProjects = (): Project[] => {
 ## Never Do
 
 - ❌ `localStorage` directly in a component — always go through `lib/storage.ts`
+- ❌ Storage or network access inside the calculation engine, or module-level state/caches in it
+- ❌ Requiring the network to calculate or to generate a PDF (offline-first)
+- ❌ Tests or manual checks that write to the developer's browser storage — use an isolated origin (another dev port) and delete the test data afterwards
 - ❌ `any` in TypeScript — use proper types or `unknown`
 - ❌ Hardcoded colors (`text-red-500`) — semantic variables only
 - ❌ Native HTML `<form>` — use `react-hook-form`
@@ -506,9 +528,10 @@ export const getProjects = (): Project[] => {
 ## Scripts
 
 ```bash
-npm run dev       # Development with Turbopack
-npm run build     # Production build
-npm run lint      # ESLint check
+pnpm dev          # Development with Turbopack
+pnpm build        # Production build
+pnpm lint         # ESLint check
+pnpm test         # Vitest (run once)
 ```
 
 ---

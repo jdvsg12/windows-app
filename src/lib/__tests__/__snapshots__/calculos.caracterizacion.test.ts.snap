@@ -1,0 +1,5482 @@
+// Vitest Snapshot v1, https://vitest.dev/guide/snapshot.html
+
+exports[`motor 80-25 · por ventana > 2hojas_mixto-extrema > accesorios 1`] = `
+{
+  "cerraduras": 1,
+  "empaqueTotal": 10.584,
+  "guiasInferior": 2,
+  "guiasSuperior": 2,
+  "rodachinas": 2,
+  "tornillosHojas": 4,
+  "tornillosInstalacion": 8,
+  "tornillosMarco": 8,
+}
+`;
+
+exports[`motor 80-25 · por ventana > 2hojas_mixto-extrema > cortes de perfiles 1`] = `
+[
+  {
+    "cantidad": 1,
+    "medida": 5.9,
+    "sistema": "8025",
+    "tipo": "Cabezal",
+    "ventana": "2hojas_mixto-extrema",
+  },
+  {
+    "cantidad": 1,
+    "medida": 5.9,
+    "sistema": "8025",
+    "tipo": "Sillar",
+    "ventana": "2hojas_mixto-extrema",
+  },
+  {
+    "cantidad": 1,
+    "medida": 2.388,
+    "sistema": "8025",
+    "tipo": "Jamba Izquierda",
+    "ventana": "2hojas_mixto-extrema",
+  },
+  {
+    "cantidad": 1,
+    "medida": 2.388,
+    "sistema": "8025",
+    "tipo": "Jamba Derecha",
+    "ventana": "2hojas_mixto-extrema",
+  },
+  {
+    "cantidad": 1,
+    "medida": 2.372,
+    "sistema": "8025",
+    "tipo": "Enganche",
+    "ventana": "2hojas_mixto-extrema",
+  },
+  {
+    "cantidad": 1,
+    "medida": 2.395,
+    "sistema": "8025",
+    "tipo": "Enganche",
+    "ventana": "2hojas_mixto-extrema (Parche)",
+  },
+  {
+    "cantidad": 1,
+    "medida": 2.372,
+    "sistema": "8025",
+    "tipo": "Traslape",
+    "ventana": "2hojas_mixto-extrema",
+  },
+  {
+    "cantidad": 1,
+    "medida": 2.395,
+    "sistema": "8025",
+    "tipo": "Traslape",
+    "ventana": "2hojas_mixto-extrema (Parche)",
+  },
+  {
+    "cantidad": 2,
+    "medida": 2.96,
+    "sistema": "8025",
+    "tipo": "Horizontal Superior",
+    "ventana": "2hojas_mixto-extrema",
+  },
+  {
+    "cantidad": 2,
+    "medida": 2.96,
+    "sistema": "8025",
+    "tipo": "Horizontal Inferior",
+    "ventana": "2hojas_mixto-extrema",
+  },
+]
+`;
+
+exports[`motor 80-25 · por ventana > 2hojas_mixto-extrema > vidrios 1`] = `
+[
+  {
+    "alto": 2388,
+    "ancho": 2904,
+    "area": 6.934752,
+    "tipo": "Hoja Móvil 1",
+    "ventana": "2hojas_mixto-extrema",
+  },
+  {
+    "alto": 2388,
+    "ancho": 2904,
+    "area": 6.934752,
+    "tipo": "Hoja Fija 1",
+    "ventana": "2hojas_mixto-extrema",
+  },
+]
+`;
+
+exports[`motor 80-25 · por ventana > 2hojas_mixto-fueraDeBarra > accesorios 1`] = `
+{
+  "cerraduras": 1,
+  "empaqueTotal": 9.184,
+  "guiasInferior": 2,
+  "guiasSuperior": 2,
+  "rodachinas": 2,
+  "tornillosHojas": 4,
+  "tornillosInstalacion": 8,
+  "tornillosMarco": 8,
+}
+`;
+
+exports[`motor 80-25 · por ventana > 2hojas_mixto-fueraDeBarra > cortes de perfiles 1`] = `
+[
+  {
+    "cantidad": 1,
+    "medida": 6.3,
+    "sistema": "8025",
+    "tipo": "Cabezal",
+    "ventana": "2hojas_mixto-fueraDeBarra",
+  },
+  {
+    "cantidad": 1,
+    "medida": 6.3,
+    "sistema": "8025",
+    "tipo": "Sillar",
+    "ventana": "2hojas_mixto-fueraDeBarra",
+  },
+  {
+    "cantidad": 1,
+    "medida": 1.488,
+    "sistema": "8025",
+    "tipo": "Jamba Izquierda",
+    "ventana": "2hojas_mixto-fueraDeBarra",
+  },
+  {
+    "cantidad": 1,
+    "medida": 1.488,
+    "sistema": "8025",
+    "tipo": "Jamba Derecha",
+    "ventana": "2hojas_mixto-fueraDeBarra",
+  },
+  {
+    "cantidad": 1,
+    "medida": 1.472,
+    "sistema": "8025",
+    "tipo": "Enganche",
+    "ventana": "2hojas_mixto-fueraDeBarra",
+  },
+  {
+    "cantidad": 1,
+    "medida": 1.495,
+    "sistema": "8025",
+    "tipo": "Enganche",
+    "ventana": "2hojas_mixto-fueraDeBarra (Parche)",
+  },
+  {
+    "cantidad": 1,
+    "medida": 1.472,
+    "sistema": "8025",
+    "tipo": "Traslape",
+    "ventana": "2hojas_mixto-fueraDeBarra",
+  },
+  {
+    "cantidad": 1,
+    "medida": 1.495,
+    "sistema": "8025",
+    "tipo": "Traslape",
+    "ventana": "2hojas_mixto-fueraDeBarra (Parche)",
+  },
+  {
+    "cantidad": 2,
+    "medida": 3.16,
+    "sistema": "8025",
+    "tipo": "Horizontal Superior",
+    "ventana": "2hojas_mixto-fueraDeBarra",
+  },
+  {
+    "cantidad": 2,
+    "medida": 3.16,
+    "sistema": "8025",
+    "tipo": "Horizontal Inferior",
+    "ventana": "2hojas_mixto-fueraDeBarra",
+  },
+]
+`;
+
+exports[`motor 80-25 · por ventana > 2hojas_mixto-fueraDeBarra > vidrios 1`] = `
+[
+  {
+    "alto": 1488,
+    "ancho": 3104,
+    "area": 4.618752,
+    "tipo": "Hoja Móvil 1",
+    "ventana": "2hojas_mixto-fueraDeBarra",
+  },
+  {
+    "alto": 1488,
+    "ancho": 3104,
+    "area": 4.618752,
+    "tipo": "Hoja Fija 1",
+    "ventana": "2hojas_mixto-fueraDeBarra",
+  },
+]
+`;
+
+exports[`motor 80-25 · por ventana > 2hojas_mixto-grande > accesorios 1`] = `
+{
+  "cerraduras": 1,
+  "empaqueTotal": 7.084,
+  "guiasInferior": 2,
+  "guiasSuperior": 2,
+  "rodachinas": 2,
+  "tornillosHojas": 4,
+  "tornillosInstalacion": 8,
+  "tornillosMarco": 8,
+}
+`;
+
+exports[`motor 80-25 · por ventana > 2hojas_mixto-grande > cortes de perfiles 1`] = `
+[
+  {
+    "cantidad": 1,
+    "medida": 3,
+    "sistema": "8025",
+    "tipo": "Cabezal",
+    "ventana": "2hojas_mixto-grande",
+  },
+  {
+    "cantidad": 1,
+    "medida": 3,
+    "sistema": "8025",
+    "tipo": "Sillar",
+    "ventana": "2hojas_mixto-grande",
+  },
+  {
+    "cantidad": 1,
+    "medida": 2.088,
+    "sistema": "8025",
+    "tipo": "Jamba Izquierda",
+    "ventana": "2hojas_mixto-grande",
+  },
+  {
+    "cantidad": 1,
+    "medida": 2.088,
+    "sistema": "8025",
+    "tipo": "Jamba Derecha",
+    "ventana": "2hojas_mixto-grande",
+  },
+  {
+    "cantidad": 1,
+    "medida": 2.072,
+    "sistema": "8025",
+    "tipo": "Enganche",
+    "ventana": "2hojas_mixto-grande",
+  },
+  {
+    "cantidad": 1,
+    "medida": 2.095,
+    "sistema": "8025",
+    "tipo": "Enganche",
+    "ventana": "2hojas_mixto-grande (Parche)",
+  },
+  {
+    "cantidad": 1,
+    "medida": 2.072,
+    "sistema": "8025",
+    "tipo": "Traslape",
+    "ventana": "2hojas_mixto-grande",
+  },
+  {
+    "cantidad": 1,
+    "medida": 2.095,
+    "sistema": "8025",
+    "tipo": "Traslape",
+    "ventana": "2hojas_mixto-grande (Parche)",
+  },
+  {
+    "cantidad": 2,
+    "medida": 1.51,
+    "sistema": "8025",
+    "tipo": "Horizontal Superior",
+    "ventana": "2hojas_mixto-grande",
+  },
+  {
+    "cantidad": 2,
+    "medida": 1.51,
+    "sistema": "8025",
+    "tipo": "Horizontal Inferior",
+    "ventana": "2hojas_mixto-grande",
+  },
+]
+`;
+
+exports[`motor 80-25 · por ventana > 2hojas_mixto-grande > vidrios 1`] = `
+[
+  {
+    "alto": 2088,
+    "ancho": 1454,
+    "area": 3.035952,
+    "tipo": "Hoja Móvil 1",
+    "ventana": "2hojas_mixto-grande",
+  },
+  {
+    "alto": 2088,
+    "ancho": 1454,
+    "area": 3.035952,
+    "tipo": "Hoja Fija 1",
+    "ventana": "2hojas_mixto-grande",
+  },
+]
+`;
+
+exports[`motor 80-25 · por ventana > 2hojas_mixto-pequena > accesorios 1`] = `
+{
+  "cerraduras": 1,
+  "empaqueTotal": 2.384,
+  "guiasInferior": 2,
+  "guiasSuperior": 2,
+  "rodachinas": 2,
+  "tornillosHojas": 4,
+  "tornillosInstalacion": 8,
+  "tornillosMarco": 8,
+}
+`;
+
+exports[`motor 80-25 · por ventana > 2hojas_mixto-pequena > cortes de perfiles 1`] = `
+[
+  {
+    "cantidad": 1,
+    "medida": 0.9,
+    "sistema": "8025",
+    "tipo": "Cabezal",
+    "ventana": "2hojas_mixto-pequena",
+  },
+  {
+    "cantidad": 1,
+    "medida": 0.9,
+    "sistema": "8025",
+    "tipo": "Sillar",
+    "ventana": "2hojas_mixto-pequena",
+  },
+  {
+    "cantidad": 1,
+    "medida": 0.788,
+    "sistema": "8025",
+    "tipo": "Jamba Izquierda",
+    "ventana": "2hojas_mixto-pequena",
+  },
+  {
+    "cantidad": 1,
+    "medida": 0.788,
+    "sistema": "8025",
+    "tipo": "Jamba Derecha",
+    "ventana": "2hojas_mixto-pequena",
+  },
+  {
+    "cantidad": 1,
+    "medida": 0.772,
+    "sistema": "8025",
+    "tipo": "Enganche",
+    "ventana": "2hojas_mixto-pequena",
+  },
+  {
+    "cantidad": 1,
+    "medida": 0.795,
+    "sistema": "8025",
+    "tipo": "Enganche",
+    "ventana": "2hojas_mixto-pequena (Parche)",
+  },
+  {
+    "cantidad": 1,
+    "medida": 0.772,
+    "sistema": "8025",
+    "tipo": "Traslape",
+    "ventana": "2hojas_mixto-pequena",
+  },
+  {
+    "cantidad": 1,
+    "medida": 0.795,
+    "sistema": "8025",
+    "tipo": "Traslape",
+    "ventana": "2hojas_mixto-pequena (Parche)",
+  },
+  {
+    "cantidad": 2,
+    "medida": 0.46,
+    "sistema": "8025",
+    "tipo": "Horizontal Superior",
+    "ventana": "2hojas_mixto-pequena",
+  },
+  {
+    "cantidad": 2,
+    "medida": 0.46,
+    "sistema": "8025",
+    "tipo": "Horizontal Inferior",
+    "ventana": "2hojas_mixto-pequena",
+  },
+]
+`;
+
+exports[`motor 80-25 · por ventana > 2hojas_mixto-pequena > vidrios 1`] = `
+[
+  {
+    "alto": 788,
+    "ancho": 404,
+    "area": 0.318352,
+    "tipo": "Hoja Móvil 1",
+    "ventana": "2hojas_mixto-pequena",
+  },
+  {
+    "alto": 788,
+    "ancho": 404,
+    "area": 0.318352,
+    "tipo": "Hoja Fija 1",
+    "ventana": "2hojas_mixto-pequena",
+  },
+]
+`;
+
+exports[`motor 80-25 · por ventana > 2hojas_mixto-tipica > accesorios 1`] = `
+{
+  "cerraduras": 1,
+  "empaqueTotal": 4.684,
+  "guiasInferior": 2,
+  "guiasSuperior": 2,
+  "rodachinas": 2,
+  "tornillosHojas": 4,
+  "tornillosInstalacion": 8,
+  "tornillosMarco": 8,
+}
+`;
+
+exports[`motor 80-25 · por ventana > 2hojas_mixto-tipica > cortes de perfiles 1`] = `
+[
+  {
+    "cantidad": 1,
+    "medida": 2,
+    "sistema": "8025",
+    "tipo": "Cabezal",
+    "ventana": "2hojas_mixto-tipica",
+  },
+  {
+    "cantidad": 1,
+    "medida": 2,
+    "sistema": "8025",
+    "tipo": "Sillar",
+    "ventana": "2hojas_mixto-tipica",
+  },
+  {
+    "cantidad": 1,
+    "medida": 1.388,
+    "sistema": "8025",
+    "tipo": "Jamba Izquierda",
+    "ventana": "2hojas_mixto-tipica",
+  },
+  {
+    "cantidad": 1,
+    "medida": 1.388,
+    "sistema": "8025",
+    "tipo": "Jamba Derecha",
+    "ventana": "2hojas_mixto-tipica",
+  },
+  {
+    "cantidad": 1,
+    "medida": 1.372,
+    "sistema": "8025",
+    "tipo": "Enganche",
+    "ventana": "2hojas_mixto-tipica",
+  },
+  {
+    "cantidad": 1,
+    "medida": 1.395,
+    "sistema": "8025",
+    "tipo": "Enganche",
+    "ventana": "2hojas_mixto-tipica (Parche)",
+  },
+  {
+    "cantidad": 1,
+    "medida": 1.372,
+    "sistema": "8025",
+    "tipo": "Traslape",
+    "ventana": "2hojas_mixto-tipica",
+  },
+  {
+    "cantidad": 1,
+    "medida": 1.395,
+    "sistema": "8025",
+    "tipo": "Traslape",
+    "ventana": "2hojas_mixto-tipica (Parche)",
+  },
+  {
+    "cantidad": 2,
+    "medida": 1.01,
+    "sistema": "8025",
+    "tipo": "Horizontal Superior",
+    "ventana": "2hojas_mixto-tipica",
+  },
+  {
+    "cantidad": 2,
+    "medida": 1.01,
+    "sistema": "8025",
+    "tipo": "Horizontal Inferior",
+    "ventana": "2hojas_mixto-tipica",
+  },
+]
+`;
+
+exports[`motor 80-25 · por ventana > 2hojas_mixto-tipica > vidrios 1`] = `
+[
+  {
+    "alto": 1388,
+    "ancho": 954,
+    "area": 1.324152,
+    "tipo": "Hoja Móvil 1",
+    "ventana": "2hojas_mixto-tipica",
+  },
+  {
+    "alto": 1388,
+    "ancho": 954,
+    "area": 1.324152,
+    "tipo": "Hoja Fija 1",
+    "ventana": "2hojas_mixto-tipica",
+  },
+]
+`;
+
+exports[`motor 80-25 · por ventana > 2hojas-extrema > accesorios 1`] = `
+{
+  "cerraduras": 1,
+  "empaqueTotal": 21.168,
+  "guiasInferior": 4,
+  "guiasSuperior": 4,
+  "rodachinas": 4,
+  "tornillosHojas": 8,
+  "tornillosInstalacion": 8,
+  "tornillosMarco": 8,
+}
+`;
+
+exports[`motor 80-25 · por ventana > 2hojas-extrema > cortes de perfiles 1`] = `
+[
+  {
+    "cantidad": 1,
+    "medida": 5.9,
+    "sistema": "8025",
+    "tipo": "Cabezal",
+    "ventana": "2hojas-extrema",
+  },
+  {
+    "cantidad": 1,
+    "medida": 5.9,
+    "sistema": "8025",
+    "tipo": "Sillar",
+    "ventana": "2hojas-extrema",
+  },
+  {
+    "cantidad": 1,
+    "medida": 2.388,
+    "sistema": "8025",
+    "tipo": "Jamba Izquierda",
+    "ventana": "2hojas-extrema",
+  },
+  {
+    "cantidad": 1,
+    "medida": 2.388,
+    "sistema": "8025",
+    "tipo": "Jamba Derecha",
+    "ventana": "2hojas-extrema",
+  },
+  {
+    "cantidad": 2,
+    "medida": 2.372,
+    "sistema": "8025",
+    "tipo": "Enganche",
+    "ventana": "2hojas-extrema",
+  },
+  {
+    "cantidad": 2,
+    "medida": 2.372,
+    "sistema": "8025",
+    "tipo": "Traslape",
+    "ventana": "2hojas-extrema",
+  },
+  {
+    "cantidad": 2,
+    "medida": 2.96,
+    "sistema": "8025",
+    "tipo": "Horizontal Superior",
+    "ventana": "2hojas-extrema",
+  },
+  {
+    "cantidad": 2,
+    "medida": 2.96,
+    "sistema": "8025",
+    "tipo": "Horizontal Inferior",
+    "ventana": "2hojas-extrema",
+  },
+]
+`;
+
+exports[`motor 80-25 · por ventana > 2hojas-extrema > vidrios 1`] = `
+[
+  {
+    "alto": 2388,
+    "ancho": 2904,
+    "area": 6.934752,
+    "tipo": "Hoja Móvil 1",
+    "ventana": "2hojas-extrema",
+  },
+  {
+    "alto": 2388,
+    "ancho": 2904,
+    "area": 6.934752,
+    "tipo": "Hoja Móvil 2",
+    "ventana": "2hojas-extrema",
+  },
+]
+`;
+
+exports[`motor 80-25 · por ventana > 2hojas-fueraDeBarra > accesorios 1`] = `
+{
+  "cerraduras": 1,
+  "empaqueTotal": 18.368,
+  "guiasInferior": 4,
+  "guiasSuperior": 4,
+  "rodachinas": 4,
+  "tornillosHojas": 8,
+  "tornillosInstalacion": 8,
+  "tornillosMarco": 8,
+}
+`;
+
+exports[`motor 80-25 · por ventana > 2hojas-fueraDeBarra > cortes de perfiles 1`] = `
+[
+  {
+    "cantidad": 1,
+    "medida": 6.3,
+    "sistema": "8025",
+    "tipo": "Cabezal",
+    "ventana": "2hojas-fueraDeBarra",
+  },
+  {
+    "cantidad": 1,
+    "medida": 6.3,
+    "sistema": "8025",
+    "tipo": "Sillar",
+    "ventana": "2hojas-fueraDeBarra",
+  },
+  {
+    "cantidad": 1,
+    "medida": 1.488,
+    "sistema": "8025",
+    "tipo": "Jamba Izquierda",
+    "ventana": "2hojas-fueraDeBarra",
+  },
+  {
+    "cantidad": 1,
+    "medida": 1.488,
+    "sistema": "8025",
+    "tipo": "Jamba Derecha",
+    "ventana": "2hojas-fueraDeBarra",
+  },
+  {
+    "cantidad": 2,
+    "medida": 1.472,
+    "sistema": "8025",
+    "tipo": "Enganche",
+    "ventana": "2hojas-fueraDeBarra",
+  },
+  {
+    "cantidad": 2,
+    "medida": 1.472,
+    "sistema": "8025",
+    "tipo": "Traslape",
+    "ventana": "2hojas-fueraDeBarra",
+  },
+  {
+    "cantidad": 2,
+    "medida": 3.16,
+    "sistema": "8025",
+    "tipo": "Horizontal Superior",
+    "ventana": "2hojas-fueraDeBarra",
+  },
+  {
+    "cantidad": 2,
+    "medida": 3.16,
+    "sistema": "8025",
+    "tipo": "Horizontal Inferior",
+    "ventana": "2hojas-fueraDeBarra",
+  },
+]
+`;
+
+exports[`motor 80-25 · por ventana > 2hojas-fueraDeBarra > vidrios 1`] = `
+[
+  {
+    "alto": 1488,
+    "ancho": 3104,
+    "area": 4.618752,
+    "tipo": "Hoja Móvil 1",
+    "ventana": "2hojas-fueraDeBarra",
+  },
+  {
+    "alto": 1488,
+    "ancho": 3104,
+    "area": 4.618752,
+    "tipo": "Hoja Móvil 2",
+    "ventana": "2hojas-fueraDeBarra",
+  },
+]
+`;
+
+exports[`motor 80-25 · por ventana > 2hojas-grande > accesorios 1`] = `
+{
+  "cerraduras": 1,
+  "empaqueTotal": 14.168,
+  "guiasInferior": 4,
+  "guiasSuperior": 4,
+  "rodachinas": 4,
+  "tornillosHojas": 8,
+  "tornillosInstalacion": 8,
+  "tornillosMarco": 8,
+}
+`;
+
+exports[`motor 80-25 · por ventana > 2hojas-grande > cortes de perfiles 1`] = `
+[
+  {
+    "cantidad": 1,
+    "medida": 3,
+    "sistema": "8025",
+    "tipo": "Cabezal",
+    "ventana": "2hojas-grande",
+  },
+  {
+    "cantidad": 1,
+    "medida": 3,
+    "sistema": "8025",
+    "tipo": "Sillar",
+    "ventana": "2hojas-grande",
+  },
+  {
+    "cantidad": 1,
+    "medida": 2.088,
+    "sistema": "8025",
+    "tipo": "Jamba Izquierda",
+    "ventana": "2hojas-grande",
+  },
+  {
+    "cantidad": 1,
+    "medida": 2.088,
+    "sistema": "8025",
+    "tipo": "Jamba Derecha",
+    "ventana": "2hojas-grande",
+  },
+  {
+    "cantidad": 2,
+    "medida": 2.072,
+    "sistema": "8025",
+    "tipo": "Enganche",
+    "ventana": "2hojas-grande",
+  },
+  {
+    "cantidad": 2,
+    "medida": 2.072,
+    "sistema": "8025",
+    "tipo": "Traslape",
+    "ventana": "2hojas-grande",
+  },
+  {
+    "cantidad": 2,
+    "medida": 1.51,
+    "sistema": "8025",
+    "tipo": "Horizontal Superior",
+    "ventana": "2hojas-grande",
+  },
+  {
+    "cantidad": 2,
+    "medida": 1.51,
+    "sistema": "8025",
+    "tipo": "Horizontal Inferior",
+    "ventana": "2hojas-grande",
+  },
+]
+`;
+
+exports[`motor 80-25 · por ventana > 2hojas-grande > vidrios 1`] = `
+[
+  {
+    "alto": 2088,
+    "ancho": 1454,
+    "area": 3.035952,
+    "tipo": "Hoja Móvil 1",
+    "ventana": "2hojas-grande",
+  },
+  {
+    "alto": 2088,
+    "ancho": 1454,
+    "area": 3.035952,
+    "tipo": "Hoja Móvil 2",
+    "ventana": "2hojas-grande",
+  },
+]
+`;
+
+exports[`motor 80-25 · por ventana > 2hojas-pequena > accesorios 1`] = `
+{
+  "cerraduras": 1,
+  "empaqueTotal": 4.768,
+  "guiasInferior": 4,
+  "guiasSuperior": 4,
+  "rodachinas": 4,
+  "tornillosHojas": 8,
+  "tornillosInstalacion": 8,
+  "tornillosMarco": 8,
+}
+`;
+
+exports[`motor 80-25 · por ventana > 2hojas-pequena > cortes de perfiles 1`] = `
+[
+  {
+    "cantidad": 1,
+    "medida": 0.9,
+    "sistema": "8025",
+    "tipo": "Cabezal",
+    "ventana": "2hojas-pequena",
+  },
+  {
+    "cantidad": 1,
+    "medida": 0.9,
+    "sistema": "8025",
+    "tipo": "Sillar",
+    "ventana": "2hojas-pequena",
+  },
+  {
+    "cantidad": 1,
+    "medida": 0.788,
+    "sistema": "8025",
+    "tipo": "Jamba Izquierda",
+    "ventana": "2hojas-pequena",
+  },
+  {
+    "cantidad": 1,
+    "medida": 0.788,
+    "sistema": "8025",
+    "tipo": "Jamba Derecha",
+    "ventana": "2hojas-pequena",
+  },
+  {
+    "cantidad": 2,
+    "medida": 0.772,
+    "sistema": "8025",
+    "tipo": "Enganche",
+    "ventana": "2hojas-pequena",
+  },
+  {
+    "cantidad": 2,
+    "medida": 0.772,
+    "sistema": "8025",
+    "tipo": "Traslape",
+    "ventana": "2hojas-pequena",
+  },
+  {
+    "cantidad": 2,
+    "medida": 0.46,
+    "sistema": "8025",
+    "tipo": "Horizontal Superior",
+    "ventana": "2hojas-pequena",
+  },
+  {
+    "cantidad": 2,
+    "medida": 0.46,
+    "sistema": "8025",
+    "tipo": "Horizontal Inferior",
+    "ventana": "2hojas-pequena",
+  },
+]
+`;
+
+exports[`motor 80-25 · por ventana > 2hojas-pequena > vidrios 1`] = `
+[
+  {
+    "alto": 788,
+    "ancho": 404,
+    "area": 0.318352,
+    "tipo": "Hoja Móvil 1",
+    "ventana": "2hojas-pequena",
+  },
+  {
+    "alto": 788,
+    "ancho": 404,
+    "area": 0.318352,
+    "tipo": "Hoja Móvil 2",
+    "ventana": "2hojas-pequena",
+  },
+]
+`;
+
+exports[`motor 80-25 · por ventana > 2hojas-tipica > accesorios 1`] = `
+{
+  "cerraduras": 1,
+  "empaqueTotal": 9.368,
+  "guiasInferior": 4,
+  "guiasSuperior": 4,
+  "rodachinas": 4,
+  "tornillosHojas": 8,
+  "tornillosInstalacion": 8,
+  "tornillosMarco": 8,
+}
+`;
+
+exports[`motor 80-25 · por ventana > 2hojas-tipica > cortes de perfiles 1`] = `
+[
+  {
+    "cantidad": 1,
+    "medida": 2,
+    "sistema": "8025",
+    "tipo": "Cabezal",
+    "ventana": "2hojas-tipica",
+  },
+  {
+    "cantidad": 1,
+    "medida": 2,
+    "sistema": "8025",
+    "tipo": "Sillar",
+    "ventana": "2hojas-tipica",
+  },
+  {
+    "cantidad": 1,
+    "medida": 1.388,
+    "sistema": "8025",
+    "tipo": "Jamba Izquierda",
+    "ventana": "2hojas-tipica",
+  },
+  {
+    "cantidad": 1,
+    "medida": 1.388,
+    "sistema": "8025",
+    "tipo": "Jamba Derecha",
+    "ventana": "2hojas-tipica",
+  },
+  {
+    "cantidad": 2,
+    "medida": 1.372,
+    "sistema": "8025",
+    "tipo": "Enganche",
+    "ventana": "2hojas-tipica",
+  },
+  {
+    "cantidad": 2,
+    "medida": 1.372,
+    "sistema": "8025",
+    "tipo": "Traslape",
+    "ventana": "2hojas-tipica",
+  },
+  {
+    "cantidad": 2,
+    "medida": 1.01,
+    "sistema": "8025",
+    "tipo": "Horizontal Superior",
+    "ventana": "2hojas-tipica",
+  },
+  {
+    "cantidad": 2,
+    "medida": 1.01,
+    "sistema": "8025",
+    "tipo": "Horizontal Inferior",
+    "ventana": "2hojas-tipica",
+  },
+]
+`;
+
+exports[`motor 80-25 · por ventana > 2hojas-tipica > vidrios 1`] = `
+[
+  {
+    "alto": 1388,
+    "ancho": 954,
+    "area": 1.324152,
+    "tipo": "Hoja Móvil 1",
+    "ventana": "2hojas-tipica",
+  },
+  {
+    "alto": 1388,
+    "ancho": 954,
+    "area": 1.324152,
+    "tipo": "Hoja Móvil 2",
+    "ventana": "2hojas-tipica",
+  },
+]
+`;
+
+exports[`motor 80-25 · por ventana > 3hojas-extrema > accesorios 1`] = `
+{
+  "cerraduras": 1,
+  "empaqueTotal": 17.234667,
+  "guiasInferior": 4,
+  "guiasSuperior": 4,
+  "rodachinas": 4,
+  "tornillosHojas": 8,
+  "tornillosInstalacion": 8,
+  "tornillosMarco": 8,
+}
+`;
+
+exports[`motor 80-25 · por ventana > 3hojas-extrema > cortes de perfiles 1`] = `
+[
+  {
+    "cantidad": 1,
+    "medida": 5.9,
+    "sistema": "8025",
+    "tipo": "Cabezal",
+    "ventana": "3hojas-extrema",
+  },
+  {
+    "cantidad": 1,
+    "medida": 5.9,
+    "sistema": "8025",
+    "tipo": "Sillar",
+    "ventana": "3hojas-extrema",
+  },
+  {
+    "cantidad": 1,
+    "medida": 2.388,
+    "sistema": "8025",
+    "tipo": "Jamba Izquierda",
+    "ventana": "3hojas-extrema",
+  },
+  {
+    "cantidad": 1,
+    "medida": 2.388,
+    "sistema": "8025",
+    "tipo": "Jamba Derecha",
+    "ventana": "3hojas-extrema",
+  },
+  {
+    "cantidad": 3,
+    "medida": 2.372,
+    "sistema": "8025",
+    "tipo": "Enganche",
+    "ventana": "3hojas-extrema",
+  },
+  {
+    "cantidad": 1,
+    "medida": 2.395,
+    "sistema": "8025",
+    "tipo": "Enganche",
+    "ventana": "3hojas-extrema (Parche)",
+  },
+  {
+    "cantidad": 1,
+    "medida": 2.372,
+    "sistema": "8025",
+    "tipo": "Traslape",
+    "ventana": "3hojas-extrema",
+  },
+  {
+    "cantidad": 1,
+    "medida": 2.395,
+    "sistema": "8025",
+    "tipo": "Traslape",
+    "ventana": "3hojas-extrema (Parche)",
+  },
+  {
+    "cantidad": 1,
+    "medida": 1.961667,
+    "sistema": "8025",
+    "tipo": "Horizontal Superior",
+    "ventana": "3hojas-extrema (Fija)",
+  },
+  {
+    "cantidad": 1,
+    "medida": 1.961667,
+    "sistema": "8025",
+    "tipo": "Horizontal Inferior",
+    "ventana": "3hojas-extrema (Fija)",
+  },
+  {
+    "cantidad": 1,
+    "medida": 2.031667,
+    "sistema": "8025",
+    "tipo": "Horizontal Superior",
+    "ventana": "3hojas-extrema (Cerradura)",
+  },
+  {
+    "cantidad": 1,
+    "medida": 2.031667,
+    "sistema": "8025",
+    "tipo": "Horizontal Inferior",
+    "ventana": "3hojas-extrema (Cerradura)",
+  },
+  {
+    "cantidad": 1,
+    "medida": 1.951667,
+    "sistema": "8025",
+    "tipo": "Horizontal Superior",
+    "ventana": "3hojas-extrema (Centrales)",
+  },
+  {
+    "cantidad": 1,
+    "medida": 1.951667,
+    "sistema": "8025",
+    "tipo": "Horizontal Inferior",
+    "ventana": "3hojas-extrema (Centrales)",
+  },
+]
+`;
+
+exports[`motor 80-25 · por ventana > 3hojas-extrema > vidrios 1`] = `
+[
+  {
+    "alto": 2388,
+    "ancho": 1915.666667,
+    "area": 4.574612,
+    "tipo": "Hoja Fija (Parche)",
+    "ventana": "3hojas-extrema",
+  },
+  {
+    "alto": 2388,
+    "ancho": 1985.666667,
+    "area": 4.741772,
+    "tipo": "Hoja Móvil (Cerradura)",
+    "ventana": "3hojas-extrema",
+  },
+  {
+    "alto": 2388,
+    "ancho": 1905.666667,
+    "area": 4.550732,
+    "tipo": "Hoja Móvil (Central 1)",
+    "ventana": "3hojas-extrema",
+  },
+]
+`;
+
+exports[`motor 80-25 · por ventana > 3hojas-fueraDeBarra > accesorios 1`] = `
+{
+  "cerraduras": 1,
+  "empaqueTotal": 14.168,
+  "guiasInferior": 4,
+  "guiasSuperior": 4,
+  "rodachinas": 4,
+  "tornillosHojas": 8,
+  "tornillosInstalacion": 8,
+  "tornillosMarco": 8,
+}
+`;
+
+exports[`motor 80-25 · por ventana > 3hojas-fueraDeBarra > cortes de perfiles 1`] = `
+[
+  {
+    "cantidad": 1,
+    "medida": 6.3,
+    "sistema": "8025",
+    "tipo": "Cabezal",
+    "ventana": "3hojas-fueraDeBarra",
+  },
+  {
+    "cantidad": 1,
+    "medida": 6.3,
+    "sistema": "8025",
+    "tipo": "Sillar",
+    "ventana": "3hojas-fueraDeBarra",
+  },
+  {
+    "cantidad": 1,
+    "medida": 1.488,
+    "sistema": "8025",
+    "tipo": "Jamba Izquierda",
+    "ventana": "3hojas-fueraDeBarra",
+  },
+  {
+    "cantidad": 1,
+    "medida": 1.488,
+    "sistema": "8025",
+    "tipo": "Jamba Derecha",
+    "ventana": "3hojas-fueraDeBarra",
+  },
+  {
+    "cantidad": 3,
+    "medida": 1.472,
+    "sistema": "8025",
+    "tipo": "Enganche",
+    "ventana": "3hojas-fueraDeBarra",
+  },
+  {
+    "cantidad": 1,
+    "medida": 1.495,
+    "sistema": "8025",
+    "tipo": "Enganche",
+    "ventana": "3hojas-fueraDeBarra (Parche)",
+  },
+  {
+    "cantidad": 1,
+    "medida": 1.472,
+    "sistema": "8025",
+    "tipo": "Traslape",
+    "ventana": "3hojas-fueraDeBarra",
+  },
+  {
+    "cantidad": 1,
+    "medida": 1.495,
+    "sistema": "8025",
+    "tipo": "Traslape",
+    "ventana": "3hojas-fueraDeBarra (Parche)",
+  },
+  {
+    "cantidad": 1,
+    "medida": 2.095,
+    "sistema": "8025",
+    "tipo": "Horizontal Superior",
+    "ventana": "3hojas-fueraDeBarra (Fija)",
+  },
+  {
+    "cantidad": 1,
+    "medida": 2.095,
+    "sistema": "8025",
+    "tipo": "Horizontal Inferior",
+    "ventana": "3hojas-fueraDeBarra (Fija)",
+  },
+  {
+    "cantidad": 1,
+    "medida": 2.165,
+    "sistema": "8025",
+    "tipo": "Horizontal Superior",
+    "ventana": "3hojas-fueraDeBarra (Cerradura)",
+  },
+  {
+    "cantidad": 1,
+    "medida": 2.165,
+    "sistema": "8025",
+    "tipo": "Horizontal Inferior",
+    "ventana": "3hojas-fueraDeBarra (Cerradura)",
+  },
+  {
+    "cantidad": 1,
+    "medida": 2.085,
+    "sistema": "8025",
+    "tipo": "Horizontal Superior",
+    "ventana": "3hojas-fueraDeBarra (Centrales)",
+  },
+  {
+    "cantidad": 1,
+    "medida": 2.085,
+    "sistema": "8025",
+    "tipo": "Horizontal Inferior",
+    "ventana": "3hojas-fueraDeBarra (Centrales)",
+  },
+]
+`;
+
+exports[`motor 80-25 · por ventana > 3hojas-fueraDeBarra > vidrios 1`] = `
+[
+  {
+    "alto": 1488,
+    "ancho": 2049,
+    "area": 3.048912,
+    "tipo": "Hoja Fija (Parche)",
+    "ventana": "3hojas-fueraDeBarra",
+  },
+  {
+    "alto": 1488,
+    "ancho": 2119,
+    "area": 3.153072,
+    "tipo": "Hoja Móvil (Cerradura)",
+    "ventana": "3hojas-fueraDeBarra",
+  },
+  {
+    "alto": 1488,
+    "ancho": 2039,
+    "area": 3.034032,
+    "tipo": "Hoja Móvil (Central 1)",
+    "ventana": "3hojas-fueraDeBarra",
+  },
+]
+`;
+
+exports[`motor 80-25 · por ventana > 3hojas-grande > accesorios 1`] = `
+{
+  "cerraduras": 1,
+  "empaqueTotal": 12.168,
+  "guiasInferior": 4,
+  "guiasSuperior": 4,
+  "rodachinas": 4,
+  "tornillosHojas": 8,
+  "tornillosInstalacion": 8,
+  "tornillosMarco": 8,
+}
+`;
+
+exports[`motor 80-25 · por ventana > 3hojas-grande > cortes de perfiles 1`] = `
+[
+  {
+    "cantidad": 1,
+    "medida": 3,
+    "sistema": "8025",
+    "tipo": "Cabezal",
+    "ventana": "3hojas-grande",
+  },
+  {
+    "cantidad": 1,
+    "medida": 3,
+    "sistema": "8025",
+    "tipo": "Sillar",
+    "ventana": "3hojas-grande",
+  },
+  {
+    "cantidad": 1,
+    "medida": 2.088,
+    "sistema": "8025",
+    "tipo": "Jamba Izquierda",
+    "ventana": "3hojas-grande",
+  },
+  {
+    "cantidad": 1,
+    "medida": 2.088,
+    "sistema": "8025",
+    "tipo": "Jamba Derecha",
+    "ventana": "3hojas-grande",
+  },
+  {
+    "cantidad": 3,
+    "medida": 2.072,
+    "sistema": "8025",
+    "tipo": "Enganche",
+    "ventana": "3hojas-grande",
+  },
+  {
+    "cantidad": 1,
+    "medida": 2.095,
+    "sistema": "8025",
+    "tipo": "Enganche",
+    "ventana": "3hojas-grande (Parche)",
+  },
+  {
+    "cantidad": 1,
+    "medida": 2.072,
+    "sistema": "8025",
+    "tipo": "Traslape",
+    "ventana": "3hojas-grande",
+  },
+  {
+    "cantidad": 1,
+    "medida": 2.095,
+    "sistema": "8025",
+    "tipo": "Traslape",
+    "ventana": "3hojas-grande (Parche)",
+  },
+  {
+    "cantidad": 1,
+    "medida": 0.995,
+    "sistema": "8025",
+    "tipo": "Horizontal Superior",
+    "ventana": "3hojas-grande (Fija)",
+  },
+  {
+    "cantidad": 1,
+    "medida": 0.995,
+    "sistema": "8025",
+    "tipo": "Horizontal Inferior",
+    "ventana": "3hojas-grande (Fija)",
+  },
+  {
+    "cantidad": 1,
+    "medida": 1.065,
+    "sistema": "8025",
+    "tipo": "Horizontal Superior",
+    "ventana": "3hojas-grande (Cerradura)",
+  },
+  {
+    "cantidad": 1,
+    "medida": 1.065,
+    "sistema": "8025",
+    "tipo": "Horizontal Inferior",
+    "ventana": "3hojas-grande (Cerradura)",
+  },
+  {
+    "cantidad": 1,
+    "medida": 0.985,
+    "sistema": "8025",
+    "tipo": "Horizontal Superior",
+    "ventana": "3hojas-grande (Centrales)",
+  },
+  {
+    "cantidad": 1,
+    "medida": 0.985,
+    "sistema": "8025",
+    "tipo": "Horizontal Inferior",
+    "ventana": "3hojas-grande (Centrales)",
+  },
+]
+`;
+
+exports[`motor 80-25 · por ventana > 3hojas-grande > vidrios 1`] = `
+[
+  {
+    "alto": 2088,
+    "ancho": 949,
+    "area": 1.981512,
+    "tipo": "Hoja Fija (Parche)",
+    "ventana": "3hojas-grande",
+  },
+  {
+    "alto": 2088,
+    "ancho": 1019,
+    "area": 2.127672,
+    "tipo": "Hoja Móvil (Cerradura)",
+    "ventana": "3hojas-grande",
+  },
+  {
+    "alto": 2088,
+    "ancho": 939,
+    "area": 1.960632,
+    "tipo": "Hoja Móvil (Central 1)",
+    "ventana": "3hojas-grande",
+  },
+]
+`;
+
+exports[`motor 80-25 · por ventana > 3hojas-pequena > accesorios 1`] = `
+{
+  "cerraduras": 1,
+  "empaqueTotal": 4.168,
+  "guiasInferior": 4,
+  "guiasSuperior": 4,
+  "rodachinas": 4,
+  "tornillosHojas": 8,
+  "tornillosInstalacion": 8,
+  "tornillosMarco": 8,
+}
+`;
+
+exports[`motor 80-25 · por ventana > 3hojas-pequena > cortes de perfiles 1`] = `
+[
+  {
+    "cantidad": 1,
+    "medida": 0.9,
+    "sistema": "8025",
+    "tipo": "Cabezal",
+    "ventana": "3hojas-pequena",
+  },
+  {
+    "cantidad": 1,
+    "medida": 0.9,
+    "sistema": "8025",
+    "tipo": "Sillar",
+    "ventana": "3hojas-pequena",
+  },
+  {
+    "cantidad": 1,
+    "medida": 0.788,
+    "sistema": "8025",
+    "tipo": "Jamba Izquierda",
+    "ventana": "3hojas-pequena",
+  },
+  {
+    "cantidad": 1,
+    "medida": 0.788,
+    "sistema": "8025",
+    "tipo": "Jamba Derecha",
+    "ventana": "3hojas-pequena",
+  },
+  {
+    "cantidad": 3,
+    "medida": 0.772,
+    "sistema": "8025",
+    "tipo": "Enganche",
+    "ventana": "3hojas-pequena",
+  },
+  {
+    "cantidad": 1,
+    "medida": 0.795,
+    "sistema": "8025",
+    "tipo": "Enganche",
+    "ventana": "3hojas-pequena (Parche)",
+  },
+  {
+    "cantidad": 1,
+    "medida": 0.772,
+    "sistema": "8025",
+    "tipo": "Traslape",
+    "ventana": "3hojas-pequena",
+  },
+  {
+    "cantidad": 1,
+    "medida": 0.795,
+    "sistema": "8025",
+    "tipo": "Traslape",
+    "ventana": "3hojas-pequena (Parche)",
+  },
+  {
+    "cantidad": 1,
+    "medida": 0.295,
+    "sistema": "8025",
+    "tipo": "Horizontal Superior",
+    "ventana": "3hojas-pequena (Fija)",
+  },
+  {
+    "cantidad": 1,
+    "medida": 0.295,
+    "sistema": "8025",
+    "tipo": "Horizontal Inferior",
+    "ventana": "3hojas-pequena (Fija)",
+  },
+  {
+    "cantidad": 1,
+    "medida": 0.365,
+    "sistema": "8025",
+    "tipo": "Horizontal Superior",
+    "ventana": "3hojas-pequena (Cerradura)",
+  },
+  {
+    "cantidad": 1,
+    "medida": 0.365,
+    "sistema": "8025",
+    "tipo": "Horizontal Inferior",
+    "ventana": "3hojas-pequena (Cerradura)",
+  },
+  {
+    "cantidad": 1,
+    "medida": 0.285,
+    "sistema": "8025",
+    "tipo": "Horizontal Superior",
+    "ventana": "3hojas-pequena (Centrales)",
+  },
+  {
+    "cantidad": 1,
+    "medida": 0.285,
+    "sistema": "8025",
+    "tipo": "Horizontal Inferior",
+    "ventana": "3hojas-pequena (Centrales)",
+  },
+]
+`;
+
+exports[`motor 80-25 · por ventana > 3hojas-pequena > vidrios 1`] = `
+[
+  {
+    "alto": 788,
+    "ancho": 249,
+    "area": 0.196212,
+    "tipo": "Hoja Fija (Parche)",
+    "ventana": "3hojas-pequena",
+  },
+  {
+    "alto": 788,
+    "ancho": 319,
+    "area": 0.251372,
+    "tipo": "Hoja Móvil (Cerradura)",
+    "ventana": "3hojas-pequena",
+  },
+  {
+    "alto": 788,
+    "ancho": 239,
+    "area": 0.188332,
+    "tipo": "Hoja Móvil (Central 1)",
+    "ventana": "3hojas-pequena",
+  },
+]
+`;
+
+exports[`motor 80-25 · por ventana > 3hojas-tipica > accesorios 1`] = `
+{
+  "cerraduras": 1,
+  "empaqueTotal": 8.034667,
+  "guiasInferior": 4,
+  "guiasSuperior": 4,
+  "rodachinas": 4,
+  "tornillosHojas": 8,
+  "tornillosInstalacion": 8,
+  "tornillosMarco": 8,
+}
+`;
+
+exports[`motor 80-25 · por ventana > 3hojas-tipica > cortes de perfiles 1`] = `
+[
+  {
+    "cantidad": 1,
+    "medida": 2,
+    "sistema": "8025",
+    "tipo": "Cabezal",
+    "ventana": "3hojas-tipica",
+  },
+  {
+    "cantidad": 1,
+    "medida": 2,
+    "sistema": "8025",
+    "tipo": "Sillar",
+    "ventana": "3hojas-tipica",
+  },
+  {
+    "cantidad": 1,
+    "medida": 1.388,
+    "sistema": "8025",
+    "tipo": "Jamba Izquierda",
+    "ventana": "3hojas-tipica",
+  },
+  {
+    "cantidad": 1,
+    "medida": 1.388,
+    "sistema": "8025",
+    "tipo": "Jamba Derecha",
+    "ventana": "3hojas-tipica",
+  },
+  {
+    "cantidad": 3,
+    "medida": 1.372,
+    "sistema": "8025",
+    "tipo": "Enganche",
+    "ventana": "3hojas-tipica",
+  },
+  {
+    "cantidad": 1,
+    "medida": 1.395,
+    "sistema": "8025",
+    "tipo": "Enganche",
+    "ventana": "3hojas-tipica (Parche)",
+  },
+  {
+    "cantidad": 1,
+    "medida": 1.372,
+    "sistema": "8025",
+    "tipo": "Traslape",
+    "ventana": "3hojas-tipica",
+  },
+  {
+    "cantidad": 1,
+    "medida": 1.395,
+    "sistema": "8025",
+    "tipo": "Traslape",
+    "ventana": "3hojas-tipica (Parche)",
+  },
+  {
+    "cantidad": 1,
+    "medida": 0.661667,
+    "sistema": "8025",
+    "tipo": "Horizontal Superior",
+    "ventana": "3hojas-tipica (Fija)",
+  },
+  {
+    "cantidad": 1,
+    "medida": 0.661667,
+    "sistema": "8025",
+    "tipo": "Horizontal Inferior",
+    "ventana": "3hojas-tipica (Fija)",
+  },
+  {
+    "cantidad": 1,
+    "medida": 0.731667,
+    "sistema": "8025",
+    "tipo": "Horizontal Superior",
+    "ventana": "3hojas-tipica (Cerradura)",
+  },
+  {
+    "cantidad": 1,
+    "medida": 0.731667,
+    "sistema": "8025",
+    "tipo": "Horizontal Inferior",
+    "ventana": "3hojas-tipica (Cerradura)",
+  },
+  {
+    "cantidad": 1,
+    "medida": 0.651667,
+    "sistema": "8025",
+    "tipo": "Horizontal Superior",
+    "ventana": "3hojas-tipica (Centrales)",
+  },
+  {
+    "cantidad": 1,
+    "medida": 0.651667,
+    "sistema": "8025",
+    "tipo": "Horizontal Inferior",
+    "ventana": "3hojas-tipica (Centrales)",
+  },
+]
+`;
+
+exports[`motor 80-25 · por ventana > 3hojas-tipica > vidrios 1`] = `
+[
+  {
+    "alto": 1388,
+    "ancho": 615.666667,
+    "area": 0.854545,
+    "tipo": "Hoja Fija (Parche)",
+    "ventana": "3hojas-tipica",
+  },
+  {
+    "alto": 1388,
+    "ancho": 685.666667,
+    "area": 0.951705,
+    "tipo": "Hoja Móvil (Cerradura)",
+    "ventana": "3hojas-tipica",
+  },
+  {
+    "alto": 1388,
+    "ancho": 605.666667,
+    "area": 0.840665,
+    "tipo": "Hoja Móvil (Central 1)",
+    "ventana": "3hojas-tipica",
+  },
+]
+`;
+
+exports[`motor 80-25 · por ventana > 4hojas-extrema > accesorios 1`] = `
+{
+  "cerraduras": 1,
+  "empaqueTotal": 22.902,
+  "guiasInferior": 6,
+  "guiasSuperior": 6,
+  "rodachinas": 6,
+  "tornillosHojas": 12,
+  "tornillosInstalacion": 8,
+  "tornillosMarco": 8,
+}
+`;
+
+exports[`motor 80-25 · por ventana > 4hojas-extrema > cortes de perfiles 1`] = `
+[
+  {
+    "cantidad": 1,
+    "medida": 5.9,
+    "sistema": "8025",
+    "tipo": "Cabezal",
+    "ventana": "4hojas-extrema",
+  },
+  {
+    "cantidad": 1,
+    "medida": 5.9,
+    "sistema": "8025",
+    "tipo": "Sillar",
+    "ventana": "4hojas-extrema",
+  },
+  {
+    "cantidad": 1,
+    "medida": 2.388,
+    "sistema": "8025",
+    "tipo": "Jamba Izquierda",
+    "ventana": "4hojas-extrema",
+  },
+  {
+    "cantidad": 1,
+    "medida": 2.388,
+    "sistema": "8025",
+    "tipo": "Jamba Derecha",
+    "ventana": "4hojas-extrema",
+  },
+  {
+    "cantidad": 5,
+    "medida": 2.372,
+    "sistema": "8025",
+    "tipo": "Enganche",
+    "ventana": "4hojas-extrema",
+  },
+  {
+    "cantidad": 1,
+    "medida": 2.395,
+    "sistema": "8025",
+    "tipo": "Enganche",
+    "ventana": "4hojas-extrema (Parche)",
+  },
+  {
+    "cantidad": 1,
+    "medida": 2.372,
+    "sistema": "8025",
+    "tipo": "Traslape",
+    "ventana": "4hojas-extrema",
+  },
+  {
+    "cantidad": 1,
+    "medida": 2.395,
+    "sistema": "8025",
+    "tipo": "Traslape",
+    "ventana": "4hojas-extrema (Parche)",
+  },
+  {
+    "cantidad": 1,
+    "medida": 1.483,
+    "sistema": "8025",
+    "tipo": "Horizontal Superior",
+    "ventana": "4hojas-extrema (Fija)",
+  },
+  {
+    "cantidad": 1,
+    "medida": 1.483,
+    "sistema": "8025",
+    "tipo": "Horizontal Inferior",
+    "ventana": "4hojas-extrema (Fija)",
+  },
+  {
+    "cantidad": 1,
+    "medida": 1.549,
+    "sistema": "8025",
+    "tipo": "Horizontal Superior",
+    "ventana": "4hojas-extrema (Cerradura)",
+  },
+  {
+    "cantidad": 1,
+    "medida": 1.549,
+    "sistema": "8025",
+    "tipo": "Horizontal Inferior",
+    "ventana": "4hojas-extrema (Cerradura)",
+  },
+  {
+    "cantidad": 2,
+    "medida": 1.474,
+    "sistema": "8025",
+    "tipo": "Horizontal Superior",
+    "ventana": "4hojas-extrema (Centrales)",
+  },
+  {
+    "cantidad": 2,
+    "medida": 1.474,
+    "sistema": "8025",
+    "tipo": "Horizontal Inferior",
+    "ventana": "4hojas-extrema (Centrales)",
+  },
+]
+`;
+
+exports[`motor 80-25 · por ventana > 4hojas-extrema > vidrios 1`] = `
+[
+  {
+    "alto": 2388,
+    "ancho": 1437,
+    "area": 3.431556,
+    "tipo": "Hoja Fija (Parche)",
+    "ventana": "4hojas-extrema",
+  },
+  {
+    "alto": 2388,
+    "ancho": 1503,
+    "area": 3.589164,
+    "tipo": "Hoja Móvil (Cerradura)",
+    "ventana": "4hojas-extrema",
+  },
+  {
+    "alto": 2388,
+    "ancho": 1428,
+    "area": 3.410064,
+    "tipo": "Hoja Móvil (Central 1)",
+    "ventana": "4hojas-extrema",
+  },
+  {
+    "alto": 2388,
+    "ancho": 1428,
+    "area": 3.410064,
+    "tipo": "Hoja Móvil (Central 2)",
+    "ventana": "4hojas-extrema",
+  },
+]
+`;
+
+exports[`motor 80-25 · por ventana > 4hojas-fueraDeBarra > accesorios 1`] = `
+{
+  "cerraduras": 1,
+  "empaqueTotal": 18.102,
+  "guiasInferior": 6,
+  "guiasSuperior": 6,
+  "rodachinas": 6,
+  "tornillosHojas": 12,
+  "tornillosInstalacion": 8,
+  "tornillosMarco": 8,
+}
+`;
+
+exports[`motor 80-25 · por ventana > 4hojas-fueraDeBarra > cortes de perfiles 1`] = `
+[
+  {
+    "cantidad": 1,
+    "medida": 6.3,
+    "sistema": "8025",
+    "tipo": "Cabezal",
+    "ventana": "4hojas-fueraDeBarra",
+  },
+  {
+    "cantidad": 1,
+    "medida": 6.3,
+    "sistema": "8025",
+    "tipo": "Sillar",
+    "ventana": "4hojas-fueraDeBarra",
+  },
+  {
+    "cantidad": 1,
+    "medida": 1.488,
+    "sistema": "8025",
+    "tipo": "Jamba Izquierda",
+    "ventana": "4hojas-fueraDeBarra",
+  },
+  {
+    "cantidad": 1,
+    "medida": 1.488,
+    "sistema": "8025",
+    "tipo": "Jamba Derecha",
+    "ventana": "4hojas-fueraDeBarra",
+  },
+  {
+    "cantidad": 5,
+    "medida": 1.472,
+    "sistema": "8025",
+    "tipo": "Enganche",
+    "ventana": "4hojas-fueraDeBarra",
+  },
+  {
+    "cantidad": 1,
+    "medida": 1.495,
+    "sistema": "8025",
+    "tipo": "Enganche",
+    "ventana": "4hojas-fueraDeBarra (Parche)",
+  },
+  {
+    "cantidad": 1,
+    "medida": 1.472,
+    "sistema": "8025",
+    "tipo": "Traslape",
+    "ventana": "4hojas-fueraDeBarra",
+  },
+  {
+    "cantidad": 1,
+    "medida": 1.495,
+    "sistema": "8025",
+    "tipo": "Traslape",
+    "ventana": "4hojas-fueraDeBarra (Parche)",
+  },
+  {
+    "cantidad": 1,
+    "medida": 1.583,
+    "sistema": "8025",
+    "tipo": "Horizontal Superior",
+    "ventana": "4hojas-fueraDeBarra (Fija)",
+  },
+  {
+    "cantidad": 1,
+    "medida": 1.583,
+    "sistema": "8025",
+    "tipo": "Horizontal Inferior",
+    "ventana": "4hojas-fueraDeBarra (Fija)",
+  },
+  {
+    "cantidad": 1,
+    "medida": 1.649,
+    "sistema": "8025",
+    "tipo": "Horizontal Superior",
+    "ventana": "4hojas-fueraDeBarra (Cerradura)",
+  },
+  {
+    "cantidad": 1,
+    "medida": 1.649,
+    "sistema": "8025",
+    "tipo": "Horizontal Inferior",
+    "ventana": "4hojas-fueraDeBarra (Cerradura)",
+  },
+  {
+    "cantidad": 2,
+    "medida": 1.574,
+    "sistema": "8025",
+    "tipo": "Horizontal Superior",
+    "ventana": "4hojas-fueraDeBarra (Centrales)",
+  },
+  {
+    "cantidad": 2,
+    "medida": 1.574,
+    "sistema": "8025",
+    "tipo": "Horizontal Inferior",
+    "ventana": "4hojas-fueraDeBarra (Centrales)",
+  },
+]
+`;
+
+exports[`motor 80-25 · por ventana > 4hojas-fueraDeBarra > vidrios 1`] = `
+[
+  {
+    "alto": 1488,
+    "ancho": 1537,
+    "area": 2.287056,
+    "tipo": "Hoja Fija (Parche)",
+    "ventana": "4hojas-fueraDeBarra",
+  },
+  {
+    "alto": 1488,
+    "ancho": 1603,
+    "area": 2.385264,
+    "tipo": "Hoja Móvil (Cerradura)",
+    "ventana": "4hojas-fueraDeBarra",
+  },
+  {
+    "alto": 1488,
+    "ancho": 1528,
+    "area": 2.273664,
+    "tipo": "Hoja Móvil (Central 1)",
+    "ventana": "4hojas-fueraDeBarra",
+  },
+  {
+    "alto": 1488,
+    "ancho": 1528,
+    "area": 2.273664,
+    "tipo": "Hoja Móvil (Central 2)",
+    "ventana": "4hojas-fueraDeBarra",
+  },
+]
+`;
+
+exports[`motor 80-25 · por ventana > 4hojas-grande > accesorios 1`] = `
+{
+  "cerraduras": 1,
+  "empaqueTotal": 16.752,
+  "guiasInferior": 6,
+  "guiasSuperior": 6,
+  "rodachinas": 6,
+  "tornillosHojas": 12,
+  "tornillosInstalacion": 8,
+  "tornillosMarco": 8,
+}
+`;
+
+exports[`motor 80-25 · por ventana > 4hojas-grande > cortes de perfiles 1`] = `
+[
+  {
+    "cantidad": 1,
+    "medida": 3,
+    "sistema": "8025",
+    "tipo": "Cabezal",
+    "ventana": "4hojas-grande",
+  },
+  {
+    "cantidad": 1,
+    "medida": 3,
+    "sistema": "8025",
+    "tipo": "Sillar",
+    "ventana": "4hojas-grande",
+  },
+  {
+    "cantidad": 1,
+    "medida": 2.088,
+    "sistema": "8025",
+    "tipo": "Jamba Izquierda",
+    "ventana": "4hojas-grande",
+  },
+  {
+    "cantidad": 1,
+    "medida": 2.088,
+    "sistema": "8025",
+    "tipo": "Jamba Derecha",
+    "ventana": "4hojas-grande",
+  },
+  {
+    "cantidad": 5,
+    "medida": 2.072,
+    "sistema": "8025",
+    "tipo": "Enganche",
+    "ventana": "4hojas-grande",
+  },
+  {
+    "cantidad": 1,
+    "medida": 2.095,
+    "sistema": "8025",
+    "tipo": "Enganche",
+    "ventana": "4hojas-grande (Parche)",
+  },
+  {
+    "cantidad": 1,
+    "medida": 2.072,
+    "sistema": "8025",
+    "tipo": "Traslape",
+    "ventana": "4hojas-grande",
+  },
+  {
+    "cantidad": 1,
+    "medida": 2.095,
+    "sistema": "8025",
+    "tipo": "Traslape",
+    "ventana": "4hojas-grande (Parche)",
+  },
+  {
+    "cantidad": 1,
+    "medida": 0.758,
+    "sistema": "8025",
+    "tipo": "Horizontal Superior",
+    "ventana": "4hojas-grande (Fija)",
+  },
+  {
+    "cantidad": 1,
+    "medida": 0.758,
+    "sistema": "8025",
+    "tipo": "Horizontal Inferior",
+    "ventana": "4hojas-grande (Fija)",
+  },
+  {
+    "cantidad": 1,
+    "medida": 0.824,
+    "sistema": "8025",
+    "tipo": "Horizontal Superior",
+    "ventana": "4hojas-grande (Cerradura)",
+  },
+  {
+    "cantidad": 1,
+    "medida": 0.824,
+    "sistema": "8025",
+    "tipo": "Horizontal Inferior",
+    "ventana": "4hojas-grande (Cerradura)",
+  },
+  {
+    "cantidad": 2,
+    "medida": 0.749,
+    "sistema": "8025",
+    "tipo": "Horizontal Superior",
+    "ventana": "4hojas-grande (Centrales)",
+  },
+  {
+    "cantidad": 2,
+    "medida": 0.749,
+    "sistema": "8025",
+    "tipo": "Horizontal Inferior",
+    "ventana": "4hojas-grande (Centrales)",
+  },
+]
+`;
+
+exports[`motor 80-25 · por ventana > 4hojas-grande > vidrios 1`] = `
+[
+  {
+    "alto": 2088,
+    "ancho": 712,
+    "area": 1.486656,
+    "tipo": "Hoja Fija (Parche)",
+    "ventana": "4hojas-grande",
+  },
+  {
+    "alto": 2088,
+    "ancho": 778,
+    "area": 1.624464,
+    "tipo": "Hoja Móvil (Cerradura)",
+    "ventana": "4hojas-grande",
+  },
+  {
+    "alto": 2088,
+    "ancho": 703,
+    "area": 1.467864,
+    "tipo": "Hoja Móvil (Central 1)",
+    "ventana": "4hojas-grande",
+  },
+  {
+    "alto": 2088,
+    "ancho": 703,
+    "area": 1.467864,
+    "tipo": "Hoja Móvil (Central 2)",
+    "ventana": "4hojas-grande",
+  },
+]
+`;
+
+exports[`motor 80-25 · por ventana > 4hojas-pequena > accesorios 1`] = `
+{
+  "cerraduras": 1,
+  "empaqueTotal": 5.802,
+  "guiasInferior": 6,
+  "guiasSuperior": 6,
+  "rodachinas": 6,
+  "tornillosHojas": 12,
+  "tornillosInstalacion": 8,
+  "tornillosMarco": 8,
+}
+`;
+
+exports[`motor 80-25 · por ventana > 4hojas-pequena > cortes de perfiles 1`] = `
+[
+  {
+    "cantidad": 1,
+    "medida": 0.9,
+    "sistema": "8025",
+    "tipo": "Cabezal",
+    "ventana": "4hojas-pequena",
+  },
+  {
+    "cantidad": 1,
+    "medida": 0.9,
+    "sistema": "8025",
+    "tipo": "Sillar",
+    "ventana": "4hojas-pequena",
+  },
+  {
+    "cantidad": 1,
+    "medida": 0.788,
+    "sistema": "8025",
+    "tipo": "Jamba Izquierda",
+    "ventana": "4hojas-pequena",
+  },
+  {
+    "cantidad": 1,
+    "medida": 0.788,
+    "sistema": "8025",
+    "tipo": "Jamba Derecha",
+    "ventana": "4hojas-pequena",
+  },
+  {
+    "cantidad": 5,
+    "medida": 0.772,
+    "sistema": "8025",
+    "tipo": "Enganche",
+    "ventana": "4hojas-pequena",
+  },
+  {
+    "cantidad": 1,
+    "medida": 0.795,
+    "sistema": "8025",
+    "tipo": "Enganche",
+    "ventana": "4hojas-pequena (Parche)",
+  },
+  {
+    "cantidad": 1,
+    "medida": 0.772,
+    "sistema": "8025",
+    "tipo": "Traslape",
+    "ventana": "4hojas-pequena",
+  },
+  {
+    "cantidad": 1,
+    "medida": 0.795,
+    "sistema": "8025",
+    "tipo": "Traslape",
+    "ventana": "4hojas-pequena (Parche)",
+  },
+  {
+    "cantidad": 1,
+    "medida": 0.233,
+    "sistema": "8025",
+    "tipo": "Horizontal Superior",
+    "ventana": "4hojas-pequena (Fija)",
+  },
+  {
+    "cantidad": 1,
+    "medida": 0.233,
+    "sistema": "8025",
+    "tipo": "Horizontal Inferior",
+    "ventana": "4hojas-pequena (Fija)",
+  },
+  {
+    "cantidad": 1,
+    "medida": 0.299,
+    "sistema": "8025",
+    "tipo": "Horizontal Superior",
+    "ventana": "4hojas-pequena (Cerradura)",
+  },
+  {
+    "cantidad": 1,
+    "medida": 0.299,
+    "sistema": "8025",
+    "tipo": "Horizontal Inferior",
+    "ventana": "4hojas-pequena (Cerradura)",
+  },
+  {
+    "cantidad": 2,
+    "medida": 0.224,
+    "sistema": "8025",
+    "tipo": "Horizontal Superior",
+    "ventana": "4hojas-pequena (Centrales)",
+  },
+  {
+    "cantidad": 2,
+    "medida": 0.224,
+    "sistema": "8025",
+    "tipo": "Horizontal Inferior",
+    "ventana": "4hojas-pequena (Centrales)",
+  },
+]
+`;
+
+exports[`motor 80-25 · por ventana > 4hojas-pequena > vidrios 1`] = `
+[
+  {
+    "alto": 788,
+    "ancho": 187,
+    "area": 0.147356,
+    "tipo": "Hoja Fija (Parche)",
+    "ventana": "4hojas-pequena",
+  },
+  {
+    "alto": 788,
+    "ancho": 253,
+    "area": 0.199364,
+    "tipo": "Hoja Móvil (Cerradura)",
+    "ventana": "4hojas-pequena",
+  },
+  {
+    "alto": 788,
+    "ancho": 178,
+    "area": 0.140264,
+    "tipo": "Hoja Móvil (Central 1)",
+    "ventana": "4hojas-pequena",
+  },
+  {
+    "alto": 788,
+    "ancho": 178,
+    "area": 0.140264,
+    "tipo": "Hoja Móvil (Central 2)",
+    "ventana": "4hojas-pequena",
+  },
+]
+`;
+
+exports[`motor 80-25 · por ventana > 4hojas-tipica > accesorios 1`] = `
+{
+  "cerraduras": 1,
+  "empaqueTotal": 11.052,
+  "guiasInferior": 6,
+  "guiasSuperior": 6,
+  "rodachinas": 6,
+  "tornillosHojas": 12,
+  "tornillosInstalacion": 8,
+  "tornillosMarco": 8,
+}
+`;
+
+exports[`motor 80-25 · por ventana > 4hojas-tipica > cortes de perfiles 1`] = `
+[
+  {
+    "cantidad": 1,
+    "medida": 2,
+    "sistema": "8025",
+    "tipo": "Cabezal",
+    "ventana": "4hojas-tipica",
+  },
+  {
+    "cantidad": 1,
+    "medida": 2,
+    "sistema": "8025",
+    "tipo": "Sillar",
+    "ventana": "4hojas-tipica",
+  },
+  {
+    "cantidad": 1,
+    "medida": 1.388,
+    "sistema": "8025",
+    "tipo": "Jamba Izquierda",
+    "ventana": "4hojas-tipica",
+  },
+  {
+    "cantidad": 1,
+    "medida": 1.388,
+    "sistema": "8025",
+    "tipo": "Jamba Derecha",
+    "ventana": "4hojas-tipica",
+  },
+  {
+    "cantidad": 5,
+    "medida": 1.372,
+    "sistema": "8025",
+    "tipo": "Enganche",
+    "ventana": "4hojas-tipica",
+  },
+  {
+    "cantidad": 1,
+    "medida": 1.395,
+    "sistema": "8025",
+    "tipo": "Enganche",
+    "ventana": "4hojas-tipica (Parche)",
+  },
+  {
+    "cantidad": 1,
+    "medida": 1.372,
+    "sistema": "8025",
+    "tipo": "Traslape",
+    "ventana": "4hojas-tipica",
+  },
+  {
+    "cantidad": 1,
+    "medida": 1.395,
+    "sistema": "8025",
+    "tipo": "Traslape",
+    "ventana": "4hojas-tipica (Parche)",
+  },
+  {
+    "cantidad": 1,
+    "medida": 0.508,
+    "sistema": "8025",
+    "tipo": "Horizontal Superior",
+    "ventana": "4hojas-tipica (Fija)",
+  },
+  {
+    "cantidad": 1,
+    "medida": 0.508,
+    "sistema": "8025",
+    "tipo": "Horizontal Inferior",
+    "ventana": "4hojas-tipica (Fija)",
+  },
+  {
+    "cantidad": 1,
+    "medida": 0.574,
+    "sistema": "8025",
+    "tipo": "Horizontal Superior",
+    "ventana": "4hojas-tipica (Cerradura)",
+  },
+  {
+    "cantidad": 1,
+    "medida": 0.574,
+    "sistema": "8025",
+    "tipo": "Horizontal Inferior",
+    "ventana": "4hojas-tipica (Cerradura)",
+  },
+  {
+    "cantidad": 2,
+    "medida": 0.499,
+    "sistema": "8025",
+    "tipo": "Horizontal Superior",
+    "ventana": "4hojas-tipica (Centrales)",
+  },
+  {
+    "cantidad": 2,
+    "medida": 0.499,
+    "sistema": "8025",
+    "tipo": "Horizontal Inferior",
+    "ventana": "4hojas-tipica (Centrales)",
+  },
+]
+`;
+
+exports[`motor 80-25 · por ventana > 4hojas-tipica > vidrios 1`] = `
+[
+  {
+    "alto": 1388,
+    "ancho": 462,
+    "area": 0.641256,
+    "tipo": "Hoja Fija (Parche)",
+    "ventana": "4hojas-tipica",
+  },
+  {
+    "alto": 1388,
+    "ancho": 528,
+    "area": 0.732864,
+    "tipo": "Hoja Móvil (Cerradura)",
+    "ventana": "4hojas-tipica",
+  },
+  {
+    "alto": 1388,
+    "ancho": 453,
+    "area": 0.628764,
+    "tipo": "Hoja Móvil (Central 1)",
+    "ventana": "4hojas-tipica",
+  },
+  {
+    "alto": 1388,
+    "ancho": 453,
+    "area": 0.628764,
+    "tipo": "Hoja Móvil (Central 2)",
+    "ventana": "4hojas-tipica",
+  },
+]
+`;
+
+exports[`motor 80-25 · por ventana > 5hojas-extrema > accesorios 1`] = `
+{
+  "cerraduras": 1,
+  "empaqueTotal": 28.176,
+  "guiasInferior": 8,
+  "guiasSuperior": 8,
+  "rodachinas": 8,
+  "tornillosHojas": 16,
+  "tornillosInstalacion": 8,
+  "tornillosMarco": 8,
+}
+`;
+
+exports[`motor 80-25 · por ventana > 5hojas-extrema > cortes de perfiles 1`] = `
+[
+  {
+    "cantidad": 1,
+    "medida": 5.9,
+    "sistema": "8025",
+    "tipo": "Cabezal",
+    "ventana": "5hojas-extrema",
+  },
+  {
+    "cantidad": 1,
+    "medida": 5.9,
+    "sistema": "8025",
+    "tipo": "Sillar",
+    "ventana": "5hojas-extrema",
+  },
+  {
+    "cantidad": 1,
+    "medida": 2.388,
+    "sistema": "8025",
+    "tipo": "Jamba Izquierda",
+    "ventana": "5hojas-extrema",
+  },
+  {
+    "cantidad": 1,
+    "medida": 2.388,
+    "sistema": "8025",
+    "tipo": "Jamba Derecha",
+    "ventana": "5hojas-extrema",
+  },
+  {
+    "cantidad": 7,
+    "medida": 2.372,
+    "sistema": "8025",
+    "tipo": "Enganche",
+    "ventana": "5hojas-extrema",
+  },
+  {
+    "cantidad": 1,
+    "medida": 2.395,
+    "sistema": "8025",
+    "tipo": "Enganche",
+    "ventana": "5hojas-extrema (Parche)",
+  },
+  {
+    "cantidad": 1,
+    "medida": 2.372,
+    "sistema": "8025",
+    "tipo": "Traslape",
+    "ventana": "5hojas-extrema",
+  },
+  {
+    "cantidad": 1,
+    "medida": 2.395,
+    "sistema": "8025",
+    "tipo": "Traslape",
+    "ventana": "5hojas-extrema (Parche)",
+  },
+  {
+    "cantidad": 5,
+    "medida": 1.19,
+    "sistema": "8025",
+    "tipo": "Horizontal Superior",
+    "ventana": "5hojas-extrema",
+  },
+  {
+    "cantidad": 5,
+    "medida": 1.19,
+    "sistema": "8025",
+    "tipo": "Horizontal Inferior",
+    "ventana": "5hojas-extrema",
+  },
+]
+`;
+
+exports[`motor 80-25 · por ventana > 5hojas-extrema > vidrios 1`] = `
+[
+  {
+    "alto": 2388,
+    "ancho": 1134,
+    "area": 2.707992,
+    "tipo": "Hoja Móvil 1",
+    "ventana": "5hojas-extrema",
+  },
+  {
+    "alto": 2388,
+    "ancho": 1134,
+    "area": 2.707992,
+    "tipo": "Hoja Móvil 2",
+    "ventana": "5hojas-extrema",
+  },
+  {
+    "alto": 2388,
+    "ancho": 1134,
+    "area": 2.707992,
+    "tipo": "Hoja Móvil 3",
+    "ventana": "5hojas-extrema",
+  },
+  {
+    "alto": 2388,
+    "ancho": 1134,
+    "area": 2.707992,
+    "tipo": "Hoja Móvil 4",
+    "ventana": "5hojas-extrema",
+  },
+  {
+    "alto": 2388,
+    "ancho": 1134,
+    "area": 2.707992,
+    "tipo": "Hoja Fija 1",
+    "ventana": "5hojas-extrema",
+  },
+]
+`;
+
+exports[`motor 80-25 · por ventana > 5hojas-fueraDeBarra > accesorios 1`] = `
+{
+  "cerraduras": 1,
+  "empaqueTotal": 21.616,
+  "guiasInferior": 8,
+  "guiasSuperior": 8,
+  "rodachinas": 8,
+  "tornillosHojas": 16,
+  "tornillosInstalacion": 8,
+  "tornillosMarco": 8,
+}
+`;
+
+exports[`motor 80-25 · por ventana > 5hojas-fueraDeBarra > cortes de perfiles 1`] = `
+[
+  {
+    "cantidad": 1,
+    "medida": 6.3,
+    "sistema": "8025",
+    "tipo": "Cabezal",
+    "ventana": "5hojas-fueraDeBarra",
+  },
+  {
+    "cantidad": 1,
+    "medida": 6.3,
+    "sistema": "8025",
+    "tipo": "Sillar",
+    "ventana": "5hojas-fueraDeBarra",
+  },
+  {
+    "cantidad": 1,
+    "medida": 1.488,
+    "sistema": "8025",
+    "tipo": "Jamba Izquierda",
+    "ventana": "5hojas-fueraDeBarra",
+  },
+  {
+    "cantidad": 1,
+    "medida": 1.488,
+    "sistema": "8025",
+    "tipo": "Jamba Derecha",
+    "ventana": "5hojas-fueraDeBarra",
+  },
+  {
+    "cantidad": 7,
+    "medida": 1.472,
+    "sistema": "8025",
+    "tipo": "Enganche",
+    "ventana": "5hojas-fueraDeBarra",
+  },
+  {
+    "cantidad": 1,
+    "medida": 1.495,
+    "sistema": "8025",
+    "tipo": "Enganche",
+    "ventana": "5hojas-fueraDeBarra (Parche)",
+  },
+  {
+    "cantidad": 1,
+    "medida": 1.472,
+    "sistema": "8025",
+    "tipo": "Traslape",
+    "ventana": "5hojas-fueraDeBarra",
+  },
+  {
+    "cantidad": 1,
+    "medida": 1.495,
+    "sistema": "8025",
+    "tipo": "Traslape",
+    "ventana": "5hojas-fueraDeBarra (Parche)",
+  },
+  {
+    "cantidad": 5,
+    "medida": 1.27,
+    "sistema": "8025",
+    "tipo": "Horizontal Superior",
+    "ventana": "5hojas-fueraDeBarra",
+  },
+  {
+    "cantidad": 5,
+    "medida": 1.27,
+    "sistema": "8025",
+    "tipo": "Horizontal Inferior",
+    "ventana": "5hojas-fueraDeBarra",
+  },
+]
+`;
+
+exports[`motor 80-25 · por ventana > 5hojas-fueraDeBarra > vidrios 1`] = `
+[
+  {
+    "alto": 1488,
+    "ancho": 1214,
+    "area": 1.806432,
+    "tipo": "Hoja Móvil 1",
+    "ventana": "5hojas-fueraDeBarra",
+  },
+  {
+    "alto": 1488,
+    "ancho": 1214,
+    "area": 1.806432,
+    "tipo": "Hoja Móvil 2",
+    "ventana": "5hojas-fueraDeBarra",
+  },
+  {
+    "alto": 1488,
+    "ancho": 1214,
+    "area": 1.806432,
+    "tipo": "Hoja Móvil 3",
+    "ventana": "5hojas-fueraDeBarra",
+  },
+  {
+    "alto": 1488,
+    "ancho": 1214,
+    "area": 1.806432,
+    "tipo": "Hoja Móvil 4",
+    "ventana": "5hojas-fueraDeBarra",
+  },
+  {
+    "alto": 1488,
+    "ancho": 1214,
+    "area": 1.806432,
+    "tipo": "Hoja Fija 1",
+    "ventana": "5hojas-fueraDeBarra",
+  },
+]
+`;
+
+exports[`motor 80-25 · por ventana > 5hojas-grande > accesorios 1`] = `
+{
+  "cerraduras": 1,
+  "empaqueTotal": 21.136,
+  "guiasInferior": 8,
+  "guiasSuperior": 8,
+  "rodachinas": 8,
+  "tornillosHojas": 16,
+  "tornillosInstalacion": 8,
+  "tornillosMarco": 8,
+}
+`;
+
+exports[`motor 80-25 · por ventana > 5hojas-grande > cortes de perfiles 1`] = `
+[
+  {
+    "cantidad": 1,
+    "medida": 3,
+    "sistema": "8025",
+    "tipo": "Cabezal",
+    "ventana": "5hojas-grande",
+  },
+  {
+    "cantidad": 1,
+    "medida": 3,
+    "sistema": "8025",
+    "tipo": "Sillar",
+    "ventana": "5hojas-grande",
+  },
+  {
+    "cantidad": 1,
+    "medida": 2.088,
+    "sistema": "8025",
+    "tipo": "Jamba Izquierda",
+    "ventana": "5hojas-grande",
+  },
+  {
+    "cantidad": 1,
+    "medida": 2.088,
+    "sistema": "8025",
+    "tipo": "Jamba Derecha",
+    "ventana": "5hojas-grande",
+  },
+  {
+    "cantidad": 7,
+    "medida": 2.072,
+    "sistema": "8025",
+    "tipo": "Enganche",
+    "ventana": "5hojas-grande",
+  },
+  {
+    "cantidad": 1,
+    "medida": 2.095,
+    "sistema": "8025",
+    "tipo": "Enganche",
+    "ventana": "5hojas-grande (Parche)",
+  },
+  {
+    "cantidad": 1,
+    "medida": 2.072,
+    "sistema": "8025",
+    "tipo": "Traslape",
+    "ventana": "5hojas-grande",
+  },
+  {
+    "cantidad": 1,
+    "medida": 2.095,
+    "sistema": "8025",
+    "tipo": "Traslape",
+    "ventana": "5hojas-grande (Parche)",
+  },
+  {
+    "cantidad": 5,
+    "medida": 0.61,
+    "sistema": "8025",
+    "tipo": "Horizontal Superior",
+    "ventana": "5hojas-grande",
+  },
+  {
+    "cantidad": 5,
+    "medida": 0.61,
+    "sistema": "8025",
+    "tipo": "Horizontal Inferior",
+    "ventana": "5hojas-grande",
+  },
+]
+`;
+
+exports[`motor 80-25 · por ventana > 5hojas-grande > vidrios 1`] = `
+[
+  {
+    "alto": 2088,
+    "ancho": 554,
+    "area": 1.156752,
+    "tipo": "Hoja Móvil 1",
+    "ventana": "5hojas-grande",
+  },
+  {
+    "alto": 2088,
+    "ancho": 554,
+    "area": 1.156752,
+    "tipo": "Hoja Móvil 2",
+    "ventana": "5hojas-grande",
+  },
+  {
+    "alto": 2088,
+    "ancho": 554,
+    "area": 1.156752,
+    "tipo": "Hoja Móvil 3",
+    "ventana": "5hojas-grande",
+  },
+  {
+    "alto": 2088,
+    "ancho": 554,
+    "area": 1.156752,
+    "tipo": "Hoja Móvil 4",
+    "ventana": "5hojas-grande",
+  },
+  {
+    "alto": 2088,
+    "ancho": 554,
+    "area": 1.156752,
+    "tipo": "Hoja Fija 1",
+    "ventana": "5hojas-grande",
+  },
+]
+`;
+
+exports[`motor 80-25 · por ventana > 5hojas-pequena > accesorios 1`] = `
+{
+  "cerraduras": 1,
+  "empaqueTotal": 7.376,
+  "guiasInferior": 8,
+  "guiasSuperior": 8,
+  "rodachinas": 8,
+  "tornillosHojas": 16,
+  "tornillosInstalacion": 8,
+  "tornillosMarco": 8,
+}
+`;
+
+exports[`motor 80-25 · por ventana > 5hojas-pequena > cortes de perfiles 1`] = `
+[
+  {
+    "cantidad": 1,
+    "medida": 0.9,
+    "sistema": "8025",
+    "tipo": "Cabezal",
+    "ventana": "5hojas-pequena",
+  },
+  {
+    "cantidad": 1,
+    "medida": 0.9,
+    "sistema": "8025",
+    "tipo": "Sillar",
+    "ventana": "5hojas-pequena",
+  },
+  {
+    "cantidad": 1,
+    "medida": 0.788,
+    "sistema": "8025",
+    "tipo": "Jamba Izquierda",
+    "ventana": "5hojas-pequena",
+  },
+  {
+    "cantidad": 1,
+    "medida": 0.788,
+    "sistema": "8025",
+    "tipo": "Jamba Derecha",
+    "ventana": "5hojas-pequena",
+  },
+  {
+    "cantidad": 7,
+    "medida": 0.772,
+    "sistema": "8025",
+    "tipo": "Enganche",
+    "ventana": "5hojas-pequena",
+  },
+  {
+    "cantidad": 1,
+    "medida": 0.795,
+    "sistema": "8025",
+    "tipo": "Enganche",
+    "ventana": "5hojas-pequena (Parche)",
+  },
+  {
+    "cantidad": 1,
+    "medida": 0.772,
+    "sistema": "8025",
+    "tipo": "Traslape",
+    "ventana": "5hojas-pequena",
+  },
+  {
+    "cantidad": 1,
+    "medida": 0.795,
+    "sistema": "8025",
+    "tipo": "Traslape",
+    "ventana": "5hojas-pequena (Parche)",
+  },
+  {
+    "cantidad": 5,
+    "medida": 0.19,
+    "sistema": "8025",
+    "tipo": "Horizontal Superior",
+    "ventana": "5hojas-pequena",
+  },
+  {
+    "cantidad": 5,
+    "medida": 0.19,
+    "sistema": "8025",
+    "tipo": "Horizontal Inferior",
+    "ventana": "5hojas-pequena",
+  },
+]
+`;
+
+exports[`motor 80-25 · por ventana > 5hojas-pequena > vidrios 1`] = `
+[
+  {
+    "alto": 788,
+    "ancho": 134,
+    "area": 0.105592,
+    "tipo": "Hoja Móvil 1",
+    "ventana": "5hojas-pequena",
+  },
+  {
+    "alto": 788,
+    "ancho": 134,
+    "area": 0.105592,
+    "tipo": "Hoja Móvil 2",
+    "ventana": "5hojas-pequena",
+  },
+  {
+    "alto": 788,
+    "ancho": 134,
+    "area": 0.105592,
+    "tipo": "Hoja Móvil 3",
+    "ventana": "5hojas-pequena",
+  },
+  {
+    "alto": 788,
+    "ancho": 134,
+    "area": 0.105592,
+    "tipo": "Hoja Móvil 4",
+    "ventana": "5hojas-pequena",
+  },
+  {
+    "alto": 788,
+    "ancho": 134,
+    "area": 0.105592,
+    "tipo": "Hoja Fija 1",
+    "ventana": "5hojas-pequena",
+  },
+]
+`;
+
+exports[`motor 80-25 · por ventana > 5hojas-tipica > accesorios 1`] = `
+{
+  "cerraduras": 1,
+  "empaqueTotal": 13.936,
+  "guiasInferior": 8,
+  "guiasSuperior": 8,
+  "rodachinas": 8,
+  "tornillosHojas": 16,
+  "tornillosInstalacion": 8,
+  "tornillosMarco": 8,
+}
+`;
+
+exports[`motor 80-25 · por ventana > 5hojas-tipica > cortes de perfiles 1`] = `
+[
+  {
+    "cantidad": 1,
+    "medida": 2,
+    "sistema": "8025",
+    "tipo": "Cabezal",
+    "ventana": "5hojas-tipica",
+  },
+  {
+    "cantidad": 1,
+    "medida": 2,
+    "sistema": "8025",
+    "tipo": "Sillar",
+    "ventana": "5hojas-tipica",
+  },
+  {
+    "cantidad": 1,
+    "medida": 1.388,
+    "sistema": "8025",
+    "tipo": "Jamba Izquierda",
+    "ventana": "5hojas-tipica",
+  },
+  {
+    "cantidad": 1,
+    "medida": 1.388,
+    "sistema": "8025",
+    "tipo": "Jamba Derecha",
+    "ventana": "5hojas-tipica",
+  },
+  {
+    "cantidad": 7,
+    "medida": 1.372,
+    "sistema": "8025",
+    "tipo": "Enganche",
+    "ventana": "5hojas-tipica",
+  },
+  {
+    "cantidad": 1,
+    "medida": 1.395,
+    "sistema": "8025",
+    "tipo": "Enganche",
+    "ventana": "5hojas-tipica (Parche)",
+  },
+  {
+    "cantidad": 1,
+    "medida": 1.372,
+    "sistema": "8025",
+    "tipo": "Traslape",
+    "ventana": "5hojas-tipica",
+  },
+  {
+    "cantidad": 1,
+    "medida": 1.395,
+    "sistema": "8025",
+    "tipo": "Traslape",
+    "ventana": "5hojas-tipica (Parche)",
+  },
+  {
+    "cantidad": 5,
+    "medida": 0.41,
+    "sistema": "8025",
+    "tipo": "Horizontal Superior",
+    "ventana": "5hojas-tipica",
+  },
+  {
+    "cantidad": 5,
+    "medida": 0.41,
+    "sistema": "8025",
+    "tipo": "Horizontal Inferior",
+    "ventana": "5hojas-tipica",
+  },
+]
+`;
+
+exports[`motor 80-25 · por ventana > 5hojas-tipica > vidrios 1`] = `
+[
+  {
+    "alto": 1388,
+    "ancho": 354,
+    "area": 0.491352,
+    "tipo": "Hoja Móvil 1",
+    "ventana": "5hojas-tipica",
+  },
+  {
+    "alto": 1388,
+    "ancho": 354,
+    "area": 0.491352,
+    "tipo": "Hoja Móvil 2",
+    "ventana": "5hojas-tipica",
+  },
+  {
+    "alto": 1388,
+    "ancho": 354,
+    "area": 0.491352,
+    "tipo": "Hoja Móvil 3",
+    "ventana": "5hojas-tipica",
+  },
+  {
+    "alto": 1388,
+    "ancho": 354,
+    "area": 0.491352,
+    "tipo": "Hoja Móvil 4",
+    "ventana": "5hojas-tipica",
+  },
+  {
+    "alto": 1388,
+    "ancho": 354,
+    "area": 0.491352,
+    "tipo": "Hoja Fija 1",
+    "ventana": "5hojas-tipica",
+  },
+]
+`;
+
+exports[`motor 80-25 · por ventana > 6hojas-extrema > accesorios 1`] = `
+{
+  "cerraduras": 1,
+  "empaqueTotal": 33.253333,
+  "guiasInferior": 10,
+  "guiasSuperior": 10,
+  "rodachinas": 10,
+  "tornillosHojas": 20,
+  "tornillosInstalacion": 8,
+  "tornillosMarco": 8,
+}
+`;
+
+exports[`motor 80-25 · por ventana > 6hojas-extrema > cortes de perfiles 1`] = `
+[
+  {
+    "cantidad": 1,
+    "medida": 5.9,
+    "sistema": "8025",
+    "tipo": "Cabezal",
+    "ventana": "6hojas-extrema",
+  },
+  {
+    "cantidad": 1,
+    "medida": 5.9,
+    "sistema": "8025",
+    "tipo": "Sillar",
+    "ventana": "6hojas-extrema",
+  },
+  {
+    "cantidad": 1,
+    "medida": 2.388,
+    "sistema": "8025",
+    "tipo": "Jamba Izquierda",
+    "ventana": "6hojas-extrema",
+  },
+  {
+    "cantidad": 1,
+    "medida": 2.388,
+    "sistema": "8025",
+    "tipo": "Jamba Derecha",
+    "ventana": "6hojas-extrema",
+  },
+  {
+    "cantidad": 9,
+    "medida": 2.372,
+    "sistema": "8025",
+    "tipo": "Enganche",
+    "ventana": "6hojas-extrema",
+  },
+  {
+    "cantidad": 1,
+    "medida": 2.395,
+    "sistema": "8025",
+    "tipo": "Enganche",
+    "ventana": "6hojas-extrema (Parche)",
+  },
+  {
+    "cantidad": 1,
+    "medida": 2.372,
+    "sistema": "8025",
+    "tipo": "Traslape",
+    "ventana": "6hojas-extrema",
+  },
+  {
+    "cantidad": 1,
+    "medida": 2.395,
+    "sistema": "8025",
+    "tipo": "Traslape",
+    "ventana": "6hojas-extrema (Parche)",
+  },
+  {
+    "cantidad": 6,
+    "medida": 0.993333,
+    "sistema": "8025",
+    "tipo": "Horizontal Superior",
+    "ventana": "6hojas-extrema",
+  },
+  {
+    "cantidad": 6,
+    "medida": 0.993333,
+    "sistema": "8025",
+    "tipo": "Horizontal Inferior",
+    "ventana": "6hojas-extrema",
+  },
+]
+`;
+
+exports[`motor 80-25 · por ventana > 6hojas-extrema > vidrios 1`] = `
+[
+  {
+    "alto": 2388,
+    "ancho": 937.333333,
+    "area": 2.238352,
+    "tipo": "Hoja Móvil 1",
+    "ventana": "6hojas-extrema",
+  },
+  {
+    "alto": 2388,
+    "ancho": 937.333333,
+    "area": 2.238352,
+    "tipo": "Hoja Móvil 2",
+    "ventana": "6hojas-extrema",
+  },
+  {
+    "alto": 2388,
+    "ancho": 937.333333,
+    "area": 2.238352,
+    "tipo": "Hoja Móvil 3",
+    "ventana": "6hojas-extrema",
+  },
+  {
+    "alto": 2388,
+    "ancho": 937.333333,
+    "area": 2.238352,
+    "tipo": "Hoja Móvil 4",
+    "ventana": "6hojas-extrema",
+  },
+  {
+    "alto": 2388,
+    "ancho": 937.333333,
+    "area": 2.238352,
+    "tipo": "Hoja Móvil 5",
+    "ventana": "6hojas-extrema",
+  },
+  {
+    "alto": 2388,
+    "ancho": 937.333333,
+    "area": 2.238352,
+    "tipo": "Hoja Fija 1",
+    "ventana": "6hojas-extrema",
+  },
+]
+`;
+
+exports[`motor 80-25 · por ventana > 6hojas-fueraDeBarra > accesorios 1`] = `
+{
+  "cerraduras": 1,
+  "empaqueTotal": 24.92,
+  "guiasInferior": 10,
+  "guiasSuperior": 10,
+  "rodachinas": 10,
+  "tornillosHojas": 20,
+  "tornillosInstalacion": 8,
+  "tornillosMarco": 8,
+}
+`;
+
+exports[`motor 80-25 · por ventana > 6hojas-fueraDeBarra > cortes de perfiles 1`] = `
+[
+  {
+    "cantidad": 1,
+    "medida": 6.3,
+    "sistema": "8025",
+    "tipo": "Cabezal",
+    "ventana": "6hojas-fueraDeBarra",
+  },
+  {
+    "cantidad": 1,
+    "medida": 6.3,
+    "sistema": "8025",
+    "tipo": "Sillar",
+    "ventana": "6hojas-fueraDeBarra",
+  },
+  {
+    "cantidad": 1,
+    "medida": 1.488,
+    "sistema": "8025",
+    "tipo": "Jamba Izquierda",
+    "ventana": "6hojas-fueraDeBarra",
+  },
+  {
+    "cantidad": 1,
+    "medida": 1.488,
+    "sistema": "8025",
+    "tipo": "Jamba Derecha",
+    "ventana": "6hojas-fueraDeBarra",
+  },
+  {
+    "cantidad": 9,
+    "medida": 1.472,
+    "sistema": "8025",
+    "tipo": "Enganche",
+    "ventana": "6hojas-fueraDeBarra",
+  },
+  {
+    "cantidad": 1,
+    "medida": 1.495,
+    "sistema": "8025",
+    "tipo": "Enganche",
+    "ventana": "6hojas-fueraDeBarra (Parche)",
+  },
+  {
+    "cantidad": 1,
+    "medida": 1.472,
+    "sistema": "8025",
+    "tipo": "Traslape",
+    "ventana": "6hojas-fueraDeBarra",
+  },
+  {
+    "cantidad": 1,
+    "medida": 1.495,
+    "sistema": "8025",
+    "tipo": "Traslape",
+    "ventana": "6hojas-fueraDeBarra (Parche)",
+  },
+  {
+    "cantidad": 6,
+    "medida": 1.06,
+    "sistema": "8025",
+    "tipo": "Horizontal Superior",
+    "ventana": "6hojas-fueraDeBarra",
+  },
+  {
+    "cantidad": 6,
+    "medida": 1.06,
+    "sistema": "8025",
+    "tipo": "Horizontal Inferior",
+    "ventana": "6hojas-fueraDeBarra",
+  },
+]
+`;
+
+exports[`motor 80-25 · por ventana > 6hojas-fueraDeBarra > vidrios 1`] = `
+[
+  {
+    "alto": 1488,
+    "ancho": 1004,
+    "area": 1.493952,
+    "tipo": "Hoja Móvil 1",
+    "ventana": "6hojas-fueraDeBarra",
+  },
+  {
+    "alto": 1488,
+    "ancho": 1004,
+    "area": 1.493952,
+    "tipo": "Hoja Móvil 2",
+    "ventana": "6hojas-fueraDeBarra",
+  },
+  {
+    "alto": 1488,
+    "ancho": 1004,
+    "area": 1.493952,
+    "tipo": "Hoja Móvil 3",
+    "ventana": "6hojas-fueraDeBarra",
+  },
+  {
+    "alto": 1488,
+    "ancho": 1004,
+    "area": 1.493952,
+    "tipo": "Hoja Móvil 4",
+    "ventana": "6hojas-fueraDeBarra",
+  },
+  {
+    "alto": 1488,
+    "ancho": 1004,
+    "area": 1.493952,
+    "tipo": "Hoja Móvil 5",
+    "ventana": "6hojas-fueraDeBarra",
+  },
+  {
+    "alto": 1488,
+    "ancho": 1004,
+    "area": 1.493952,
+    "tipo": "Hoja Fija 1",
+    "ventana": "6hojas-fueraDeBarra",
+  },
+]
+`;
+
+exports[`motor 80-25 · por ventana > 6hojas-grande > accesorios 1`] = `
+{
+  "cerraduras": 1,
+  "empaqueTotal": 25.42,
+  "guiasInferior": 10,
+  "guiasSuperior": 10,
+  "rodachinas": 10,
+  "tornillosHojas": 20,
+  "tornillosInstalacion": 8,
+  "tornillosMarco": 8,
+}
+`;
+
+exports[`motor 80-25 · por ventana > 6hojas-grande > cortes de perfiles 1`] = `
+[
+  {
+    "cantidad": 1,
+    "medida": 3,
+    "sistema": "8025",
+    "tipo": "Cabezal",
+    "ventana": "6hojas-grande",
+  },
+  {
+    "cantidad": 1,
+    "medida": 3,
+    "sistema": "8025",
+    "tipo": "Sillar",
+    "ventana": "6hojas-grande",
+  },
+  {
+    "cantidad": 1,
+    "medida": 2.088,
+    "sistema": "8025",
+    "tipo": "Jamba Izquierda",
+    "ventana": "6hojas-grande",
+  },
+  {
+    "cantidad": 1,
+    "medida": 2.088,
+    "sistema": "8025",
+    "tipo": "Jamba Derecha",
+    "ventana": "6hojas-grande",
+  },
+  {
+    "cantidad": 9,
+    "medida": 2.072,
+    "sistema": "8025",
+    "tipo": "Enganche",
+    "ventana": "6hojas-grande",
+  },
+  {
+    "cantidad": 1,
+    "medida": 2.095,
+    "sistema": "8025",
+    "tipo": "Enganche",
+    "ventana": "6hojas-grande (Parche)",
+  },
+  {
+    "cantidad": 1,
+    "medida": 2.072,
+    "sistema": "8025",
+    "tipo": "Traslape",
+    "ventana": "6hojas-grande",
+  },
+  {
+    "cantidad": 1,
+    "medida": 2.095,
+    "sistema": "8025",
+    "tipo": "Traslape",
+    "ventana": "6hojas-grande (Parche)",
+  },
+  {
+    "cantidad": 6,
+    "medida": 0.51,
+    "sistema": "8025",
+    "tipo": "Horizontal Superior",
+    "ventana": "6hojas-grande",
+  },
+  {
+    "cantidad": 6,
+    "medida": 0.51,
+    "sistema": "8025",
+    "tipo": "Horizontal Inferior",
+    "ventana": "6hojas-grande",
+  },
+]
+`;
+
+exports[`motor 80-25 · por ventana > 6hojas-grande > vidrios 1`] = `
+[
+  {
+    "alto": 2088,
+    "ancho": 454,
+    "area": 0.947952,
+    "tipo": "Hoja Móvil 1",
+    "ventana": "6hojas-grande",
+  },
+  {
+    "alto": 2088,
+    "ancho": 454,
+    "area": 0.947952,
+    "tipo": "Hoja Móvil 2",
+    "ventana": "6hojas-grande",
+  },
+  {
+    "alto": 2088,
+    "ancho": 454,
+    "area": 0.947952,
+    "tipo": "Hoja Móvil 3",
+    "ventana": "6hojas-grande",
+  },
+  {
+    "alto": 2088,
+    "ancho": 454,
+    "area": 0.947952,
+    "tipo": "Hoja Móvil 4",
+    "ventana": "6hojas-grande",
+  },
+  {
+    "alto": 2088,
+    "ancho": 454,
+    "area": 0.947952,
+    "tipo": "Hoja Móvil 5",
+    "ventana": "6hojas-grande",
+  },
+  {
+    "alto": 2088,
+    "ancho": 454,
+    "area": 0.947952,
+    "tipo": "Hoja Fija 1",
+    "ventana": "6hojas-grande",
+  },
+]
+`;
+
+exports[`motor 80-25 · por ventana > 6hojas-pequena > accesorios 1`] = `
+{
+  "cerraduras": 1,
+  "empaqueTotal": 8.92,
+  "guiasInferior": 10,
+  "guiasSuperior": 10,
+  "rodachinas": 10,
+  "tornillosHojas": 20,
+  "tornillosInstalacion": 8,
+  "tornillosMarco": 8,
+}
+`;
+
+exports[`motor 80-25 · por ventana > 6hojas-pequena > cortes de perfiles 1`] = `
+[
+  {
+    "cantidad": 1,
+    "medida": 0.9,
+    "sistema": "8025",
+    "tipo": "Cabezal",
+    "ventana": "6hojas-pequena",
+  },
+  {
+    "cantidad": 1,
+    "medida": 0.9,
+    "sistema": "8025",
+    "tipo": "Sillar",
+    "ventana": "6hojas-pequena",
+  },
+  {
+    "cantidad": 1,
+    "medida": 0.788,
+    "sistema": "8025",
+    "tipo": "Jamba Izquierda",
+    "ventana": "6hojas-pequena",
+  },
+  {
+    "cantidad": 1,
+    "medida": 0.788,
+    "sistema": "8025",
+    "tipo": "Jamba Derecha",
+    "ventana": "6hojas-pequena",
+  },
+  {
+    "cantidad": 9,
+    "medida": 0.772,
+    "sistema": "8025",
+    "tipo": "Enganche",
+    "ventana": "6hojas-pequena",
+  },
+  {
+    "cantidad": 1,
+    "medida": 0.795,
+    "sistema": "8025",
+    "tipo": "Enganche",
+    "ventana": "6hojas-pequena (Parche)",
+  },
+  {
+    "cantidad": 1,
+    "medida": 0.772,
+    "sistema": "8025",
+    "tipo": "Traslape",
+    "ventana": "6hojas-pequena",
+  },
+  {
+    "cantidad": 1,
+    "medida": 0.795,
+    "sistema": "8025",
+    "tipo": "Traslape",
+    "ventana": "6hojas-pequena (Parche)",
+  },
+  {
+    "cantidad": 6,
+    "medida": 0.16,
+    "sistema": "8025",
+    "tipo": "Horizontal Superior",
+    "ventana": "6hojas-pequena",
+  },
+  {
+    "cantidad": 6,
+    "medida": 0.16,
+    "sistema": "8025",
+    "tipo": "Horizontal Inferior",
+    "ventana": "6hojas-pequena",
+  },
+]
+`;
+
+exports[`motor 80-25 · por ventana > 6hojas-pequena > vidrios 1`] = `
+[
+  {
+    "alto": 788,
+    "ancho": 104,
+    "area": 0.081952,
+    "tipo": "Hoja Móvil 1",
+    "ventana": "6hojas-pequena",
+  },
+  {
+    "alto": 788,
+    "ancho": 104,
+    "area": 0.081952,
+    "tipo": "Hoja Móvil 2",
+    "ventana": "6hojas-pequena",
+  },
+  {
+    "alto": 788,
+    "ancho": 104,
+    "area": 0.081952,
+    "tipo": "Hoja Móvil 3",
+    "ventana": "6hojas-pequena",
+  },
+  {
+    "alto": 788,
+    "ancho": 104,
+    "area": 0.081952,
+    "tipo": "Hoja Móvil 4",
+    "ventana": "6hojas-pequena",
+  },
+  {
+    "alto": 788,
+    "ancho": 104,
+    "area": 0.081952,
+    "tipo": "Hoja Móvil 5",
+    "ventana": "6hojas-pequena",
+  },
+  {
+    "alto": 788,
+    "ancho": 104,
+    "area": 0.081952,
+    "tipo": "Hoja Fija 1",
+    "ventana": "6hojas-pequena",
+  },
+]
+`;
+
+exports[`motor 80-25 · por ventana > 6hojas-tipica > accesorios 1`] = `
+{
+  "cerraduras": 1,
+  "empaqueTotal": 16.753333,
+  "guiasInferior": 10,
+  "guiasSuperior": 10,
+  "rodachinas": 10,
+  "tornillosHojas": 20,
+  "tornillosInstalacion": 8,
+  "tornillosMarco": 8,
+}
+`;
+
+exports[`motor 80-25 · por ventana > 6hojas-tipica > cortes de perfiles 1`] = `
+[
+  {
+    "cantidad": 1,
+    "medida": 2,
+    "sistema": "8025",
+    "tipo": "Cabezal",
+    "ventana": "6hojas-tipica",
+  },
+  {
+    "cantidad": 1,
+    "medida": 2,
+    "sistema": "8025",
+    "tipo": "Sillar",
+    "ventana": "6hojas-tipica",
+  },
+  {
+    "cantidad": 1,
+    "medida": 1.388,
+    "sistema": "8025",
+    "tipo": "Jamba Izquierda",
+    "ventana": "6hojas-tipica",
+  },
+  {
+    "cantidad": 1,
+    "medida": 1.388,
+    "sistema": "8025",
+    "tipo": "Jamba Derecha",
+    "ventana": "6hojas-tipica",
+  },
+  {
+    "cantidad": 9,
+    "medida": 1.372,
+    "sistema": "8025",
+    "tipo": "Enganche",
+    "ventana": "6hojas-tipica",
+  },
+  {
+    "cantidad": 1,
+    "medida": 1.395,
+    "sistema": "8025",
+    "tipo": "Enganche",
+    "ventana": "6hojas-tipica (Parche)",
+  },
+  {
+    "cantidad": 1,
+    "medida": 1.372,
+    "sistema": "8025",
+    "tipo": "Traslape",
+    "ventana": "6hojas-tipica",
+  },
+  {
+    "cantidad": 1,
+    "medida": 1.395,
+    "sistema": "8025",
+    "tipo": "Traslape",
+    "ventana": "6hojas-tipica (Parche)",
+  },
+  {
+    "cantidad": 6,
+    "medida": 0.343333,
+    "sistema": "8025",
+    "tipo": "Horizontal Superior",
+    "ventana": "6hojas-tipica",
+  },
+  {
+    "cantidad": 6,
+    "medida": 0.343333,
+    "sistema": "8025",
+    "tipo": "Horizontal Inferior",
+    "ventana": "6hojas-tipica",
+  },
+]
+`;
+
+exports[`motor 80-25 · por ventana > 6hojas-tipica > vidrios 1`] = `
+[
+  {
+    "alto": 1388,
+    "ancho": 287.333333,
+    "area": 0.398819,
+    "tipo": "Hoja Móvil 1",
+    "ventana": "6hojas-tipica",
+  },
+  {
+    "alto": 1388,
+    "ancho": 287.333333,
+    "area": 0.398819,
+    "tipo": "Hoja Móvil 2",
+    "ventana": "6hojas-tipica",
+  },
+  {
+    "alto": 1388,
+    "ancho": 287.333333,
+    "area": 0.398819,
+    "tipo": "Hoja Móvil 3",
+    "ventana": "6hojas-tipica",
+  },
+  {
+    "alto": 1388,
+    "ancho": 287.333333,
+    "area": 0.398819,
+    "tipo": "Hoja Móvil 4",
+    "ventana": "6hojas-tipica",
+  },
+  {
+    "alto": 1388,
+    "ancho": 287.333333,
+    "area": 0.398819,
+    "tipo": "Hoja Móvil 5",
+    "ventana": "6hojas-tipica",
+  },
+  {
+    "alto": 1388,
+    "ancho": 287.333333,
+    "area": 0.398819,
+    "tipo": "Hoja Fija 1",
+    "ventana": "6hojas-tipica",
+  },
+]
+`;
+
+exports[`motor 80-25 · proyecto completo > accesorios totales 1`] = `
+{
+  "cerraduras": 30,
+  "empaqueTotal": 433.65,
+  "guiasInferior": 170,
+  "guiasSuperior": 170,
+  "rodachinas": 170,
+  "tornillosHojas": 340,
+  "tornillosInstalacion": 240,
+  "tornillosMarco": 240,
+}
+`;
+
+exports[`motor 80-25 · proyecto completo > optimizacion de barras de 6 m (incluye un perfil de 6,3 m que excede la barra) 1`] = `
+{
+  "8025 - Cabezal": {
+    "barras": [
+      [
+        6.3,
+      ],
+      [
+        6.3,
+      ],
+      [
+        6.3,
+      ],
+      [
+        6.3,
+      ],
+      [
+        6.3,
+      ],
+      [
+        6.3,
+      ],
+      [
+        5.9,
+      ],
+      [
+        5.9,
+      ],
+      [
+        5.9,
+      ],
+      [
+        5.9,
+      ],
+      [
+        5.9,
+      ],
+      [
+        5.9,
+      ],
+      [
+        3,
+        3,
+      ],
+      [
+        3,
+        3,
+      ],
+      [
+        3,
+        3,
+      ],
+      [
+        2,
+        2,
+        2,
+      ],
+      [
+        2,
+        2,
+        2,
+      ],
+      [
+        0.9,
+        0.9,
+        0.9,
+        0.9,
+        0.9,
+        0.9,
+      ],
+    ],
+    "metrosUsados": 108.6,
+  },
+  "8025 - Enganche": {
+    "barras": [
+      [
+        2.395,
+        2.395,
+        0.795,
+      ],
+      [
+        2.395,
+        2.395,
+        0.795,
+      ],
+      [
+        2.395,
+        2.372,
+        0.795,
+      ],
+      [
+        2.372,
+        2.372,
+        0.795,
+      ],
+      [
+        2.372,
+        2.372,
+        0.795,
+      ],
+      [
+        2.372,
+        2.372,
+        0.772,
+      ],
+      [
+        2.372,
+        2.372,
+        0.772,
+      ],
+      [
+        2.372,
+        2.372,
+        0.772,
+      ],
+      [
+        2.372,
+        2.372,
+        0.772,
+      ],
+      [
+        2.372,
+        2.372,
+        0.772,
+      ],
+      [
+        2.372,
+        2.372,
+        0.772,
+      ],
+      [
+        2.372,
+        2.372,
+        0.772,
+      ],
+      [
+        2.372,
+        2.372,
+        0.772,
+      ],
+      [
+        2.372,
+        2.372,
+        0.772,
+      ],
+      [
+        2.372,
+        2.372,
+        0.772,
+      ],
+      [
+        2.372,
+        2.372,
+        0.772,
+      ],
+      [
+        2.095,
+        2.095,
+        1.495,
+      ],
+      [
+        2.095,
+        2.095,
+        1.495,
+      ],
+      [
+        2.095,
+        2.072,
+        1.495,
+      ],
+      [
+        2.072,
+        2.072,
+        1.495,
+      ],
+      [
+        2.072,
+        2.072,
+        1.495,
+      ],
+      [
+        2.072,
+        2.072,
+        1.472,
+      ],
+      [
+        2.072,
+        2.072,
+        1.472,
+      ],
+      [
+        2.072,
+        2.072,
+        1.472,
+      ],
+      [
+        2.072,
+        2.072,
+        1.472,
+      ],
+      [
+        2.072,
+        2.072,
+        1.472,
+      ],
+      [
+        2.072,
+        2.072,
+        1.472,
+      ],
+      [
+        2.072,
+        2.072,
+        1.472,
+      ],
+      [
+        2.072,
+        2.072,
+        1.472,
+      ],
+      [
+        2.072,
+        2.072,
+        1.472,
+      ],
+      [
+        2.072,
+        2.072,
+        1.472,
+      ],
+      [
+        2.072,
+        2.072,
+        1.472,
+      ],
+      [
+        1.472,
+        1.472,
+        1.472,
+        1.472,
+      ],
+      [
+        1.472,
+        1.472,
+        1.472,
+        1.472,
+      ],
+      [
+        1.472,
+        1.472,
+        1.472,
+        1.472,
+      ],
+      [
+        1.472,
+        1.472,
+        1.472,
+        1.472,
+      ],
+      [
+        1.395,
+        1.395,
+        1.395,
+        1.395,
+      ],
+      [
+        1.395,
+        1.372,
+        1.372,
+        1.372,
+      ],
+      [
+        1.372,
+        1.372,
+        1.372,
+        1.372,
+      ],
+      [
+        1.372,
+        1.372,
+        1.372,
+        1.372,
+      ],
+      [
+        1.372,
+        1.372,
+        1.372,
+        1.372,
+      ],
+      [
+        1.372,
+        1.372,
+        1.372,
+        1.372,
+      ],
+      [
+        1.372,
+        1.372,
+        1.372,
+        1.372,
+      ],
+      [
+        1.372,
+        1.372,
+        1.372,
+        1.372,
+      ],
+      [
+        0.772,
+        0.772,
+        0.772,
+        0.772,
+        0.772,
+        0.772,
+        0.772,
+      ],
+      [
+        0.772,
+        0.772,
+        0.772,
+        0.772,
+        0.772,
+        0.772,
+        0.772,
+      ],
+      [
+        0.772,
+        0.772,
+      ],
+    ],
+    "metrosUsados": 258.495,
+  },
+  "8025 - Horizontal Inferior": {
+    "barras": [
+      [
+        3.16,
+        2.165,
+        0.661667,
+      ],
+      [
+        3.16,
+        2.095,
+        0.731667,
+      ],
+      [
+        3.16,
+        2.085,
+        0.749,
+      ],
+      [
+        3.16,
+        2.031667,
+        0.758,
+      ],
+      [
+        2.96,
+        2.96,
+      ],
+      [
+        2.96,
+        2.96,
+      ],
+      [
+        1.961667,
+        1.951667,
+        1.649,
+        0.41,
+      ],
+      [
+        1.583,
+        1.574,
+        1.574,
+        1.19,
+      ],
+      [
+        1.549,
+        1.51,
+        1.51,
+        1.27,
+        0.16,
+      ],
+      [
+        1.51,
+        1.51,
+        1.483,
+        1.474,
+      ],
+      [
+        1.474,
+        1.27,
+        1.27,
+        1.27,
+        0.651667,
+      ],
+      [
+        1.27,
+        1.19,
+        1.19,
+        1.19,
+        1.065,
+      ],
+      [
+        1.19,
+        1.06,
+        1.06,
+        1.06,
+        1.06,
+        0.51,
+      ],
+      [
+        1.06,
+        1.06,
+        1.01,
+        1.01,
+        1.01,
+        0.824,
+      ],
+      [
+        1.01,
+        0.995,
+        0.993333,
+        0.993333,
+        0.993333,
+        0.993333,
+      ],
+      [
+        0.993333,
+        0.993333,
+        0.985,
+        0.749,
+        0.61,
+        0.61,
+        0.61,
+        0.41,
+      ],
+      [
+        0.61,
+        0.61,
+        0.574,
+        0.51,
+        0.51,
+        0.51,
+        0.51,
+        0.51,
+        0.508,
+        0.499,
+        0.499,
+      ],
+      [
+        0.46,
+        0.46,
+        0.46,
+        0.46,
+        0.41,
+        0.41,
+        0.41,
+        0.365,
+        0.343333,
+        0.343333,
+        0.343333,
+        0.343333,
+        0.343333,
+        0.343333,
+        0.299,
+        0.19,
+      ],
+      [
+        0.295,
+        0.285,
+        0.233,
+        0.224,
+        0.224,
+        0.19,
+        0.19,
+        0.19,
+        0.19,
+        0.16,
+        0.16,
+        0.16,
+        0.16,
+        0.16,
+      ],
+    ],
+    "metrosUsados": 109.975,
+  },
+  "8025 - Horizontal Superior": {
+    "barras": [
+      [
+        3.16,
+        2.165,
+        0.661667,
+      ],
+      [
+        3.16,
+        2.095,
+        0.731667,
+      ],
+      [
+        3.16,
+        2.085,
+        0.749,
+      ],
+      [
+        3.16,
+        2.031667,
+        0.758,
+      ],
+      [
+        2.96,
+        2.96,
+      ],
+      [
+        2.96,
+        2.96,
+      ],
+      [
+        1.961667,
+        1.951667,
+        1.649,
+        0.41,
+      ],
+      [
+        1.583,
+        1.574,
+        1.574,
+        1.19,
+      ],
+      [
+        1.549,
+        1.51,
+        1.51,
+        1.27,
+        0.16,
+      ],
+      [
+        1.51,
+        1.51,
+        1.483,
+        1.474,
+      ],
+      [
+        1.474,
+        1.27,
+        1.27,
+        1.27,
+        0.651667,
+      ],
+      [
+        1.27,
+        1.19,
+        1.19,
+        1.19,
+        1.065,
+      ],
+      [
+        1.19,
+        1.06,
+        1.06,
+        1.06,
+        1.06,
+        0.51,
+      ],
+      [
+        1.06,
+        1.06,
+        1.01,
+        1.01,
+        1.01,
+        0.824,
+      ],
+      [
+        1.01,
+        0.995,
+        0.993333,
+        0.993333,
+        0.993333,
+        0.993333,
+      ],
+      [
+        0.993333,
+        0.993333,
+        0.985,
+        0.749,
+        0.61,
+        0.61,
+        0.61,
+        0.41,
+      ],
+      [
+        0.61,
+        0.61,
+        0.574,
+        0.51,
+        0.51,
+        0.51,
+        0.51,
+        0.51,
+        0.508,
+        0.499,
+        0.499,
+      ],
+      [
+        0.46,
+        0.46,
+        0.46,
+        0.46,
+        0.41,
+        0.41,
+        0.41,
+        0.365,
+        0.343333,
+        0.343333,
+        0.343333,
+        0.343333,
+        0.343333,
+        0.343333,
+        0.299,
+        0.19,
+      ],
+      [
+        0.295,
+        0.285,
+        0.233,
+        0.224,
+        0.224,
+        0.19,
+        0.19,
+        0.19,
+        0.19,
+        0.16,
+        0.16,
+        0.16,
+        0.16,
+        0.16,
+      ],
+    ],
+    "metrosUsados": 109.975,
+  },
+  "8025 - Jamba Derecha": {
+    "barras": [
+      [
+        2.388,
+        2.388,
+        0.788,
+      ],
+      [
+        2.388,
+        2.388,
+        0.788,
+      ],
+      [
+        2.388,
+        2.388,
+        0.788,
+      ],
+      [
+        2.088,
+        2.088,
+        1.488,
+      ],
+      [
+        2.088,
+        2.088,
+        1.488,
+      ],
+      [
+        2.088,
+        2.088,
+        1.488,
+      ],
+      [
+        1.488,
+        1.488,
+        1.488,
+        1.388,
+      ],
+      [
+        1.388,
+        1.388,
+        1.388,
+        1.388,
+      ],
+      [
+        1.388,
+        0.788,
+        0.788,
+        0.788,
+      ],
+    ],
+    "metrosUsados": 48.84,
+  },
+  "8025 - Jamba Izquierda": {
+    "barras": [
+      [
+        2.388,
+        2.388,
+        0.788,
+      ],
+      [
+        2.388,
+        2.388,
+        0.788,
+      ],
+      [
+        2.388,
+        2.388,
+        0.788,
+      ],
+      [
+        2.088,
+        2.088,
+        1.488,
+      ],
+      [
+        2.088,
+        2.088,
+        1.488,
+      ],
+      [
+        2.088,
+        2.088,
+        1.488,
+      ],
+      [
+        1.488,
+        1.488,
+        1.488,
+        1.388,
+      ],
+      [
+        1.388,
+        1.388,
+        1.388,
+        1.388,
+      ],
+      [
+        1.388,
+        0.788,
+        0.788,
+        0.788,
+      ],
+    ],
+    "metrosUsados": 48.84,
+  },
+  "8025 - Sillar": {
+    "barras": [
+      [
+        6.3,
+      ],
+      [
+        6.3,
+      ],
+      [
+        6.3,
+      ],
+      [
+        6.3,
+      ],
+      [
+        6.3,
+      ],
+      [
+        6.3,
+      ],
+      [
+        5.9,
+      ],
+      [
+        5.9,
+      ],
+      [
+        5.9,
+      ],
+      [
+        5.9,
+      ],
+      [
+        5.9,
+      ],
+      [
+        5.9,
+      ],
+      [
+        3,
+        3,
+      ],
+      [
+        3,
+        3,
+      ],
+      [
+        3,
+        3,
+      ],
+      [
+        2,
+        2,
+        2,
+      ],
+      [
+        2,
+        2,
+        2,
+      ],
+      [
+        0.9,
+        0.9,
+        0.9,
+        0.9,
+        0.9,
+        0.9,
+      ],
+    ],
+    "metrosUsados": 108.6,
+  },
+  "8025 - Traslape": {
+    "barras": [
+      [
+        2.395,
+        2.395,
+        0.795,
+      ],
+      [
+        2.395,
+        2.395,
+        0.795,
+      ],
+      [
+        2.395,
+        2.372,
+        0.795,
+      ],
+      [
+        2.372,
+        2.372,
+        0.795,
+      ],
+      [
+        2.372,
+        2.372,
+        0.795,
+      ],
+      [
+        2.372,
+        2.372,
+        0.772,
+      ],
+      [
+        2.095,
+        2.095,
+        1.495,
+      ],
+      [
+        2.095,
+        2.095,
+        1.495,
+      ],
+      [
+        2.095,
+        2.072,
+        1.495,
+      ],
+      [
+        2.072,
+        2.072,
+        1.495,
+      ],
+      [
+        2.072,
+        2.072,
+        1.495,
+      ],
+      [
+        2.072,
+        2.072,
+        1.472,
+      ],
+      [
+        1.472,
+        1.472,
+        1.472,
+        1.472,
+      ],
+      [
+        1.472,
+        1.472,
+        1.395,
+        1.395,
+      ],
+      [
+        1.395,
+        1.395,
+        1.395,
+        1.372,
+      ],
+      [
+        1.372,
+        1.372,
+        1.372,
+        1.372,
+      ],
+      [
+        1.372,
+        1.372,
+        0.772,
+        0.772,
+        0.772,
+        0.772,
+      ],
+      [
+        0.772,
+        0.772,
+      ],
+    ],
+    "metrosUsados": 97.295,
+  },
+}
+`;
+
+exports[`motor 80-25 · proyecto completo > vidrios totales 1`] = `
+[
+  {
+    "alto": 788,
+    "ancho": 404,
+    "area": 0.318352,
+    "tipo": "Hoja Móvil 1",
+    "ventana": "2hojas-pequena",
+  },
+  {
+    "alto": 788,
+    "ancho": 404,
+    "area": 0.318352,
+    "tipo": "Hoja Móvil 2",
+    "ventana": "2hojas-pequena",
+  },
+  {
+    "alto": 1388,
+    "ancho": 954,
+    "area": 1.324152,
+    "tipo": "Hoja Móvil 1",
+    "ventana": "2hojas-tipica",
+  },
+  {
+    "alto": 1388,
+    "ancho": 954,
+    "area": 1.324152,
+    "tipo": "Hoja Móvil 2",
+    "ventana": "2hojas-tipica",
+  },
+  {
+    "alto": 2088,
+    "ancho": 1454,
+    "area": 3.035952,
+    "tipo": "Hoja Móvil 1",
+    "ventana": "2hojas-grande",
+  },
+  {
+    "alto": 2088,
+    "ancho": 1454,
+    "area": 3.035952,
+    "tipo": "Hoja Móvil 2",
+    "ventana": "2hojas-grande",
+  },
+  {
+    "alto": 2388,
+    "ancho": 2904,
+    "area": 6.934752,
+    "tipo": "Hoja Móvil 1",
+    "ventana": "2hojas-extrema",
+  },
+  {
+    "alto": 2388,
+    "ancho": 2904,
+    "area": 6.934752,
+    "tipo": "Hoja Móvil 2",
+    "ventana": "2hojas-extrema",
+  },
+  {
+    "alto": 1488,
+    "ancho": 3104,
+    "area": 4.618752,
+    "tipo": "Hoja Móvil 1",
+    "ventana": "2hojas-fueraDeBarra",
+  },
+  {
+    "alto": 1488,
+    "ancho": 3104,
+    "area": 4.618752,
+    "tipo": "Hoja Móvil 2",
+    "ventana": "2hojas-fueraDeBarra",
+  },
+  {
+    "alto": 788,
+    "ancho": 404,
+    "area": 0.318352,
+    "tipo": "Hoja Móvil 1",
+    "ventana": "2hojas_mixto-pequena",
+  },
+  {
+    "alto": 788,
+    "ancho": 404,
+    "area": 0.318352,
+    "tipo": "Hoja Fija 1",
+    "ventana": "2hojas_mixto-pequena",
+  },
+  {
+    "alto": 1388,
+    "ancho": 954,
+    "area": 1.324152,
+    "tipo": "Hoja Móvil 1",
+    "ventana": "2hojas_mixto-tipica",
+  },
+  {
+    "alto": 1388,
+    "ancho": 954,
+    "area": 1.324152,
+    "tipo": "Hoja Fija 1",
+    "ventana": "2hojas_mixto-tipica",
+  },
+  {
+    "alto": 2088,
+    "ancho": 1454,
+    "area": 3.035952,
+    "tipo": "Hoja Móvil 1",
+    "ventana": "2hojas_mixto-grande",
+  },
+  {
+    "alto": 2088,
+    "ancho": 1454,
+    "area": 3.035952,
+    "tipo": "Hoja Fija 1",
+    "ventana": "2hojas_mixto-grande",
+  },
+  {
+    "alto": 2388,
+    "ancho": 2904,
+    "area": 6.934752,
+    "tipo": "Hoja Móvil 1",
+    "ventana": "2hojas_mixto-extrema",
+  },
+  {
+    "alto": 2388,
+    "ancho": 2904,
+    "area": 6.934752,
+    "tipo": "Hoja Fija 1",
+    "ventana": "2hojas_mixto-extrema",
+  },
+  {
+    "alto": 1488,
+    "ancho": 3104,
+    "area": 4.618752,
+    "tipo": "Hoja Móvil 1",
+    "ventana": "2hojas_mixto-fueraDeBarra",
+  },
+  {
+    "alto": 1488,
+    "ancho": 3104,
+    "area": 4.618752,
+    "tipo": "Hoja Fija 1",
+    "ventana": "2hojas_mixto-fueraDeBarra",
+  },
+  {
+    "alto": 788,
+    "ancho": 249,
+    "area": 0.196212,
+    "tipo": "Hoja Fija (Parche)",
+    "ventana": "3hojas-pequena",
+  },
+  {
+    "alto": 788,
+    "ancho": 319,
+    "area": 0.251372,
+    "tipo": "Hoja Móvil (Cerradura)",
+    "ventana": "3hojas-pequena",
+  },
+  {
+    "alto": 788,
+    "ancho": 239,
+    "area": 0.188332,
+    "tipo": "Hoja Móvil (Central 1)",
+    "ventana": "3hojas-pequena",
+  },
+  {
+    "alto": 1388,
+    "ancho": 615.666667,
+    "area": 0.854545,
+    "tipo": "Hoja Fija (Parche)",
+    "ventana": "3hojas-tipica",
+  },
+  {
+    "alto": 1388,
+    "ancho": 685.666667,
+    "area": 0.951705,
+    "tipo": "Hoja Móvil (Cerradura)",
+    "ventana": "3hojas-tipica",
+  },
+  {
+    "alto": 1388,
+    "ancho": 605.666667,
+    "area": 0.840665,
+    "tipo": "Hoja Móvil (Central 1)",
+    "ventana": "3hojas-tipica",
+  },
+  {
+    "alto": 2088,
+    "ancho": 949,
+    "area": 1.981512,
+    "tipo": "Hoja Fija (Parche)",
+    "ventana": "3hojas-grande",
+  },
+  {
+    "alto": 2088,
+    "ancho": 1019,
+    "area": 2.127672,
+    "tipo": "Hoja Móvil (Cerradura)",
+    "ventana": "3hojas-grande",
+  },
+  {
+    "alto": 2088,
+    "ancho": 939,
+    "area": 1.960632,
+    "tipo": "Hoja Móvil (Central 1)",
+    "ventana": "3hojas-grande",
+  },
+  {
+    "alto": 2388,
+    "ancho": 1915.666667,
+    "area": 4.574612,
+    "tipo": "Hoja Fija (Parche)",
+    "ventana": "3hojas-extrema",
+  },
+  {
+    "alto": 2388,
+    "ancho": 1985.666667,
+    "area": 4.741772,
+    "tipo": "Hoja Móvil (Cerradura)",
+    "ventana": "3hojas-extrema",
+  },
+  {
+    "alto": 2388,
+    "ancho": 1905.666667,
+    "area": 4.550732,
+    "tipo": "Hoja Móvil (Central 1)",
+    "ventana": "3hojas-extrema",
+  },
+  {
+    "alto": 1488,
+    "ancho": 2049,
+    "area": 3.048912,
+    "tipo": "Hoja Fija (Parche)",
+    "ventana": "3hojas-fueraDeBarra",
+  },
+  {
+    "alto": 1488,
+    "ancho": 2119,
+    "area": 3.153072,
+    "tipo": "Hoja Móvil (Cerradura)",
+    "ventana": "3hojas-fueraDeBarra",
+  },
+  {
+    "alto": 1488,
+    "ancho": 2039,
+    "area": 3.034032,
+    "tipo": "Hoja Móvil (Central 1)",
+    "ventana": "3hojas-fueraDeBarra",
+  },
+  {
+    "alto": 788,
+    "ancho": 187,
+    "area": 0.147356,
+    "tipo": "Hoja Fija (Parche)",
+    "ventana": "4hojas-pequena",
+  },
+  {
+    "alto": 788,
+    "ancho": 253,
+    "area": 0.199364,
+    "tipo": "Hoja Móvil (Cerradura)",
+    "ventana": "4hojas-pequena",
+  },
+  {
+    "alto": 788,
+    "ancho": 178,
+    "area": 0.140264,
+    "tipo": "Hoja Móvil (Central 1)",
+    "ventana": "4hojas-pequena",
+  },
+  {
+    "alto": 788,
+    "ancho": 178,
+    "area": 0.140264,
+    "tipo": "Hoja Móvil (Central 2)",
+    "ventana": "4hojas-pequena",
+  },
+  {
+    "alto": 1388,
+    "ancho": 462,
+    "area": 0.641256,
+    "tipo": "Hoja Fija (Parche)",
+    "ventana": "4hojas-tipica",
+  },
+  {
+    "alto": 1388,
+    "ancho": 528,
+    "area": 0.732864,
+    "tipo": "Hoja Móvil (Cerradura)",
+    "ventana": "4hojas-tipica",
+  },
+  {
+    "alto": 1388,
+    "ancho": 453,
+    "area": 0.628764,
+    "tipo": "Hoja Móvil (Central 1)",
+    "ventana": "4hojas-tipica",
+  },
+  {
+    "alto": 1388,
+    "ancho": 453,
+    "area": 0.628764,
+    "tipo": "Hoja Móvil (Central 2)",
+    "ventana": "4hojas-tipica",
+  },
+  {
+    "alto": 2088,
+    "ancho": 712,
+    "area": 1.486656,
+    "tipo": "Hoja Fija (Parche)",
+    "ventana": "4hojas-grande",
+  },
+  {
+    "alto": 2088,
+    "ancho": 778,
+    "area": 1.624464,
+    "tipo": "Hoja Móvil (Cerradura)",
+    "ventana": "4hojas-grande",
+  },
+  {
+    "alto": 2088,
+    "ancho": 703,
+    "area": 1.467864,
+    "tipo": "Hoja Móvil (Central 1)",
+    "ventana": "4hojas-grande",
+  },
+  {
+    "alto": 2088,
+    "ancho": 703,
+    "area": 1.467864,
+    "tipo": "Hoja Móvil (Central 2)",
+    "ventana": "4hojas-grande",
+  },
+  {
+    "alto": 2388,
+    "ancho": 1437,
+    "area": 3.431556,
+    "tipo": "Hoja Fija (Parche)",
+    "ventana": "4hojas-extrema",
+  },
+  {
+    "alto": 2388,
+    "ancho": 1503,
+    "area": 3.589164,
+    "tipo": "Hoja Móvil (Cerradura)",
+    "ventana": "4hojas-extrema",
+  },
+  {
+    "alto": 2388,
+    "ancho": 1428,
+    "area": 3.410064,
+    "tipo": "Hoja Móvil (Central 1)",
+    "ventana": "4hojas-extrema",
+  },
+  {
+    "alto": 2388,
+    "ancho": 1428,
+    "area": 3.410064,
+    "tipo": "Hoja Móvil (Central 2)",
+    "ventana": "4hojas-extrema",
+  },
+  {
+    "alto": 1488,
+    "ancho": 1537,
+    "area": 2.287056,
+    "tipo": "Hoja Fija (Parche)",
+    "ventana": "4hojas-fueraDeBarra",
+  },
+  {
+    "alto": 1488,
+    "ancho": 1603,
+    "area": 2.385264,
+    "tipo": "Hoja Móvil (Cerradura)",
+    "ventana": "4hojas-fueraDeBarra",
+  },
+  {
+    "alto": 1488,
+    "ancho": 1528,
+    "area": 2.273664,
+    "tipo": "Hoja Móvil (Central 1)",
+    "ventana": "4hojas-fueraDeBarra",
+  },
+  {
+    "alto": 1488,
+    "ancho": 1528,
+    "area": 2.273664,
+    "tipo": "Hoja Móvil (Central 2)",
+    "ventana": "4hojas-fueraDeBarra",
+  },
+  {
+    "alto": 788,
+    "ancho": 134,
+    "area": 0.105592,
+    "tipo": "Hoja Móvil 1",
+    "ventana": "5hojas-pequena",
+  },
+  {
+    "alto": 788,
+    "ancho": 134,
+    "area": 0.105592,
+    "tipo": "Hoja Móvil 2",
+    "ventana": "5hojas-pequena",
+  },
+  {
+    "alto": 788,
+    "ancho": 134,
+    "area": 0.105592,
+    "tipo": "Hoja Móvil 3",
+    "ventana": "5hojas-pequena",
+  },
+  {
+    "alto": 788,
+    "ancho": 134,
+    "area": 0.105592,
+    "tipo": "Hoja Móvil 4",
+    "ventana": "5hojas-pequena",
+  },
+  {
+    "alto": 788,
+    "ancho": 134,
+    "area": 0.105592,
+    "tipo": "Hoja Fija 1",
+    "ventana": "5hojas-pequena",
+  },
+  {
+    "alto": 1388,
+    "ancho": 354,
+    "area": 0.491352,
+    "tipo": "Hoja Móvil 1",
+    "ventana": "5hojas-tipica",
+  },
+  {
+    "alto": 1388,
+    "ancho": 354,
+    "area": 0.491352,
+    "tipo": "Hoja Móvil 2",
+    "ventana": "5hojas-tipica",
+  },
+  {
+    "alto": 1388,
+    "ancho": 354,
+    "area": 0.491352,
+    "tipo": "Hoja Móvil 3",
+    "ventana": "5hojas-tipica",
+  },
+  {
+    "alto": 1388,
+    "ancho": 354,
+    "area": 0.491352,
+    "tipo": "Hoja Móvil 4",
+    "ventana": "5hojas-tipica",
+  },
+  {
+    "alto": 1388,
+    "ancho": 354,
+    "area": 0.491352,
+    "tipo": "Hoja Fija 1",
+    "ventana": "5hojas-tipica",
+  },
+  {
+    "alto": 2088,
+    "ancho": 554,
+    "area": 1.156752,
+    "tipo": "Hoja Móvil 1",
+    "ventana": "5hojas-grande",
+  },
+  {
+    "alto": 2088,
+    "ancho": 554,
+    "area": 1.156752,
+    "tipo": "Hoja Móvil 2",
+    "ventana": "5hojas-grande",
+  },
+  {
+    "alto": 2088,
+    "ancho": 554,
+    "area": 1.156752,
+    "tipo": "Hoja Móvil 3",
+    "ventana": "5hojas-grande",
+  },
+  {
+    "alto": 2088,
+    "ancho": 554,
+    "area": 1.156752,
+    "tipo": "Hoja Móvil 4",
+    "ventana": "5hojas-grande",
+  },
+  {
+    "alto": 2088,
+    "ancho": 554,
+    "area": 1.156752,
+    "tipo": "Hoja Fija 1",
+    "ventana": "5hojas-grande",
+  },
+  {
+    "alto": 2388,
+    "ancho": 1134,
+    "area": 2.707992,
+    "tipo": "Hoja Móvil 1",
+    "ventana": "5hojas-extrema",
+  },
+  {
+    "alto": 2388,
+    "ancho": 1134,
+    "area": 2.707992,
+    "tipo": "Hoja Móvil 2",
+    "ventana": "5hojas-extrema",
+  },
+  {
+    "alto": 2388,
+    "ancho": 1134,
+    "area": 2.707992,
+    "tipo": "Hoja Móvil 3",
+    "ventana": "5hojas-extrema",
+  },
+  {
+    "alto": 2388,
+    "ancho": 1134,
+    "area": 2.707992,
+    "tipo": "Hoja Móvil 4",
+    "ventana": "5hojas-extrema",
+  },
+  {
+    "alto": 2388,
+    "ancho": 1134,
+    "area": 2.707992,
+    "tipo": "Hoja Fija 1",
+    "ventana": "5hojas-extrema",
+  },
+  {
+    "alto": 1488,
+    "ancho": 1214,
+    "area": 1.806432,
+    "tipo": "Hoja Móvil 1",
+    "ventana": "5hojas-fueraDeBarra",
+  },
+  {
+    "alto": 1488,
+    "ancho": 1214,
+    "area": 1.806432,
+    "tipo": "Hoja Móvil 2",
+    "ventana": "5hojas-fueraDeBarra",
+  },
+  {
+    "alto": 1488,
+    "ancho": 1214,
+    "area": 1.806432,
+    "tipo": "Hoja Móvil 3",
+    "ventana": "5hojas-fueraDeBarra",
+  },
+  {
+    "alto": 1488,
+    "ancho": 1214,
+    "area": 1.806432,
+    "tipo": "Hoja Móvil 4",
+    "ventana": "5hojas-fueraDeBarra",
+  },
+  {
+    "alto": 1488,
+    "ancho": 1214,
+    "area": 1.806432,
+    "tipo": "Hoja Fija 1",
+    "ventana": "5hojas-fueraDeBarra",
+  },
+  {
+    "alto": 788,
+    "ancho": 104,
+    "area": 0.081952,
+    "tipo": "Hoja Móvil 1",
+    "ventana": "6hojas-pequena",
+  },
+  {
+    "alto": 788,
+    "ancho": 104,
+    "area": 0.081952,
+    "tipo": "Hoja Móvil 2",
+    "ventana": "6hojas-pequena",
+  },
+  {
+    "alto": 788,
+    "ancho": 104,
+    "area": 0.081952,
+    "tipo": "Hoja Móvil 3",
+    "ventana": "6hojas-pequena",
+  },
+  {
+    "alto": 788,
+    "ancho": 104,
+    "area": 0.081952,
+    "tipo": "Hoja Móvil 4",
+    "ventana": "6hojas-pequena",
+  },
+  {
+    "alto": 788,
+    "ancho": 104,
+    "area": 0.081952,
+    "tipo": "Hoja Móvil 5",
+    "ventana": "6hojas-pequena",
+  },
+  {
+    "alto": 788,
+    "ancho": 104,
+    "area": 0.081952,
+    "tipo": "Hoja Fija 1",
+    "ventana": "6hojas-pequena",
+  },
+  {
+    "alto": 1388,
+    "ancho": 287.333333,
+    "area": 0.398819,
+    "tipo": "Hoja Móvil 1",
+    "ventana": "6hojas-tipica",
+  },
+  {
+    "alto": 1388,
+    "ancho": 287.333333,
+    "area": 0.398819,
+    "tipo": "Hoja Móvil 2",
+    "ventana": "6hojas-tipica",
+  },
+  {
+    "alto": 1388,
+    "ancho": 287.333333,
+    "area": 0.398819,
+    "tipo": "Hoja Móvil 3",
+    "ventana": "6hojas-tipica",
+  },
+  {
+    "alto": 1388,
+    "ancho": 287.333333,
+    "area": 0.398819,
+    "tipo": "Hoja Móvil 4",
+    "ventana": "6hojas-tipica",
+  },
+  {
+    "alto": 1388,
+    "ancho": 287.333333,
+    "area": 0.398819,
+    "tipo": "Hoja Móvil 5",
+    "ventana": "6hojas-tipica",
+  },
+  {
+    "alto": 1388,
+    "ancho": 287.333333,
+    "area": 0.398819,
+    "tipo": "Hoja Fija 1",
+    "ventana": "6hojas-tipica",
+  },
+  {
+    "alto": 2088,
+    "ancho": 454,
+    "area": 0.947952,
+    "tipo": "Hoja Móvil 1",
+    "ventana": "6hojas-grande",
+  },
+  {
+    "alto": 2088,
+    "ancho": 454,
+    "area": 0.947952,
+    "tipo": "Hoja Móvil 2",
+    "ventana": "6hojas-grande",
+  },
+  {
+    "alto": 2088,
+    "ancho": 454,
+    "area": 0.947952,
+    "tipo": "Hoja Móvil 3",
+    "ventana": "6hojas-grande",
+  },
+  {
+    "alto": 2088,
+    "ancho": 454,
+    "area": 0.947952,
+    "tipo": "Hoja Móvil 4",
+    "ventana": "6hojas-grande",
+  },
+  {
+    "alto": 2088,
+    "ancho": 454,
+    "area": 0.947952,
+    "tipo": "Hoja Móvil 5",
+    "ventana": "6hojas-grande",
+  },
+  {
+    "alto": 2088,
+    "ancho": 454,
+    "area": 0.947952,
+    "tipo": "Hoja Fija 1",
+    "ventana": "6hojas-grande",
+  },
+  {
+    "alto": 2388,
+    "ancho": 937.333333,
+    "area": 2.238352,
+    "tipo": "Hoja Móvil 1",
+    "ventana": "6hojas-extrema",
+  },
+  {
+    "alto": 2388,
+    "ancho": 937.333333,
+    "area": 2.238352,
+    "tipo": "Hoja Móvil 2",
+    "ventana": "6hojas-extrema",
+  },
+  {
+    "alto": 2388,
+    "ancho": 937.333333,
+    "area": 2.238352,
+    "tipo": "Hoja Móvil 3",
+    "ventana": "6hojas-extrema",
+  },
+  {
+    "alto": 2388,
+    "ancho": 937.333333,
+    "area": 2.238352,
+    "tipo": "Hoja Móvil 4",
+    "ventana": "6hojas-extrema",
+  },
+  {
+    "alto": 2388,
+    "ancho": 937.333333,
+    "area": 2.238352,
+    "tipo": "Hoja Móvil 5",
+    "ventana": "6hojas-extrema",
+  },
+  {
+    "alto": 2388,
+    "ancho": 937.333333,
+    "area": 2.238352,
+    "tipo": "Hoja Fija 1",
+    "ventana": "6hojas-extrema",
+  },
+  {
+    "alto": 1488,
+    "ancho": 1004,
+    "area": 1.493952,
+    "tipo": "Hoja Móvil 1",
+    "ventana": "6hojas-fueraDeBarra",
+  },
+  {
+    "alto": 1488,
+    "ancho": 1004,
+    "area": 1.493952,
+    "tipo": "Hoja Móvil 2",
+    "ventana": "6hojas-fueraDeBarra",
+  },
+  {
+    "alto": 1488,
+    "ancho": 1004,
+    "area": 1.493952,
+    "tipo": "Hoja Móvil 3",
+    "ventana": "6hojas-fueraDeBarra",
+  },
+  {
+    "alto": 1488,
+    "ancho": 1004,
+    "area": 1.493952,
+    "tipo": "Hoja Móvil 4",
+    "ventana": "6hojas-fueraDeBarra",
+  },
+  {
+    "alto": 1488,
+    "ancho": 1004,
+    "area": 1.493952,
+    "tipo": "Hoja Móvil 5",
+    "ventana": "6hojas-fueraDeBarra",
+  },
+  {
+    "alto": 1488,
+    "ancho": 1004,
+    "area": 1.493952,
+    "tipo": "Hoja Fija 1",
+    "ventana": "6hojas-fueraDeBarra",
+  },
+]
+`;
+
+exports[`optimizarLaminasVidrio · lámina 2500 x 3600 > baseline: numero de láminas usadas 1`] = `7`;
+
+exports[`optimizarLaminasVidrio · lámina 3300 x 2140 > baseline: numero de láminas usadas 1`] = `9`;

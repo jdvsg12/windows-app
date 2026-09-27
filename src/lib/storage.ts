@@ -1,5 +1,6 @@
-import type { Proyecto, ConfiguracionPrecios } from "./types"
+import type { Proyecto, ConfiguracionPrecios, DescuentosPorSistema } from "./types"
 import { ProyectoSchema, ConfiguracionEmpresaSchema, ConfiguracionPreciosSchema } from "./schemas"
+import { DESCUNTOS_DEFAULT } from "./types"
 
 const STORAGE_KEYS = {
     PROYECTOS: "ventanas_proyectos",
@@ -8,6 +9,8 @@ const STORAGE_KEYS = {
     DATOS_BANCARIOS: "ventanas_datos_bancarios",
     CONFIGURACION: "ventanas_configuracion",
     PRECIOS: "ventanas_precios",
+    DESCUNTOS: "ventanas_descuentos",
+    ADMIN_AUTH: "admin_auth",
 }
 
 const CONFIGURACION_DEFAULT = {
@@ -115,6 +118,20 @@ export const obtenerProyectoActual = (): string | null => {
     return localStorage.getItem(STORAGE_KEYS.PROYECTO_ACTUAL)
 }
 
+export const isAdminAuthenticated = (): boolean => {
+    if (typeof window === "undefined") return false
+    return localStorage.getItem(STORAGE_KEYS.ADMIN_AUTH) === "true"
+}
+
+export const setAdminAuthenticated = (authenticated: boolean) => {
+    if (typeof window === "undefined") return
+    if (authenticated) {
+        localStorage.setItem(STORAGE_KEYS.ADMIN_AUTH, "true")
+    } else {
+        localStorage.removeItem(STORAGE_KEYS.ADMIN_AUTH)
+    }
+}
+
 export const getProyectos = obtenerProyectos
 
 export const crearProyecto = (nombre: string, cliente?: string, direccion?: string): Proyecto => {
@@ -168,3 +185,9 @@ export const obtenerPrecios = (): ConfiguracionPrecios =>
 
 export const guardarPrecios = (precios: ConfiguracionPrecios) => 
     safeSet(STORAGE_KEYS.PRECIOS, precios)
+
+export const obtenerDescuentos = (): DescuentosPorSistema => 
+    safeGet(STORAGE_KEYS.DESCUNTOS, DESCUNTOS_DEFAULT)
+
+export const guardarDescuentos = (descuentos: DescuentosPorSistema) => 
+    safeSet(STORAGE_KEYS.DESCUNTOS, descuentos)

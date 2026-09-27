@@ -5,6 +5,7 @@ import type { ConfiguracionEmpresa } from "@/lib/types"
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card"
 import { Input } from "@/components/ui/input"
 import { Label } from "@/components/ui/label"
+import { Textarea } from "@/components/ui/textarea"
 
 interface Props {
     config: ConfiguracionEmpresa
@@ -26,7 +27,7 @@ export function ConfiguracionTab({ config, logo, onConfigChange, onLogoUpload }:
                         <div className="flex items-center gap-4">
                             {logo && (
                                 <div className="w-20 h-20 border rounded-md overflow-hidden">
-                                    <img src={logo || "/placeholder.svg"} alt="Logo" className="w-full h-full object-contain" />
+                                    <img src={logo || "/placeholder.svg"} alt={`${config.nombre} - logo`} className="w-full h-full object-contain" />
                                 </div>
                             )}
                             <div className="flex-1">
@@ -35,45 +36,47 @@ export function ConfiguracionTab({ config, logo, onConfigChange, onLogoUpload }:
                         </div>
                     </div>
                     <div className="space-y-2">
-                        <Label>Nombre Empresa</Label>
-                        <Input value={config.nombre} onChange={(e) => onConfigChange("nombre", e.target.value)} />
+                        <Label htmlFor="config-nombre">Nombre Empresa</Label>
+                        <Input id="config-nombre" value={config.nombre} onChange={(e) => onConfigChange("nombre", e.target.value)} />
                     </div>
                     <div className="space-y-2">
-                        <Label>NIT</Label>
-                        <Input value={config.nit} onChange={(e) => onConfigChange("nit", e.target.value)} />
+                        <Label htmlFor="config-nit">NIT</Label>
+                        <Input id="config-nit" value={config.nit} onChange={(e) => onConfigChange("nit", e.target.value)} />
                     </div>
                     <div className="space-y-2">
-                        <Label>Dirección</Label>
-                        <Input value={config.direccion} onChange={(e) => onConfigChange("direccion", e.target.value)} />
+                        <Label htmlFor="config-direccion">Dirección</Label>
+                        <Input id="config-direccion" value={config.direccion} onChange={(e) => onConfigChange("direccion", e.target.value)} />
                     </div>
                     <div className="space-y-2">
-                        <Label>Ciudad</Label>
-                        <Input value={config.ciudad} onChange={(e) => onConfigChange("ciudad", e.target.value)} />
+                        <Label htmlFor="config-ciudad">Ciudad</Label>
+                        <Input id="config-ciudad" value={config.ciudad} onChange={(e) => onConfigChange("ciudad", e.target.value)} />
                     </div>
                     <div className="space-y-2">
-                        <Label>Teléfonos</Label>
-                        <Input value={config.telefonos} onChange={(e) => onConfigChange("telefonos", e.target.value)} />
+                        <Label htmlFor="config-telefonos">Teléfonos</Label>
+                        <Input id="config-telefonos" value={config.telefonos} onChange={(e) => onConfigChange("telefonos", e.target.value)} />
                     </div>
                     <div className="space-y-2">
-                        <Label>Email</Label>
-                        <Input value={config.email} onChange={(e) => onConfigChange("email", e.target.value)} />
+                        <Label htmlFor="config-email">Email</Label>
+                        <Input id="config-email" value={config.email} onChange={(e) => onConfigChange("email", e.target.value)} />
                     </div>
                     <div className="space-y-2">
-                        <Label>Representante Legal</Label>
+                        <Label htmlFor="config-representante">Representante Legal</Label>
                         <Input
+                            id="config-representante"
                             value={config.representante}
                             onChange={(e) => onConfigChange("representante", e.target.value)}
                         />
                     </div>
                     <div className="space-y-2">
-                        <Label>Cédula Representante</Label>
-                        <Input value={config.cedula} onChange={(e) => onConfigChange("cedula", e.target.value)} />
+                        <Label htmlFor="config-cedula">Cédula Representante</Label>
+                        <Input id="config-cedula" value={config.cedula} onChange={(e) => onConfigChange("cedula", e.target.value)} />
                     </div>
                 </div>
                 <div className="space-y-2">
-                    <Label>Datos Bancarios</Label>
-                    <textarea
-                        className="w-full min-h-[100px] p-3 rounded-md border border-input bg-background"
+                    <Label htmlFor="config-datos-bancarios">Datos Bancarios</Label>
+                    <Textarea
+                        id="config-datos-bancarios"
+                        className="min-h-[100px]"
                         value={config.datosBancarios}
                         onChange={(e) => onConfigChange("datosBancarios", e.target.value)}
                     />
