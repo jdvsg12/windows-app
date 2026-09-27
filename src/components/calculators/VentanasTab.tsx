@@ -6,6 +6,7 @@ import { Pencil, Grid3X3 } from "lucide-react"
 import { Button } from "@/components/ui/button"
 import { Card, CardContent } from "@/components/ui/card"
 import { Badge } from "@/components/ui/badge"
+import { EmptyState } from "@/components/common/EmptyState"
 import { DeleteWindowDialog } from "./DeleteWindowDialog"
 import { VentanaForm } from "./VentanaForm"
 import type { VentanaFormValues } from "@/lib/schemas"
@@ -41,14 +42,13 @@ export function VentanasTab({ ventanas, onAgregar, onEliminar }: VentanasTabProp
 
             {ventanas.length === 0 ? (
                 <Card>
-                    <CardContent className="flex flex-col items-center justify-center py-12 text-center">
-                        <div className="rounded-full bg-muted p-4 mb-4">
-                            <Grid3X3 className="h-8 w-8 text-muted-foreground" />
-                        </div>
-                        <h3 className="font-semibold">No hay ventanas agregadas</h3>
-                        <p className="text-sm text-muted-foreground mt-1">
-                            Usa el formulario de arriba para agregar ventanas
-                        </p>
+                    <CardContent>
+                        <EmptyState
+                            size="compact"
+                            icon={Grid3X3}
+                            title="No hay ventanas agregadas"
+                            description="Usa el formulario de arriba para agregar ventanas"
+                        />
                     </CardContent>
                 </Card>
             ) : (

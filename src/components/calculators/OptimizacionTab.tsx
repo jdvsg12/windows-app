@@ -3,9 +3,12 @@
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card"
 import { Label } from "@/components/ui/label"
 import { NativeSelect } from "@/components/common/NativeSelect"
+import { StatCard } from "@/components/common/StatCard"
 import { PiezaBadge } from "./PiezaBadge"
 import { ESTILOS_HOJA, obtenerEstiloPerfil, obtenerTipoHoja } from "@/lib/design/piezas"
 import { cn } from "@/lib/utils"
+import { formatMeters } from "@/lib/format"
+import { Layers, Ruler, SquareStack } from "lucide-react"
 import type { OptimizacionPerfil, LaminaVidrio, TamanoLamina } from "@/lib/types"
 import { TAMANOS_LAMINA } from "@/lib/types"
 
@@ -20,34 +23,17 @@ export function OptimizacionTab({ optimizacion, laminasVidrio, tamanoLamina, onT
     return (
         <div className="space-y-4">
             <div className="grid grid-cols-2 md:grid-cols-3 gap-4">
-                <Card>
-                    <CardHeader className="pb-2">
-                        <CardTitle className="text-sm font-medium text-muted-foreground">Barras 6m</CardTitle>
-                    </CardHeader>
-                    <CardContent>
-                        <p className="text-metric font-bold tabular-nums">
-                            {Object.values(optimizacion).reduce((sum, opt) => sum + opt.barras.length, 0)}
-                        </p>
-                    </CardContent>
-                </Card>
-                <Card>
-                    <CardHeader className="pb-2">
-                        <CardTitle className="text-sm font-medium text-muted-foreground">Metros Totales</CardTitle>
-                    </CardHeader>
-                    <CardContent>
-                        <p className="text-metric font-bold tabular-nums">
-                            {Object.values(optimizacion).reduce((sum, opt) => sum + opt.metrosUsados, 0).toFixed(2)} m
-                        </p>
-                    </CardContent>
-                </Card>
-                <Card>
-                    <CardHeader className="pb-2">
-                        <CardTitle className="text-sm font-medium text-muted-foreground">Láminas Vidrio</CardTitle>
-                    </CardHeader>
-                    <CardContent>
-                        <p className="text-metric font-bold tabular-nums">{laminasVidrio.length}</p>
-                    </CardContent>
-                </Card>
+                <StatCard
+                    label="Barras 6m"
+                    value={Object.values(optimizacion).reduce((sum, opt) => sum + opt.barras.length, 0)}
+                    icon={Ruler}
+                />
+                <StatCard
+                    label="Metros Totales"
+                    value={formatMeters(Object.values(optimizacion).reduce((sum, opt) => sum + opt.metrosUsados, 0))}
+                    icon={Layers}
+                />
+                <StatCard label="Láminas Vidrio" value={laminasVidrio.length} icon={SquareStack} />
             </div>
 
             <Card>

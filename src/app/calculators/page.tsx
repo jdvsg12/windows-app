@@ -8,13 +8,14 @@ import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card"
 import { Label } from "@/components/ui/label"
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs"
 import { Badge } from "@/components/ui/badge"
-import { ArrowLeft, Plus, FileSpreadsheet, Ruler, Package, Grid3X3, DollarSign } from "lucide-react"
+import { PageHeader } from "@/components/common/PageHeader"
+import { Plus, FileSpreadsheet, Ruler, Package, Grid3X3, DollarSign } from "lucide-react"
 import * as XLSX from "xlsx"
 import { crearProyecto } from "@/lib/storage"
 import { optimizarCortes } from "@/lib/calculos"
 import { useVentanas } from "@/hooks/useVentanas"
 import { VentanasTab, MaterialesTab, OptimizacionTab, DeleteProjectDialog } from "@/components/calculators"
-import type { TamanoLamina } from "@/lib/types"
+import { getTipoVentanaLabel, type TamanoLamina } from "@/lib/types"
 
 export default function CalculadorPageWrapper() {
     return (
@@ -56,7 +57,7 @@ function CalculadorPage() {
         const wb = XLSX.utils.book_new()
         const ws1 = XLSX.utils.json_to_sheet(ventanas.map((v) => ({
             Nombre: v.nombre, "Ancho (mm)": v.ancho, "Alto (mm)": v.alto,
-            Tipo: v.tipoVentana === "2hojas" ? "2 Hojas" : v.tipoVentana,
+            Tipo: getTipoVentanaLabel(v.tipoVentana),
         })))
         XLSX.utils.book_append_sheet(wb, ws1, "Ventanas")
         const opt = optimizarCortes(ventanas)
@@ -109,41 +110,38 @@ function CalculadorPage() {
 
     return (
         <div>
-            {/* Header */}
-            <div className="flex flex-col md:flex-row md:items-center md:justify-between gap-4 mb-6">
-                <div className="flex items-center gap-4">
-                    <Button variant="ghost" size="icon" aria-label="Volver al dashboard" onClick={() => router.push("/")}>
-                        <ArrowLeft className="h-5 w-5" />
-                    </Button>
-                    <div>
-                        <h1 className="text-title font-bold tracking-tight">{proyecto.nombre}</h1>
-                        <p className="text-sm text-muted-foreground">
-                            {proyecto.cliente ? `Cliente: ${proyecto.cliente}` : "Sin cliente"}
-                        </p>
-                    </div>
-                </div>
-                <div className="flex flex-wrap items-center gap-2">
-                    <Badge variant="secondary" className="text-sm">
-                        {ventanas.length} ventanas
-                    </Badge>
-                    {ventanas.length > 0 && (
-                        <Button variant="outline" onClick={exportarExcel}>
-                            <FileSpreadsheet className="h-4 w-4 mr-2" />
-                            Exportar
-                        </Button>
-                    )}
-                    {ventanas.length > 0 && (
-                        <Button onClick={() => router.push(`/cotizador?id=${proyectoId}`)}>
-                            <DollarSign className="h-4 w-4 mr-2" />
-                            Cotizar
-                        </Button>
-                    )}
-                    <DeleteProjectDialog
-                        projectName={proyecto.nombre}
-                        onConfirm={eliminarProyectoActual}
-                    />
-                </div>
-            </div>
+            <PageHeader
+                title={proyecto.nombre}
+                description={proyecto.cliente ? `Cliente: ${proyecto.cliente}` : "Sin cliente"}
+                onBack={() => router.push("/")}
+                backLabel="Volver al dashboard"
+                actions={
+                    <>
+                        <Badge variant="secondary" className="text-sm">
+                            {ventanas.length} ventanas
+                        </Badge>
+                        {ventanas.length > 0 && (
+                            <Button variant="outline" onClick={exportarExcel}>
+                                <FileSpreadsheet className="h-4 w-4 mr-2" />
+                                Exportar
+                            </Button>
+                        )}
+                        {ventanas.length > 0 && (
+                            <Button onClick={() => router.push(`/cotizador?id=${proyectoId}`)}>
+                                <DollarSign className="h-4 w-4 mr-2" />
+                                Cotizar
+                            </Button>
+                        )}
+                        {/* ml-auto keeps it pinned to the right edge instead of stranded alone when the row wraps on mobile */}
+                        <div className="ml-auto sm:ml-0">
+                            <DeleteProjectDialog
+                                projectName={proyecto.nombre}
+                                onConfirm={eliminarProyectoActual}
+                            />
+                        </div>
+                    </>
+                }
+            />
 
             {/* Tabs */}
             <Tabs defaultValue="ventanas" className="space-y-4">

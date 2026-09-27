@@ -1,12 +1,10 @@
+import { formatCurrency } from "@/lib/format"
 import type { CostosCalculadosCotizador } from "@/lib/types"
 
 interface ResumenCostosProps {
     costos: CostosCalculadosCotizador
     utilidadPorcentaje: number
 }
-
-const formatCurrency = (value: number | undefined): string =>
-    `$${(value || 0).toLocaleString("es-CO", { maximumFractionDigits: 0 })}`
 
 export function ResumenCostos({ costos, utilidadPorcentaje }: ResumenCostosProps) {
     return (

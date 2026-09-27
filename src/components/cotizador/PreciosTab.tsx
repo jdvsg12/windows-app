@@ -3,6 +3,8 @@
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card"
 import { Label } from "@/components/ui/label"
 import { NativeSelect } from "@/components/common/NativeSelect"
+import { SectionTitle } from "@/components/common/SectionTitle"
+import { formatArea } from "@/lib/format"
 import { TAMANOS_LAMINA, type ConfiguracionPrecios, type CostosCalculadosCotizador } from "@/lib/types"
 import { PrecioField } from "./PrecioField"
 import { CostosAdicionalesEditor } from "./CostosAdicionalesEditor"
@@ -65,10 +67,10 @@ export function PreciosTab({ precios, costosCalculados, onUpdatePrecios }: Preci
             <CardContent className="space-y-6">
                 <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
                     <div className="space-y-4">
-                        <h3 className="font-semibold text-lg border-b pb-2">Perfiles (Barra 6m)</h3>
+                        <SectionTitle>Perfiles (Barra 6m)</SectionTitle>
                         <div className="grid grid-cols-2 gap-4">{renderFields(PERFILES_FIELDS)}</div>
 
-                        <h3 className="font-semibold text-lg border-b pb-2 mt-6">Vidrio y Empaque</h3>
+                        <SectionTitle className="mt-6">Vidrio y Empaque</SectionTitle>
                         <div className="grid grid-cols-2 gap-4">
                             <PrecioField
                                 id="precioVidrioLamina"
@@ -100,19 +102,19 @@ export function PreciosTab({ precios, costosCalculados, onUpdatePrecios }: Preci
                     </div>
 
                     <div className="space-y-4">
-                        <h3 className="font-semibold text-lg border-b pb-2">Accesorios</h3>
+                        <SectionTitle>Accesorios</SectionTitle>
                         <div className="grid grid-cols-2 gap-4">{renderFields(ACCESORIOS_FIELDS)}</div>
                     </div>
 
                     <div className="border-t pt-6 md:col-span-2">
-                        <h3 className="font-semibold text-lg border-b pb-2 mb-4">Costos Globales del Proyecto</h3>
+                        <SectionTitle className="mb-4">Costos Globales del Proyecto</SectionTitle>
                         <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
                             <PrecioField
                                 id="manoDeObra"
                                 label="Mano de Obra ($/m²)"
                                 value={precios.manoDeObra}
                                 onChange={(value) => update("manoDeObra", value)}
-                                hint={`Se multiplicará por el área total (${costosCalculados?.areaTotal?.toFixed(2) || 0} m²)`}
+                                hint={`Se multiplicará por el área total (${formatArea(costosCalculados?.areaTotal)})`}
                             />
                             <PrecioField
                                 id="costosIndirectos"
