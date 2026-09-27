@@ -19,6 +19,7 @@ interface ConfiguracionTabProps {
     logo: string
     onSave: (config: Partial<ConfiguracionEmpresa>) => boolean | void
     onLogoUpload: (e: React.ChangeEvent<HTMLInputElement>) => void
+    logoError?: string | null
 }
 
 interface CamposConfig {
@@ -37,7 +38,7 @@ const CAMPOS: readonly CamposConfig[] = [
     { id: "cedula", label: "Cédula Representante" },
 ]
 
-export function ConfiguracionTab({ config, logo, onSave, onLogoUpload }: ConfiguracionTabProps) {
+export function ConfiguracionTab({ config, logo, onSave, onLogoUpload, logoError }: ConfiguracionTabProps) {
     const form = useForm<ConfiguracionEmpresa>({
         resolver: zodResolver(ConfiguracionEmpresaSchema),
         values: config,
@@ -64,6 +65,8 @@ export function ConfiguracionTab({ config, logo, onSave, onLogoUpload }: Configu
                                 )}
                                 <div className="flex-1">
                                     <Input type="file" accept="image/*" onChange={onLogoUpload} />
+                                    <p className="text-xs text-muted-foreground mt-1">Máx. 512 KB, se reduce a 400x400 px</p>
+                                    {logoError && <p className="text-sm text-destructive mt-1">{logoError}</p>}
                                 </div>
                             </div>
                         </div>

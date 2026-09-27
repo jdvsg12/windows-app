@@ -1,7 +1,7 @@
 "use client"
 
 import type React from "react"
-import { useState, Suspense } from "react"
+import { useState, useCallback, Suspense } from "react"
 import { useRouter, useSearchParams } from "next/navigation"
 import { format } from "date-fns"
 import { es } from "date-fns/locale"
@@ -11,6 +11,7 @@ import { ArrowLeft, Download } from "lucide-react"
 import { useProyecto } from "@/hooks/useProyecto"
 import { useCotizador } from "@/hooks/useCotizador"
 import { generarPDF } from "@/lib/pdf-generatos"
+import { processLogoFile } from "@/lib/logo"
 import { ConfiguracionTab } from "@/components/cotizador/ConfiguracionTab"
 import { ContenidoTab } from "@/components/cotizador/ContenidoTab"
 import { PreciosTab } from "@/components/cotizador/PreciosTab"
@@ -30,18 +31,21 @@ function CotizadorContent() {
     const [descripcion, setDescripcion] = useState("")
     const [mostrarMedidas, setMostrarMedidas] = useState(true)
     const [mostrarValores, setMostrarValores] = useState(true)
+    const [logoError, setLogoError] = useState<string | null>(null)
 
-    const handleLogoUpload = (e: React.ChangeEvent<HTMLInputElement>) => {
+    const handleLogoUpload = useCallback(async (e: React.ChangeEvent<HTMLInputElement>) => {
         const file = e.target.files?.[0]
-        if (file) {
-            const reader = new FileReader()
-            reader.onloadend = () => {
-                const logoUrl = reader.result as string
-                updateConfig({ logo: logoUrl })
-            }
-            reader.readAsDataURL(file)
+        e.target.value = ""
+        if (!file) return
+
+        const result = await processLogoFile(file)
+        if ("error" in result) {
+            setLogoError(result.error)
+            return
         }
-    }
+        setLogoError(null)
+        updateConfig({ logo: result.dataUrl })
+    }, [updateConfig])
 
     const handleClienteChange = (cliente: string) => {
         setClienteLocal(cliente)
@@ -95,6 +99,7 @@ function CotizadorContent() {
                         logo={config.logo || ""}
                         onSave={updateConfig}
                         onLogoUpload={handleLogoUpload}
+                        logoError={logoError}
                     />
                 </TabsContent>
 
