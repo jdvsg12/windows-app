@@ -16,6 +16,11 @@ export const ProyectoSchema = z.object({
     direccion: z.string().optional(),
     fechaCreacion: z.string(),
     ventanas: z.array(VentanaSchema),
+    // .default() en vez de required: los proyectos guardados antes de F3.2 no tienen
+    // estos campos, y deben seguir cargando (con estos valores neutros) en vez de
+    // fallar la validación y perderse.
+    duracionMeses: z.number().positive().default(1),
+    transporte: z.number().min(0).default(0),
 })
 
 export const ConfiguracionEmpresaSchema = z.object({
@@ -55,11 +60,22 @@ export const ConfiguracionPreciosSchema = z.object({
     precioVidrioLamina: z.number(),
     tamanoLamina: z.enum(["2440x3660", "2500x3600", "2440x3050", "2140x3300"]),
     manoDeObra: z.number(),
-    transporte: z.number(),
+    // .default(0): precios guardados antes de F3.2 no tienen "imprevistos" (era un
+    // campo nuevo del modelo D8) y deben seguir cargando en vez de perder todos los
+    // demás precios ya configurados por caer al fallback completo.
+    imprevistos: z.number().default(0),
     utilidad: z.number(),
-    otros: z.number(),
-    costosIndirectos: z.number(),
     costosAdicionales: z.array(CostoAdicionalSchema),
+})
+
+export const ConfiguracionOverheadSchema = z.object({
+    servicioLuz: z.number(),
+    servicioAgua: z.number(),
+    servicioInternet: z.number(),
+    servicioGas: z.number(),
+    arriendo: z.number(),
+    herramienta: z.number(),
+    admin: z.number(),
 })
 
 const dimensionSchema = (label: string) =>
@@ -84,7 +100,7 @@ export const CreateProjectSchema = z.object({
 
 export type CreateProjectInput = z.infer<typeof CreateProjectSchema>
 
-export const AdminLoginSchema =z.object({
+export const AdminLoginSchema = z.object({
     password: z.string().min(1, "Ingrese la contraseña"),
 })
 
@@ -92,3 +108,4 @@ export type AdminLoginInput = z.infer<typeof AdminLoginSchema>
 export type ProyectoInput = z.infer<typeof ProyectoSchema>
 export type ConfiguracionEmpresaInput = z.infer<typeof ConfiguracionEmpresaSchema>
 export type ConfiguracionPreciosInput = z.infer<typeof ConfiguracionPreciosSchema>
+export type ConfiguracionOverheadInput = z.infer<typeof ConfiguracionOverheadSchema>
