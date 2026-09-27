@@ -92,6 +92,8 @@ export interface Proyecto {
     direccion?: string
     fechaCreacion: string
     ventanas: Ventana[]
+    duracionMeses: number // usado para absorber el overhead mensual (modelo D8)
+    transporte: number // costo directo de transporte de esta obra (modelo D8)
 }
 
 export interface ConfiguracionEmpresa {
@@ -124,11 +126,21 @@ export interface ConfiguracionPrecios {
     precioVidrioLamina: number
     tamanoLamina: TamanoLamina
     manoDeObra: number
-    transporte: number
-    utilidad: number
-    otros: number
-    costosIndirectos: number
+    imprevistos: number // % sobre el costo de producción (modelo de costeo D8)
+    utilidad: number // % sobre el costo total (modelo de costeo D8)
     costosAdicionales: CostoAdicional[]
+}
+
+// Overhead mensual del taller (modelo de costeo D8): se absorbe por tiempo
+// (overhead × meses de obra), no por m². Ver lib/calculo/costeo.ts.
+export interface ConfiguracionOverhead {
+    servicioLuz: number
+    servicioAgua: number
+    servicioInternet: number
+    servicioGas: number
+    arriendo: number
+    herramienta: number
+    admin: number
 }
 
 export interface CostoAdicional {
@@ -176,40 +188,25 @@ export interface OptimizacionPerfil {
     metrosUsados: number
 }
 
-export interface CostosCalculados {
-    costoPerfiles: number
-    costoAccesorios: number
-    costoEmpaque: number
-    subtotal: number
-    costoManoObra: number
-    costoTransporte: number
-    costoOtros: number
-    costosAdicionalesDetalle: Array<CostoAdicional & { valorCalculado: number }>
-    costosAdicionalesTotal: number
-    utilidadMonto: number
-    total: number
-    areaTotal: number
-    precioPorM2: number
-    valoresPorVentana: Array<{
-        id: string
-        area: number
-        valor: number
-    }>
-}
-
+// Cascada del modelo de costeo D8. Cada paso guarda tanto el monto de esa línea como
+// el subtotal acumulado hasta ahí, para que la vista pueda mostrar la cascada completa.
 export interface CostosCalculadosCotizador {
     costoPerfiles: number
     costoAccesorios: number
     costoVidrio: number
     costoEmpaque: number
-    costoMateriales: number
-    costoManoObra: number
-    costoIndirectos: number
+    costoMateriales: number // 1. perfiles + accesorios + vidrio + empaque
+    costoManoObra: number // 2. m² × tarifa
+    costoTransporte: number // 3. input por proyecto
     costosAdicionalesDetalle: Array<CostoAdicional & { valorCalculado: number }>
     costosAdicionalesTotal: number
-    costoDirecto: number
-    utilidadMonto: number
-    total: number
+    costoDirecto: number // A = 1 + 2 + 3 + costosAdicionales
+    overheadAbsorbido: number // 4. overhead mensual × duración de la obra
+    costoProduccion: number // B = A + 4
+    imprevistosMonto: number // 5. % sobre B
+    costoTotal: number // C = B + 5
+    utilidadMonto: number // 6. % sobre C
+    total: number // D = C + 6 (precio de venta)
     areaTotal: number
     precioPorM2: number
     valoresPorVentana: Array<{

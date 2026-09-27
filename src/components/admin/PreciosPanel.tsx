@@ -38,10 +38,8 @@ const ACCESORIOS_FIELDS: readonly NumericFieldConfig[] = [
 
 const COSTOS_FIELDS: readonly NumericFieldConfig[] = [
     { key: "manoDeObra", label: "Mano de Obra (por m²)" },
-    { key: "transporte", label: "Transporte (valor fijo)" },
+    { key: "imprevistos", label: "Imprevistos (%)" },
     { key: "utilidad", label: "Utilidad (%)" },
-    { key: "costosIndirectos", label: "Costos Indirectos" },
-    { key: "otros", label: "Otros" },
 ]
 
 export function PreciosPanel() {

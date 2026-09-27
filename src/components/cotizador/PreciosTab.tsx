@@ -117,10 +117,11 @@ export function PreciosTab({ precios, costosCalculados, onUpdatePrecios }: Preci
                                 hint={`Se multiplicará por el área total (${formatArea(costosCalculados?.areaTotal)})`}
                             />
                             <PrecioField
-                                id="costosIndirectos"
-                                label="Costos Indirectos (Global)"
-                                value={precios.costosIndirectos}
-                                onChange={(value) => update("costosIndirectos", value)}
+                                id="imprevistos"
+                                label="Imprevistos (%)"
+                                value={precios.imprevistos}
+                                onChange={(value) => update("imprevistos", value)}
+                                hint="Se aplica sobre el costo de producción (materiales + M.O. + transporte + overhead)"
                             />
                             <PrecioField
                                 id="utilidad"

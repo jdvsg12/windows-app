@@ -1,5 +1,5 @@
-import type { Proyecto, ConfiguracionPrecios, DescuentosPorSistema } from "./types"
-import { ProyectoSchema, ConfiguracionEmpresaSchema, ConfiguracionPreciosSchema } from "./schemas"
+import type { Proyecto, ConfiguracionPrecios, ConfiguracionOverhead, DescuentosPorSistema } from "./types"
+import { ProyectoSchema, ConfiguracionEmpresaSchema, ConfiguracionPreciosSchema, ConfiguracionOverheadSchema } from "./schemas"
 import { DESCUNTOS_DEFAULT } from "./types"
 
 const STORAGE_KEYS = {
@@ -10,6 +10,7 @@ const STORAGE_KEYS = {
     CONFIGURACION: "ventanas_configuracion",
     PRECIOS: "ventanas_precios",
     DESCUNTOS: "ventanas_descuentos",
+    OVERHEAD: "ventanas_overhead",
     ADMIN_AUTH: "admin_auth",
 }
 
@@ -49,11 +50,21 @@ const PRECIOS_DEFAULT: ConfiguracionPrecios = {
     precioVidrioLamina: 180000,
     tamanoLamina: "2500x3600",
     manoDeObra: 30,
-    transporte: 50000,
+    imprevistos: 0,
     utilidad: 20,
-    otros: 0,
-    costosIndirectos: 0,
     costosAdicionales: [],
+}
+
+// Servicios conocidos hoy; arriendo/herramienta/admin quedan listos en 0 hasta que se
+// definan (modelo de costeo D8, tarea F3.2).
+const OVERHEAD_DEFAULT: ConfiguracionOverhead = {
+    servicioLuz: 300000,
+    servicioAgua: 180000,
+    servicioInternet: 80000,
+    servicioGas: 40000,
+    arriendo: 0,
+    herramienta: 0,
+    admin: 0,
 }
 
 function safeGet<T>(key: string, fallback: T, validator?: (data: unknown) => T): T {
@@ -92,6 +103,11 @@ function validateConfiguracion(data: unknown) {
 function validatePrecios(data: unknown): ConfiguracionPrecios {
     const result = ConfiguracionPreciosSchema.safeParse(data)
     return result.success ? result.data : PRECIOS_DEFAULT
+}
+
+function validateOverhead(data: unknown): ConfiguracionOverhead {
+    const result = ConfiguracionOverheadSchema.safeParse(data)
+    return result.success ? result.data : OVERHEAD_DEFAULT
 }
 
 import { z } from "zod"
@@ -141,6 +157,8 @@ export const crearProyecto = (nombre: string, cliente?: string, direccion?: stri
         direccion: direccion || "",
         fechaCreacion: new Date().toISOString(),
         ventanas: [],
+        duracionMeses: 1,
+        transporte: 0,
     }
     proyectos.push(nuevoProyecto)
     guardarProyectos(proyectos)
@@ -184,8 +202,14 @@ export const obtenerPrecios = (): ConfiguracionPrecios =>
 export const guardarPrecios = (precios: ConfiguracionPrecios) => 
     safeSet(STORAGE_KEYS.PRECIOS, precios)
 
-export const obtenerDescuentos = (): DescuentosPorSistema => 
+export const obtenerDescuentos = (): DescuentosPorSistema =>
     safeGet(STORAGE_KEYS.DESCUNTOS, DESCUNTOS_DEFAULT)
 
-export const guardarDescuentos = (descuentos: DescuentosPorSistema) => 
+export const guardarDescuentos = (descuentos: DescuentosPorSistema) =>
     safeSet(STORAGE_KEYS.DESCUNTOS, descuentos)
+
+export const obtenerOverhead = (): ConfiguracionOverhead =>
+    safeGet(STORAGE_KEYS.OVERHEAD, OVERHEAD_DEFAULT, validateOverhead)
+
+export const guardarOverhead = (overhead: ConfiguracionOverhead) =>
+    safeSet(STORAGE_KEYS.OVERHEAD, overhead)

@@ -1,26 +1,47 @@
 "use client"
 
 import { useState } from "react"
+import { useForm } from "react-hook-form"
+import { zodResolver } from "@hookform/resolvers/zod"
 import { Pencil, Grid3X3 } from "lucide-react"
 
 import { Button } from "@/components/ui/button"
-import { Card, CardContent } from "@/components/ui/card"
+import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card"
 import { Badge } from "@/components/ui/badge"
+import { Input } from "@/components/ui/input"
+import { Form, FormControl, FormField, FormItem, FormLabel, FormMessage } from "@/components/ui/form"
 import { EmptyState } from "@/components/common/EmptyState"
+import { SaveIndicator } from "@/components/common/SaveIndicator"
+import { useAutosave } from "@/hooks/useAutosave"
 import { DeleteWindowDialog } from "./DeleteWindowDialog"
 import { VentanaForm } from "./VentanaForm"
+import { z } from "zod"
 import type { VentanaFormValues } from "@/lib/schemas"
-import { getTipoVentanaLabel, type Ventana, type TipoVentana, type SistemaVentana } from "@/lib/types"
+import { getTipoVentanaLabel, type Proyecto, type Ventana, type TipoVentana, type SistemaVentana } from "@/lib/types"
+
+const DatosProyectoSchema = z.object({
+    duracionMeses: z.number().positive(),
+    transporte: z.number().min(0),
+})
+type DatosProyectoValues = z.infer<typeof DatosProyectoSchema>
 
 interface VentanasTabProps {
+    proyecto: Proyecto
     ventanas: Ventana[]
     onAgregar: (nombre: string, ancho: number, alto: number, tipo: TipoVentana, sistema: SistemaVentana, editandoId: string | null) => void
     onEliminar: (id: string) => void
+    onActualizarDatosProyecto: (datos: DatosProyectoValues) => void
 }
 
-export function VentanasTab({ ventanas, onAgregar, onEliminar }: VentanasTabProps) {
+export function VentanasTab({ proyecto, ventanas, onAgregar, onEliminar, onActualizarDatosProyecto }: VentanasTabProps) {
     const [editandoId, setEditandoId] = useState<string | null>(null)
     const editingVentana = ventanas.find((ventana) => ventana.id === editandoId) ?? null
+
+    const datosForm = useForm<DatosProyectoValues>({
+        resolver: zodResolver(DatosProyectoSchema),
+        values: { duracionMeses: proyecto.duracionMeses, transporte: proyecto.transporte },
+    })
+    const datosStatus = useAutosave({ value: datosForm.watch(), onSave: onActualizarDatosProyecto })
 
     const handleSubmit = ({ nombre, ancho, alto, tipoVentana, sistema }: VentanaFormValues) => {
         onAgregar(nombre, Number.parseFloat(ancho), Number.parseFloat(alto), tipoVentana, sistema, editandoId)
@@ -34,6 +55,57 @@ export function VentanasTab({ ventanas, onAgregar, onEliminar }: VentanasTabProp
 
     return (
         <div className="space-y-4">
+            <Card>
+                <CardHeader className="flex flex-row items-center justify-between">
+                    <CardTitle className="text-lg">Datos del Proyecto</CardTitle>
+                    <SaveIndicator status={datosStatus} />
+                </CardHeader>
+                <CardContent>
+                    <Form {...datosForm}>
+                        <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+                            <FormField
+                                control={datosForm.control}
+                                name="duracionMeses"
+                                render={({ field }) => (
+                                    <FormItem>
+                                        <FormLabel>Duración estimada (meses)</FormLabel>
+                                        <FormControl>
+                                            <Input
+                                                type="number"
+                                                step="0.1"
+                                                min="0"
+                                                {...field}
+                                                onChange={(e) => field.onChange(e.target.valueAsNumber)}
+                                            />
+                                        </FormControl>
+                                        <FormMessage />
+                                    </FormItem>
+                                )}
+                            />
+                            <FormField
+                                control={datosForm.control}
+                                name="transporte"
+                                render={({ field }) => (
+                                    <FormItem>
+                                        <FormLabel>Transporte ($)</FormLabel>
+                                        <FormControl>
+                                            <Input
+                                                type="number"
+                                                step="1000"
+                                                min="0"
+                                                {...field}
+                                                onChange={(e) => field.onChange(e.target.valueAsNumber)}
+                                            />
+                                        </FormControl>
+                                        <FormMessage />
+                                    </FormItem>
+                                )}
+                            />
+                        </div>
+                    </Form>
+                </CardContent>
+            </Card>
+
             <VentanaForm
                 editingVentana={editingVentana}
                 onSubmit={handleSubmit}
