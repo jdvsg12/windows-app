@@ -72,12 +72,14 @@ function safeGet<T>(key: string, fallback: T, validator?: (data: unknown) => T):
     }
 }
 
-function safeSet(key: string, value: unknown): void {
-    if (typeof window === "undefined") return
+function safeSet(key: string, value: unknown): boolean {
+    if (typeof window === "undefined") return false
     try {
         localStorage.setItem(key, JSON.stringify(value))
+        return true
     } catch (error) {
         console.error("Error saving to localStorage:", error)
+        return false
     }
 }
 
