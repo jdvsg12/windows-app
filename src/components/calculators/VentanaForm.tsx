@@ -11,7 +11,8 @@ import { Form, FormControl, FormField, FormItem, FormLabel, FormMessage } from "
 import { Input } from "@/components/ui/input"
 import { NativeSelect } from "@/components/common/NativeSelect"
 import { VentanaFormSchema, type VentanaFormValues } from "@/lib/schemas"
-import { opcionesSistema, opcionesTipo, sistemaParaVentanaNueva, type Ventana } from "@/lib/types"
+import { opcionesSistema, sistemaParaVentanaNueva } from "@/lib/calculo/registro"
+import { opcionesTipo, type Ventana } from "@/lib/types"
 
 interface VentanaFormProps {
     editingVentana: Ventana | null

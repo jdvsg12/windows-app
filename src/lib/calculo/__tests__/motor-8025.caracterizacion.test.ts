@@ -6,13 +6,15 @@ import {
     calcularVidrios,
     optimizarCortes,
     optimizarLaminasVidrio,
-} from "@/lib/calculos"
-import { TIPOS_8025, VENTANAS_8025, VENTANAS_CON_VIDRIO_QUE_CABE } from "./fixtures/ventanas-8025"
-import { redondear, seSolapan, type Rectangulo } from "./helpers"
+} from "../motor-8025"
+import { DESCUNTOS_DEFAULT } from "@/lib/types"
+import { TIPOS_8025, VENTANAS_8025, VENTANAS_CON_VIDRIO_QUE_CABE } from "@/lib/__tests__/fixtures/ventanas-8025"
+import { redondear, seSolapan, type Rectangulo } from "@/lib/__tests__/helpers"
 
 // Characterization (golden master) of the engine as it works today for reference 80-25.
 // The snapshots record CURRENT behavior, not a specification: review any snapshot diff by hand.
-// Run in Node (no `window`), so lib/storage returns the default discounts and no browser storage is touched.
+// Run in Node (no `window`); DESCUNTOS_DEFAULT is passed explicitly now that the engine no
+// longer reads storage itself (F3.1) — it is exactly what storage.ts used to resolve to here.
 
 describe("entorno", () => {
     it("corre en Node sin window", () => {
@@ -23,15 +25,15 @@ describe("entorno", () => {
 describe("motor 80-25 · por ventana", () => {
     describe.each(VENTANAS_8025.map((ventana) => [ventana.nombre, ventana] as const))("%s", (_nombre, ventana) => {
         it("cortes de perfiles", () => {
-            expect(redondear(calcularCortesVentana(ventana))).toMatchSnapshot()
+            expect(redondear(calcularCortesVentana(ventana, DESCUNTOS_DEFAULT))).toMatchSnapshot()
         })
 
         it("vidrios", () => {
-            expect(redondear(calcularVidrios([ventana]))).toMatchSnapshot()
+            expect(redondear(calcularVidrios([ventana], DESCUNTOS_DEFAULT))).toMatchSnapshot()
         })
 
         it("accesorios", () => {
-            expect(redondear(calcularAccesorios([ventana]))).toMatchSnapshot()
+            expect(redondear(calcularAccesorios([ventana], DESCUNTOS_DEFAULT))).toMatchSnapshot()
         })
     })
 })
@@ -40,21 +42,21 @@ describe("motor 80-25 · por ventana", () => {
 describe("regla de negocio · una cerradura por ventana", () => {
     it.each(TIPOS_8025)("%s lleva 1 cerradura", (tipo) => {
         const ventana = VENTANAS_8025.find((v) => v.tipoVentana === tipo && v.nombre.endsWith("tipica"))!
-        expect(calcularAccesorios([ventana]).cerraduras).toBe(1)
+        expect(calcularAccesorios([ventana], DESCUNTOS_DEFAULT).cerraduras).toBe(1)
     })
 })
 
 describe("motor 80-25 · proyecto completo", () => {
     it("optimizacion de barras de 6 m (incluye un perfil de 6,3 m que excede la barra)", () => {
-        expect(redondear(optimizarCortes([...VENTANAS_8025]))).toMatchSnapshot()
+        expect(redondear(optimizarCortes([...VENTANAS_8025], DESCUNTOS_DEFAULT))).toMatchSnapshot()
     })
 
     it("accesorios totales", () => {
-        expect(redondear(calcularAccesorios([...VENTANAS_8025]))).toMatchSnapshot()
+        expect(redondear(calcularAccesorios([...VENTANAS_8025], DESCUNTOS_DEFAULT))).toMatchSnapshot()
     })
 
     it("vidrios totales", () => {
-        expect(redondear(calcularVidrios([...VENTANAS_8025]))).toMatchSnapshot()
+        expect(redondear(calcularVidrios([...VENTANAS_8025], DESCUNTOS_DEFAULT))).toMatchSnapshot()
     })
 })
 
@@ -65,8 +67,8 @@ describe.each([
     { ancho: 3300, alto: 2140 },
 ])("optimizarLaminasVidrio · lámina $ancho x $alto", ({ ancho, alto }) => {
     const ventanas = [...VENTANAS_CON_VIDRIO_QUE_CABE]
-    const piezas = calcularVidrios(ventanas)
-    const laminas = optimizarLaminasVidrio(ventanas, ancho, alto)
+    const piezas = calcularVidrios(ventanas, DESCUNTOS_DEFAULT)
+    const laminas = optimizarLaminasVidrio(ventanas, DESCUNTOS_DEFAULT, ancho, alto)
 
     it("coloca cada pieza exactamente una vez", () => {
         const colocadas = laminas.flatMap((lamina) => lamina.vidrios)
@@ -113,7 +115,7 @@ describe.each([
 describe("optimizarLaminasVidrio · comportamientos a corregir en el motor nuevo", () => {
     it("coloca una pieza mayor que la lámina, sin girar y fuera de sus límites", () => {
         const ventanaExtrema = VENTANAS_8025.find((ventana) => ventana.nombre === "2hojas-extrema")!
-        const [lamina] = optimizarLaminasVidrio([ventanaExtrema], 2500, 3600)
+        const [lamina] = optimizarLaminasVidrio([ventanaExtrema], DESCUNTOS_DEFAULT, 2500, 3600)
         const { vidrio, x } = lamina.vidrios[0]
 
         expect(vidrio.ancho).toBeGreaterThan(2500)
@@ -126,6 +128,7 @@ describe("optimizarLaminasVidrio · comportamientos a corregir en el motor nuevo
                 { id: "a", nombre: "a", ancho: 1000, alto: 1000, tipoVentana: "2hojas", sistema: "8025" },
                 { id: "b", nombre: "b", ancho: 1000, alto: 1000, tipoVentana: "2hojas", sistema: "8025" },
             ],
+            DESCUNTOS_DEFAULT,
             3300,
             2140
         )

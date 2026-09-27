@@ -5,14 +5,15 @@ import {
     obtenerPrecios,
     guardarPrecios,
     actualizarProyecto,
+    obtenerDescuentos,
 } from "@/lib/storage"
 import {
     optimizarCortes,
     calcularAccesorios,
     calcularVidrios,
+    optimizarLaminasVidrio,
     ORDEN_PERFILES,
-    optimizarCortesVidrio,
-} from "@/lib/calculos"
+} from "@/lib/calculo/motor-8025"
 import type { Proyecto, ConfiguracionEmpresa, ConfiguracionPrecios, CostosCalculadosCotizador } from "@/lib/types"
 
 export function useCotizador(proyecto: Proyecto | null) {
@@ -63,11 +64,14 @@ export function useCotizador(proyecto: Proyecto | null) {
     }
 }
 
+// TODO(F3.2): reemplazar esta cascada por el modelo de costeo D8 único (elimina la
+// duplicación con la calcularCostos que ya se borró de lib/calculos.ts).
 function calcularCostos(proyecto: Proyecto, precios: ConfiguracionPrecios): CostosCalculadosCotizador {
+    const descuentos = obtenerDescuentos()
     const areaTotalVentanas = proyecto.ventanas.reduce((acc, v) => acc + (v.ancho * v.alto) / 1000000, 0)
 
     let costoPerfiles = 0
-    const optimizacion = optimizarCortes(proyecto.ventanas)
+    const optimizacion = optimizarCortes(proyecto.ventanas, descuentos)
 
     ORDEN_PERFILES.forEach((perfil) => {
         if (optimizacion[perfil]) {
@@ -89,7 +93,7 @@ function calcularCostos(proyecto: Proyecto, precios: ConfiguracionPrecios): Cost
         }
     })
 
-    const accesorios = calcularAccesorios(proyecto.ventanas)
+    const accesorios = calcularAccesorios(proyecto.ventanas, descuentos)
     const costoAccesorios =
         accesorios.rodachinas * precios.precioRodachina +
         accesorios.guiasSuperior * precios.precioGuia +
@@ -99,13 +103,13 @@ function calcularCostos(proyecto: Proyecto, precios: ConfiguracionPrecios): Cost
         accesorios.tornillosInstalacion * precios.precioTornillo10mm +
         accesorios.cerraduras * precios.precioCerradura
 
-    const vidrios = calcularVidrios(proyecto.ventanas)
+    const vidrios = calcularVidrios(proyecto.ventanas, descuentos)
     let metrosEmpaque = 0
     vidrios.forEach((v) => {
         metrosEmpaque += ((v.ancho * 2 + v.alto * 2) / 1000) || 0
     })
 
-    const laminasVidrio = optimizarCortesVidrio(proyecto.ventanas)
+    const laminasVidrio = optimizarLaminasVidrio(proyecto.ventanas, descuentos)
     const numLaminas = laminasVidrio.length
     const costoVidrio = numLaminas * (precios.precioVidrioLamina || 0)
 

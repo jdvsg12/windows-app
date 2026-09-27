@@ -1,7 +1,6 @@
 import { useEffect, useState } from "react"
 
 import { obtenerDescuentos, guardarDescuentos } from "@/lib/storage"
-import { refreshDescuentosCache } from "@/lib/calculos"
 import { DESCUNTOS_DEFAULT, type DescuentosPorSistema, type DescuentosSistema, type SistemaVentana } from "@/lib/types"
 import { useSaveFeedback } from "./useSaveFeedback"
 
@@ -27,7 +26,6 @@ export function useDescuentosForm() {
 
     const handleSave = () => {
         guardarDescuentos(descuentos)
-        refreshDescuentosCache()
         markSaved()
     }
 
