@@ -6,6 +6,7 @@ import type { SistemaVentana } from "@/lib/types"
 import { Save, RotateCcw } from "lucide-react"
 import { DescuentosSistemaCard } from "./DescuentosSistemaCard"
 import { SISTEMAS, useDescuentosForm } from "./useDescuentosForm"
+import { FormSkeleton } from "@/components/common/FormSkeleton"
 
 export function DescuentosPanel() {
     const {
@@ -20,7 +21,7 @@ export function DescuentosPanel() {
         handleResetAll,
     } = useDescuentosForm()
 
-    if (loading) return <div>Cargando...</div>
+    if (loading) return <FormSkeleton fields={6} />
 
     return (
         <div className="space-y-6">

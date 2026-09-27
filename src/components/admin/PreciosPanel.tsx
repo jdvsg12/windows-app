@@ -8,6 +8,7 @@ import { TAMANOS_LAMINA, type TamanoLamina } from "@/lib/types"
 import { Save, RotateCcw } from "lucide-react"
 import { NumberField } from "./NumberField"
 import { usePreciosForm, type PreciosFormData } from "./usePreciosForm"
+import { FormSkeleton } from "@/components/common/FormSkeleton"
 
 type NumericPrecioKey = Exclude<keyof PreciosFormData, "tamanoLamina">
 
@@ -57,7 +58,7 @@ export function PreciosPanel() {
             />
         ))
 
-    if (loading) return <div>Cargando...</div>
+    if (loading) return <FormSkeleton />
 
     return (
         <div className="space-y-6">

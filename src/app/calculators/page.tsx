@@ -8,6 +8,7 @@ import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs"
 import { Badge } from "@/components/ui/badge"
 import { PageHeader } from "@/components/common/PageHeader"
 import { CreateProjectForm } from "@/components/common/CreateProjectForm"
+import { PageSkeleton } from "@/components/common/PageSkeleton"
 import { FileSpreadsheet, Ruler, Package, Grid3X3, DollarSign } from "lucide-react"
 import * as XLSX from "xlsx"
 import { optimizarCortes } from "@/lib/calculos"
@@ -17,7 +18,7 @@ import { getTipoVentanaLabel, type Proyecto, type TamanoLamina } from "@/lib/typ
 
 export default function CalculadorPageWrapper() {
     return (
-        <Suspense fallback={<div>Cargando...</div>}>
+        <Suspense fallback={<PageSkeleton />}>
             <CalculadorPage />
         </Suspense>
     )
