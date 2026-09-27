@@ -98,6 +98,13 @@ export function useVentanas(proyectoId: string | null, tamanoLamina?: TamanoLami
         setProyecto(proyectoActualizado)
     }, [proyecto])
 
+    const actualizarDatosProyecto = useCallback((datos: Pick<Proyecto, "duracionMeses" | "transporte">) => {
+        if (!proyecto) return
+        const proyectoActualizado = { ...proyecto, ...datos }
+        actualizarProyecto(proyectoActualizado)
+        setProyecto(proyectoActualizado)
+    }, [proyecto])
+
     return {
         proyecto,
         ventanas,
@@ -109,5 +116,6 @@ export function useVentanas(proyectoId: string | null, tamanoLamina?: TamanoLami
         eliminarVentana,
         eliminarProyectoActual,
         actualizarCliente,
+        actualizarDatosProyecto,
     }
 }

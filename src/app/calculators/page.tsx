@@ -41,6 +41,7 @@ function CalculadorPage() {
         agregarVentana,
         eliminarVentana,
         eliminarProyectoActual,
+        actualizarDatosProyecto,
     } = useVentanas(proyectoId, tamanoLamina)
 
     const handleProjectCreated = useCallback(
@@ -143,9 +144,11 @@ function CalculadorPage() {
 
                 <TabsContent value="ventanas">
                     <VentanasTab
+                        proyecto={proyecto}
                         ventanas={ventanas}
                         onAgregar={agregarVentana}
                         onEliminar={eliminarVentana}
+                        onActualizarDatosProyecto={actualizarDatosProyecto}
                     />
                 </TabsContent>
 
