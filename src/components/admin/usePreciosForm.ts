@@ -21,10 +21,8 @@ export interface PreciosFormData {
     precioVidrioLamina: number
     tamanoLamina: TamanoLamina
     manoDeObra: number
-    transporte: number
+    imprevistos: number
     utilidad: number
-    otros: number
-    costosIndirectos: number
 }
 
 const PRECIOS_DEFAULT: PreciosFormData = {
@@ -44,10 +42,8 @@ const PRECIOS_DEFAULT: PreciosFormData = {
     precioVidrioLamina: 180000,
     tamanoLamina: "2500x3600",
     manoDeObra: 30,
-    transporte: 50000,
+    imprevistos: 0,
     utilidad: 20,
-    otros: 0,
-    costosIndirectos: 0,
 }
 
 const toFormData = (precios: ConfiguracionPrecios): PreciosFormData => ({
@@ -67,10 +63,8 @@ const toFormData = (precios: ConfiguracionPrecios): PreciosFormData => ({
     precioVidrioLamina: precios.precioVidrioLamina,
     tamanoLamina: precios.tamanoLamina || PRECIOS_DEFAULT.tamanoLamina,
     manoDeObra: precios.manoDeObra,
-    transporte: precios.transporte,
+    imprevistos: precios.imprevistos,
     utilidad: precios.utilidad,
-    otros: precios.otros,
-    costosIndirectos: precios.costosIndirectos,
 })
 
 export function usePreciosForm() {

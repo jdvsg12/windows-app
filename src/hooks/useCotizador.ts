@@ -4,16 +4,11 @@ import {
     guardarConfiguracion,
     obtenerPrecios,
     guardarPrecios,
-    actualizarProyecto,
+    obtenerOverhead,
     obtenerDescuentos,
+    actualizarProyecto,
 } from "@/lib/storage"
-import {
-    optimizarCortes,
-    calcularAccesorios,
-    calcularVidrios,
-    optimizarLaminasVidrio,
-    ORDEN_PERFILES,
-} from "@/lib/calculo/motor-8025"
+import { calcularCosteo } from "@/lib/calculo/costeo"
 import type { Proyecto, ConfiguracionEmpresa, ConfiguracionPrecios, CostosCalculadosCotizador } from "@/lib/types"
 
 export function useCotizador(proyecto: Proyecto | null) {
@@ -31,7 +26,14 @@ export function useCotizador(proyecto: Proyecto | null) {
 
     useEffect(() => {
         if (proyecto && precios) {
-            const costos = calcularCostos(proyecto, precios)
+            const costos = calcularCosteo({
+                ventanas: proyecto.ventanas,
+                descuentos: obtenerDescuentos(),
+                precios,
+                overhead: obtenerOverhead(),
+                transporteProyecto: proyecto.transporte,
+                duracionMesesProyecto: proyecto.duracionMeses,
+            })
             setCostosCalculados(costos)
         }
     }, [proyecto, precios])
@@ -61,96 +63,5 @@ export function useCotizador(proyecto: Proyecto | null) {
         updateConfig,
         updatePrecios,
         updateCliente,
-    }
-}
-
-// TODO(F3.2): reemplazar esta cascada por el modelo de costeo D8 único (elimina la
-// duplicación con la calcularCostos que ya se borró de lib/calculos.ts).
-function calcularCostos(proyecto: Proyecto, precios: ConfiguracionPrecios): CostosCalculadosCotizador {
-    const descuentos = obtenerDescuentos()
-    const areaTotalVentanas = proyecto.ventanas.reduce((acc, v) => acc + (v.ancho * v.alto) / 1000000, 0)
-
-    let costoPerfiles = 0
-    const optimizacion = optimizarCortes(proyecto.ventanas, descuentos)
-
-    ORDEN_PERFILES.forEach((perfil) => {
-        if (optimizacion[perfil]) {
-            const numBarras = optimizacion[perfil].barras.length
-            let precioBarra = 0
-
-            switch (perfil) {
-                case "Cabezal": precioBarra = precios.precioCabezal; break
-                case "Sillar": precioBarra = precios.precioSillar; break
-                case "Jamba Izquierda":
-                case "Jamba Derecha": precioBarra = precios.precioJamba; break
-                case "Enganche": precioBarra = precios.precioEnganche; break
-                case "Traslape": precioBarra = precios.precioTraslape; break
-                case "Horizontal Superior": precioBarra = precios.precioHorizontalSuperior; break
-                case "Horizontal Inferior": precioBarra = precios.precioHorizontalInferior; break
-            }
-
-            costoPerfiles += numBarras * precioBarra
-        }
-    })
-
-    const accesorios = calcularAccesorios(proyecto.ventanas, descuentos)
-    const costoAccesorios =
-        accesorios.rodachinas * precios.precioRodachina +
-        accesorios.guiasSuperior * precios.precioGuia +
-        accesorios.guiasInferior * precios.precioGuia +
-        accesorios.tornillosHojas * precios.precioTornillo8mm +
-        accesorios.tornillosMarco * precios.precioTornillo8mm +
-        accesorios.tornillosInstalacion * precios.precioTornillo10mm +
-        accesorios.cerraduras * precios.precioCerradura
-
-    const vidrios = calcularVidrios(proyecto.ventanas, descuentos)
-    let metrosEmpaque = 0
-    vidrios.forEach((v) => {
-        metrosEmpaque += ((v.ancho * 2 + v.alto * 2) / 1000) || 0
-    })
-
-    const laminasVidrio = optimizarLaminasVidrio(proyecto.ventanas, descuentos)
-    const numLaminas = laminasVidrio.length
-    const costoVidrio = numLaminas * (precios.precioVidrioLamina || 0)
-
-    const costoEmpaque = metrosEmpaque * precios.precioEmpaque
-    const costoMateriales = costoPerfiles + costoAccesorios + costoVidrio + costoEmpaque
-
-    const costoManoObra = areaTotalVentanas * precios.manoDeObra
-    const costoIndirectos = precios.costosIndirectos || 0
-
-    let costosAdicionalesTotal = 0
-    const costosAdicionalesDetalle = (precios.costosAdicionales || []).map((costo) => {
-        const valor = costo.tipo === "porcentaje" ? costoMateriales * (costo.valor / 100) : costo.valor
-        costosAdicionalesTotal += valor
-        return { ...costo, valorCalculado: valor }
-    })
-
-    const costoDirecto = costoMateriales + costoManoObra + costoIndirectos + costosAdicionalesTotal
-    const utilidadMonto = costoDirecto * (precios.utilidad / 100)
-    const precioFinal = costoDirecto + utilidadMonto
-    const precioPorM2 = areaTotalVentanas > 0 ? precioFinal / areaTotalVentanas : 0
-
-    const valoresPorVentana = proyecto.ventanas.map((v) => {
-        const area = (v.ancho * v.alto) / 1000000
-        return { id: v.id, area, valor: area * precioPorM2 }
-    })
-
-    return {
-        costoPerfiles,
-        costoAccesorios,
-        costoVidrio,
-        costoEmpaque,
-        costoMateriales,
-        costoManoObra,
-        costoIndirectos,
-        costosAdicionalesDetalle,
-        costosAdicionalesTotal,
-        costoDirecto,
-        utilidadMonto,
-        total: precioFinal,
-        areaTotal: areaTotalVentanas,
-        precioPorM2,
-        valoresPorVentana,
     }
 }
