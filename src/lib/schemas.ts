@@ -78,7 +78,13 @@ export const VentanaFormSchema = z.object({
 
 export type VentanaFormValues = z.infer<typeof VentanaFormSchema>
 
-export const AdminLoginSchema = z.object({
+export const CreateProjectSchema = z.object({
+    nombre: z.string().trim().min(1, "Ingresa un nombre"),
+})
+
+export type CreateProjectInput = z.infer<typeof CreateProjectSchema>
+
+export const AdminLoginSchema =z.object({
     password: z.string().min(1, "Ingrese la contraseña"),
 })
 
