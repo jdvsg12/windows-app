@@ -43,10 +43,6 @@ function CotizadorContent() {
         }
     }
 
-    const handleConfigChange = (field: string, value: string) => {
-        updateConfig({ [field]: value })
-    }
-
     const handleClienteChange = (cliente: string) => {
         setClienteLocal(cliente)
         updateCliente(cliente)
@@ -97,7 +93,7 @@ function CotizadorContent() {
                     <ConfiguracionTab
                         config={config}
                         logo={config.logo || ""}
-                        onConfigChange={handleConfigChange}
+                        onSave={updateConfig}
                         onLogoUpload={handleLogoUpload}
                     />
                 </TabsContent>

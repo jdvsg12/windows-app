@@ -36,10 +36,10 @@ export function useCotizador(proyecto: Proyecto | null) {
     }, [proyecto, precios])
 
     const updateConfig = useCallback((updates: Partial<ConfiguracionEmpresa>) => {
-        if (!config) return
+        if (!config) return false
         const newConfig = { ...config, ...updates }
         setConfig(newConfig)
-        guardarConfiguracion(newConfig)
+        return guardarConfiguracion(newConfig)
     }, [config])
 
     const updatePrecios = useCallback((newPrecios: ConfiguracionPrecios) => {
