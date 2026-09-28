@@ -5,11 +5,10 @@ import {
     calcularCortesVentana,
     calcularVidrios,
     optimizarCortes,
-    optimizarLaminasVidrio,
 } from "../motor-8025"
 import { DESCUNTOS_DEFAULT } from "@/lib/types"
-import { TIPOS_8025, VENTANAS_8025, VENTANAS_CON_VIDRIO_QUE_CABE } from "@/lib/__tests__/fixtures/ventanas-8025"
-import { redondear, seSolapan, type Rectangulo } from "@/lib/__tests__/helpers"
+import { TIPOS_8025, VENTANAS_8025 } from "@/lib/__tests__/fixtures/ventanas-8025"
+import { redondear } from "@/lib/__tests__/helpers"
 
 // Characterization (golden master) of the engine as it works today for reference 80-25.
 // The snapshots record CURRENT behavior, not a specification: review any snapshot diff by hand.
@@ -60,81 +59,5 @@ describe("motor 80-25 · proyecto completo", () => {
     })
 })
 
-// The glass optimizer will be replaced (kerf 0, R/S classification, guillotine), so its layout is NOT
-// locked: only invariants that any correct optimizer must keep.
-describe.each([
-    { ancho: 2500, alto: 3600 },
-    { ancho: 3300, alto: 2140 },
-])("optimizarLaminasVidrio · lámina $ancho x $alto", ({ ancho, alto }) => {
-    const ventanas = [...VENTANAS_CON_VIDRIO_QUE_CABE]
-    const piezas = calcularVidrios(ventanas, DESCUNTOS_DEFAULT)
-    const laminas = optimizarLaminasVidrio(ventanas, DESCUNTOS_DEFAULT, ancho, alto)
-
-    it("coloca cada pieza exactamente una vez", () => {
-        const colocadas = laminas.flatMap((lamina) => lamina.vidrios)
-        expect(colocadas).toHaveLength(piezas.length)
-    })
-
-    it("mantiene cada pieza dentro de su lámina", () => {
-        for (const lamina of laminas) {
-            for (const { vidrio, x, y } of lamina.vidrios) {
-                expect(x).toBeGreaterThanOrEqual(0)
-                expect(y).toBeGreaterThanOrEqual(0)
-                expect(x + vidrio.ancho).toBeLessThanOrEqual(lamina.anchoLamina)
-                expect(y + vidrio.alto).toBeLessThanOrEqual(lamina.altoLamina)
-            }
-        }
-    })
-
-    it("no solapa piezas dentro de una misma lámina", () => {
-        for (const lamina of laminas) {
-            const rectangulos: Rectangulo[] = lamina.vidrios.map(({ vidrio, x, y }) => ({
-                x,
-                y,
-                ancho: vidrio.ancho,
-                alto: vidrio.alto,
-            }))
-            rectangulos.forEach((a, i) => {
-                rectangulos.slice(i + 1).forEach((b) => expect(seSolapan(a, b)).toBe(false))
-            })
-        }
-    })
-
-    it("el area usada coincide con la suma de sus piezas", () => {
-        for (const lamina of laminas) {
-            const suma = lamina.vidrios.reduce((total, { vidrio }) => total + vidrio.area, 0)
-            expect(lamina.areaUsada).toBeCloseTo(suma, 6)
-        }
-    })
-
-    it("baseline: numero de láminas usadas", () => {
-        expect(laminas.length).toMatchSnapshot()
-    })
-})
-
-describe("optimizarLaminasVidrio · comportamientos a corregir en el motor nuevo", () => {
-    it("coloca una pieza mayor que la lámina, sin girar y fuera de sus límites", () => {
-        const ventanaExtrema = VENTANAS_8025.find((ventana) => ventana.nombre === "2hojas-extrema")!
-        const [lamina] = optimizarLaminasVidrio([ventanaExtrema], DESCUNTOS_DEFAULT, 2500, 3600)
-        const { vidrio, x } = lamina.vidrios[0]
-
-        expect(vidrio.ancho).toBeGreaterThan(2500)
-        expect(x + vidrio.ancho).toBeGreaterThan(lamina.anchoLamina)
-    })
-
-    it("usa un margen de corte fijo de 5 mm entre piezas (no configurable)", () => {
-        const [lamina] = optimizarLaminasVidrio(
-            [
-                { id: "a", nombre: "a", ancho: 1000, alto: 1000, tipoVentana: "2hojas", sistema: "8025" },
-                { id: "b", nombre: "b", ancho: 1000, alto: 1000, tipoVentana: "2hojas", sistema: "8025" },
-            ],
-            DESCUNTOS_DEFAULT,
-            3300,
-            2140
-        )
-        const [primera, segunda] = [...lamina.vidrios].sort((p, q) => p.x - q.x)
-        const separacion = segunda.x - (primera.x + primera.vidrio.ancho)
-
-        expect(separacion).toBeGreaterThanOrEqual(5)
-    })
-})
+// El empaquetado de láminas (kerf configurable, clasificación resto/desperdicio, guillotina)
+// vive ahora en lib/calculo/vidrio.ts (F3.3) — ver vidrio.test.ts para sus invariantes.
