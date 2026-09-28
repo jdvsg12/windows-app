@@ -59,6 +59,9 @@ export const ConfiguracionPreciosSchema = z.object({
     precioEmpaque: z.number(),
     precioVidrioLamina: z.number(),
     tamanoLamina: z.enum(["2440x3660", "2500x3600", "2440x3050", "2140x3300"]),
+    // .default(): precios guardados antes de F3.3 no tienen estos campos (modelo D8/F3.3).
+    kerfVidrio: z.number().min(0).default(0),
+    minRestoVidrio: z.number().min(0).default(200),
     manoDeObra: z.number(),
     // .default(0): precios guardados antes de F3.2 no tienen "imprevistos" (era un
     // campo nuevo del modelo D8) y deben seguir cargando en vez de perder todos los
