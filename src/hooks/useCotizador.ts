@@ -15,6 +15,7 @@ export function useCotizador(proyecto: Proyecto | null) {
     const [config, setConfig] = useState<ConfiguracionEmpresa | null>(null)
     const [precios, setPrecios] = useState<ConfiguracionPrecios | null>(null)
     const [costosCalculados, setCostosCalculados] = useState<CostosCalculadosCotizador | null>(null)
+    const [errorCosteo, setErrorCosteo] = useState<string | null>(null)
 
     useEffect(() => {
         const configuracion = obtenerConfiguracion()
@@ -26,15 +27,23 @@ export function useCotizador(proyecto: Proyecto | null) {
 
     useEffect(() => {
         if (proyecto && precios) {
-            const costos = calcularCosteo({
-                ventanas: proyecto.ventanas,
-                descuentos: obtenerDescuentos(),
-                precios,
-                overhead: obtenerOverhead(),
-                transporteProyecto: proyecto.transporte,
-                duracionMesesProyecto: proyecto.duracionMeses,
-            })
-            setCostosCalculados(costos)
+            try {
+                const costos = calcularCosteo({
+                    ventanas: proyecto.ventanas,
+                    descuentos: obtenerDescuentos(),
+                    precios,
+                    overhead: obtenerOverhead(),
+                    transporteProyecto: proyecto.transporte,
+                    duracionMesesProyecto: proyecto.duracionMeses,
+                })
+                setCostosCalculados(costos)
+                setErrorCosteo(null)
+            } catch (error) {
+                // Una pieza de vidrio que no cabe en la lámina configurada (F3.3) no debe
+                // tumbar el cotizador: se muestra el error en vez de un costo silenciosamente mal.
+                setCostosCalculados(null)
+                setErrorCosteo(error instanceof Error ? error.message : String(error))
+            }
         }
     }, [proyecto, precios])
 
@@ -60,6 +69,7 @@ export function useCotizador(proyecto: Proyecto | null) {
         config,
         precios,
         costosCalculados,
+        errorCosteo,
         updateConfig,
         updatePrecios,
         updateCliente,

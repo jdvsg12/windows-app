@@ -24,7 +24,7 @@ function CotizadorContent() {
     const proyectoId = searchParams.get("id")
 
     const { proyecto } = useProyecto(proyectoId)
-    const { config, precios, costosCalculados, updateConfig, updatePrecios, updateCliente } = useCotizador(proyecto)
+    const { config, precios, costosCalculados, errorCosteo, updateConfig, updatePrecios, updateCliente } = useCotizador(proyecto)
 
     const [fecha, setFecha] = useState<Date>(new Date())
     const [clienteLocal, setClienteLocal] = useState(proyecto?.cliente || "")
@@ -122,6 +122,7 @@ function CotizadorContent() {
                     <PreciosTab
                         precios={precios}
                         costosCalculados={costosCalculados}
+                        errorCosteo={errorCosteo}
                         onUpdatePrecios={updatePrecios}
                     />
                 </TabsContent>
