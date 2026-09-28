@@ -26,6 +26,7 @@ import type {
     DescuentosPorSistema,
     CostosCalculadosCotizador,
 } from "@/lib/types"
+import { TAMANOS_LAMINA } from "@/lib/types"
 
 export interface EntradaCosteo {
     ventanas: readonly Ventana[]
@@ -34,8 +35,6 @@ export interface EntradaCosteo {
     overhead: ConfiguracionOverhead
     transporteProyecto: number
     duracionMesesProyecto: number
-    laminaAncho?: number
-    laminaAlto?: number
 }
 
 type PrecioNumericKey = {
@@ -54,14 +53,23 @@ const PRECIO_POR_PERFIL: Record<(typeof ORDEN_PERFILES)[number], PrecioNumericKe
 }
 
 export function calcularCosteo(entrada: EntradaCosteo): CostosCalculadosCotizador {
-    const { ventanas, descuentos, precios, overhead, transporteProyecto, duracionMesesProyecto, laminaAncho, laminaAlto } = entrada
+    const { ventanas, descuentos, precios, overhead, transporteProyecto, duracionMesesProyecto } = entrada
 
     // Solo 8025 está validado (D1); el registro ya lo garantiza en el formulario, pero
     // una ventana legada con otro sistema no debe tirar la cotización entera.
     const motor = obtenerMotor("8025")
     if (!motor) throw new Error("El motor de referencia 8025 no está registrado")
 
-    const salida = motor.calcular({ ventanas, descuentos, laminaAncho, laminaAlto })
+    // Única fuente del tamaño de lámina (F3.3): precios.tamanoLamina, no un parámetro suelto.
+    const { ancho: laminaAncho, alto: laminaAlto } = TAMANOS_LAMINA[precios.tamanoLamina]
+    const salida = motor.calcular({
+        ventanas,
+        descuentos,
+        laminaAncho,
+        laminaAlto,
+        kerf: precios.kerfVidrio,
+        minResto: precios.minRestoVidrio,
+    })
 
     // 1. Materiales — perfiles se compran por barra completa de 6 m, no por metro usado.
     // Las claves de optimizacionPerfiles llevan el sistema como prefijo ("8025 - Cabezal"),
