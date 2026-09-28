@@ -107,6 +107,18 @@ export function PreciosPanel() {
                             </SelectContent>
                         </Select>
                     </div>
+                    <NumberField
+                        id="kerfVidrio"
+                        label="Kerf de corte (mm)"
+                        value={formData.kerfVidrio}
+                        onChange={(value) => handleChange("kerfVidrio", value)}
+                    />
+                    <NumberField
+                        id="minRestoVidrio"
+                        label="Mínimo resto reutilizable (mm)"
+                        value={formData.minRestoVidrio}
+                        onChange={(value) => handleChange("minRestoVidrio", value)}
+                    />
                     {renderFields(COSTOS_FIELDS)}
                 </CardContent>
             </Card>
