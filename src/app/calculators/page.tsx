@@ -1,6 +1,6 @@
 "use client"
 
-import { Suspense, useState, useCallback } from "react"
+import { Suspense, useCallback } from "react"
 import { useRouter, useSearchParams } from "next/navigation"
 import { Button } from "@/components/ui/button"
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card"
@@ -15,7 +15,7 @@ import { optimizarCortes } from "@/lib/calculo/motor-8025"
 import { obtenerDescuentos } from "@/lib/storage"
 import { useVentanas } from "@/hooks/useVentanas"
 import { VentanasTab, MaterialesTab, OptimizacionTab, DeleteProjectDialog } from "@/components/calculators"
-import { getTipoVentanaLabel, type Proyecto, type TamanoLamina } from "@/lib/types"
+import { getTipoVentanaLabel, type Proyecto } from "@/lib/types"
 
 export default function CalculadorPageWrapper() {
     return (
@@ -30,7 +30,6 @@ function CalculadorPage() {
     const searchParams = useSearchParams()
     const proyectoId = searchParams.get("id")
 
-    const [tamanoLamina, setTamanoLamina] = useState<TamanoLamina>("2500x3600")
     const {
         proyecto,
         ventanas,
@@ -38,11 +37,14 @@ function CalculadorPage() {
         accesorios,
         vidrios,
         laminasVidrio,
+        errorLaminas,
+        tamanoLamina,
         agregarVentana,
         eliminarVentana,
         eliminarProyectoActual,
         actualizarDatosProyecto,
-    } = useVentanas(proyectoId, tamanoLamina)
+        actualizarTamanoLamina,
+    } = useVentanas(proyectoId)
 
     const handleProjectCreated = useCallback(
         (nuevo: Proyecto) => router.push(`/calculators?id=${nuevo.id}`),
@@ -163,8 +165,9 @@ function CalculadorPage() {
                     <OptimizacionTab
                         optimizacion={optimizacion}
                         laminasVidrio={laminasVidrio}
+                        errorLaminas={errorLaminas}
                         tamanoLamina={tamanoLamina}
-                        onTamanoLaminaChange={setTamanoLamina}
+                        onTamanoLaminaChange={actualizarTamanoLamina}
                     />
                 </TabsContent>
             </Tabs>

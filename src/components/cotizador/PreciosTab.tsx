@@ -13,6 +13,7 @@ import { ResumenCostos } from "./ResumenCostos"
 interface PreciosTabProps {
     precios: ConfiguracionPrecios
     costosCalculados: CostosCalculadosCotizador | null
+    errorCosteo: string | null
     onUpdatePrecios: (precios: ConfiguracionPrecios) => void
 }
 
@@ -43,7 +44,7 @@ const ACCESORIOS_FIELDS: readonly PrecioFieldConfig[] = [
     { key: "precioTornillo10mm", label: "Tornillo 10mm" },
 ]
 
-export function PreciosTab({ precios, costosCalculados, onUpdatePrecios }: PreciosTabProps) {
+export function PreciosTab({ precios, costosCalculados, errorCosteo, onUpdatePrecios }: PreciosTabProps) {
     const update = (field: keyof ConfiguracionPrecios, value: number | string) => {
         onUpdatePrecios({ ...precios, [field]: value })
     }
@@ -98,6 +99,18 @@ export function PreciosTab({ precios, costosCalculados, onUpdatePrecios }: Preci
                                 value={precios.precioEmpaque}
                                 onChange={(value) => update("precioEmpaque", value)}
                             />
+                            <PrecioField
+                                id="kerfVidrio"
+                                label="Kerf de corte (mm)"
+                                value={precios.kerfVidrio}
+                                onChange={(value) => update("kerfVidrio", value)}
+                            />
+                            <PrecioField
+                                id="minRestoVidrio"
+                                label="Mínimo resto (mm)"
+                                value={precios.minRestoVidrio}
+                                onChange={(value) => update("minRestoVidrio", value)}
+                            />
                         </div>
                     </div>
 
@@ -136,6 +149,12 @@ export function PreciosTab({ precios, costosCalculados, onUpdatePrecios }: Preci
                         costos={precios.costosAdicionales || []}
                         onChange={(costosAdicionales) => onUpdatePrecios({ ...precios, costosAdicionales })}
                     />
+
+                    {errorCosteo && (
+                        <div className="mt-8 p-4 bg-destructive/10 border border-destructive rounded-lg text-sm text-destructive md:col-span-2">
+                            {errorCosteo} Cambia el tamaño de lámina arriba para poder cotizar este vidrio.
+                        </div>
+                    )}
 
                     {costosCalculados && (
                         <ResumenCostos costos={costosCalculados} utilidadPorcentaje={precios.utilidad} />

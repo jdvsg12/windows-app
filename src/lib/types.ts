@@ -125,6 +125,8 @@ export interface ConfiguracionPrecios {
     precioEmpaque: number
     precioVidrioLamina: number
     tamanoLamina: TamanoLamina
+    kerfVidrio: number // mm que consume cada corte de vidrio (F3.3); 0 por defecto (vidrio rayado y partido)
+    minRestoVidrio: number // mm de lado menor a partir del cual un sobrante de lámina es "resto" reutilizable y no desperdicio
     manoDeObra: number
     imprevistos: number // % sobre el costo de producción (modelo de costeo D8)
     utilidad: number // % sobre el costo total (modelo de costeo D8)
@@ -158,6 +160,14 @@ export interface VidrioCorte {
     area: number // m²
 }
 
+export interface RestoLamina {
+    x: number
+    y: number
+    ancho: number
+    alto: number
+    tipo: "resto" | "desperdicio"
+}
+
 export interface LaminaVidrio {
     numero: number
     anchoLamina: number
@@ -168,6 +178,7 @@ export interface LaminaVidrio {
         y: number
         rotado: boolean
     }>
+    restos: RestoLamina[]
     areaUsada: number
     areaSobrante: number
 }
@@ -220,7 +231,7 @@ export const TAMANOS_LAMINA = {
     "2440x3660": { label: "2440 x 3660 mm", ancho: 2440, alto: 3660 },
     "2500x3600": { label: "2500 x 3600 mm", ancho: 2500, alto: 3600 },
     "2440x3050": { label: "2440 x 3050 mm", ancho: 2440, alto: 3050 },
-    "2140x3300": { label: "2140 x 3300 mm", ancho: 2140, alto: 3300 },
+    "2140x3300": { label: "2140 x 3300 mm", ancho: 3300, alto: 2140 },
 } as const
 
 export type TamanoLamina = keyof typeof TAMANOS_LAMINA

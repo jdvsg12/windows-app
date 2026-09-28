@@ -15,11 +15,15 @@ import { TAMANOS_LAMINA } from "@/lib/types"
 interface Props {
     optimizacion: Record<string, OptimizacionPerfil>
     laminasVidrio: LaminaVidrio[]
+    errorLaminas: string | null
     tamanoLamina: TamanoLamina
     onTamanoLaminaChange: (tamano: TamanoLamina) => void
 }
 
-export function OptimizacionTab({ optimizacion, laminasVidrio, tamanoLamina, onTamanoLaminaChange }: Props) {
+const ESTILO_RESTO = { codigo: "R", clases: "bg-resto border-resto-border text-resto-fg" }
+const ESTILO_DESPERDICIO = { codigo: "S", clases: "bg-desperdicio border-desperdicio-border text-desperdicio-fg" }
+
+export function OptimizacionTab({ optimizacion, laminasVidrio, errorLaminas, tamanoLamina, onTamanoLaminaChange }: Props) {
     return (
         <div className="space-y-4">
             <div className="grid grid-cols-2 md:grid-cols-3 gap-4">
@@ -66,6 +70,14 @@ export function OptimizacionTab({ optimizacion, laminasVidrio, tamanoLamina, onT
                 </CardContent>
             </Card>
 
+            {errorLaminas && (
+                <Card className="border-destructive">
+                    <CardContent className="pt-6 text-sm text-destructive">
+                        {errorLaminas} Cambia el tamaño de lámina en Precios para poder cotizar este vidrio.
+                    </CardContent>
+                </Card>
+            )}
+
             {laminasVidrio.length > 0 && (
                 <Card>
                     <CardHeader>
@@ -94,6 +106,14 @@ export function OptimizacionTab({ optimizacion, laminasVidrio, tamanoLamina, onT
                                     Hoja {ESTILOS_HOJA[tipo].nombre.toLowerCase()}
                                 </span>
                             ))}
+                            <span className="inline-flex items-center gap-2">
+                                <PiezaBadge estilo={ESTILO_RESTO} />
+                                Resto reutilizable
+                            </span>
+                            <span className="inline-flex items-center gap-2">
+                                <PiezaBadge estilo={ESTILO_DESPERDICIO} />
+                                Desperdicio
+                            </span>
                         </div>
                         <div className="space-y-6">
                             {laminasVidrio.map((lamina) => {
@@ -137,6 +157,29 @@ export function OptimizacionTab({ optimizacion, laminasVidrio, tamanoLamina, onT
                                                             {item.vidrio.ancho.toFixed(0)}×{item.vidrio.alto.toFixed(0)}
                                                             {item.rotado && <span className="ml-0.5">↻</span>}
                                                         </span>
+                                                    </div>
+                                                )
+                                            })}
+                                            {lamina.restos.map((resto, i) => {
+                                                const estilo = resto.tipo === "resto" ? ESTILO_RESTO : ESTILO_DESPERDICIO
+                                                const left = (resto.x / lamina.anchoLamina) * 100
+                                                const top = (resto.y / lamina.altoLamina) * 100
+                                                const w = (resto.ancho / lamina.anchoLamina) * 100
+                                                const h = (resto.alto / lamina.altoLamina) * 100
+                                                return (
+                                                    <div
+                                                        key={`resto-${i}`}
+                                                        className={cn("absolute border flex items-center justify-center overflow-hidden", estilo.clases)}
+                                                        style={{
+                                                            left: `${left}%`,
+                                                            top: `${top}%`,
+                                                            width: `${w}%`,
+                                                            height: `${h}%`,
+                                                            fontSize: Math.min(w, h) > 8 ? "10px" : "0",
+                                                        }}
+                                                        title={`${resto.tipo === "resto" ? "Resto" : "Desperdicio"}: ${resto.ancho.toFixed(0)}×${resto.alto.toFixed(0)} mm`}
+                                                    >
+                                                        {estilo.codigo}
                                                     </div>
                                                 )
                                             })}

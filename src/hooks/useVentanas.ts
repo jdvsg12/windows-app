@@ -5,23 +5,27 @@ import {
     actualizarProyecto,
     eliminarProyecto,
     obtenerDescuentos,
+    obtenerPrecios,
+    guardarPrecios,
 } from "@/lib/storage"
 import {
     optimizarCortes,
     calcularAccesorios,
     calcularVidrios,
-    optimizarLaminasVidrio,
 } from "@/lib/calculo/motor-8025"
-import type { Proyecto, Ventana, TipoVentana, SistemaVentana, TamanoLamina } from "@/lib/types"
+import { optimizarLaminasVidrio } from "@/lib/calculo/vidrio"
+import type { Proyecto, Ventana, TipoVentana, SistemaVentana, TamanoLamina, LaminaVidrio } from "@/lib/types"
 import { TAMANOS_LAMINA } from "@/lib/types"
 
-export function useVentanas(proyectoId: string | null, tamanoLamina?: TamanoLamina) {
+export function useVentanas(proyectoId: string | null) {
     const router = useRouter()
     const [proyecto, setProyecto] = useState<Proyecto | null>(null)
     const [ventanas, setVentanas] = useState<Ventana[]>([])
+    // Única fuente del tamaño de lámina (F3.3): precios.tamanoLamina, leído aquí y
+    // actualizado a través de actualizarTamanoLamina — ya no un estado local de la página.
+    const [precios, setPrecios] = useState(() => obtenerPrecios())
 
-    const actualTamano = tamanoLamina || "2500x3600"
-    const { ancho: laminaAncho, alto: laminaAlto } = TAMANOS_LAMINA[actualTamano]
+    const { ancho: laminaAncho, alto: laminaAlto } = TAMANOS_LAMINA[precios.tamanoLamina]
 
     useEffect(() => {
         if (!proyectoId) return
@@ -38,7 +42,25 @@ export function useVentanas(proyectoId: string | null, tamanoLamina?: TamanoLami
     const optimizacion = useMemo(() => ventanas.length > 0 ? optimizarCortes(ventanas, descuentos) : {}, [ventanas, descuentos])
     const accesorios = useMemo(() => ventanas.length > 0 ? calcularAccesorios(ventanas, descuentos) : null, [ventanas, descuentos])
     const vidrios = useMemo(() => ventanas.length > 0 ? calcularVidrios(ventanas, descuentos) : [], [ventanas, descuentos])
-    const laminasVidrio = useMemo(() => ventanas.length > 0 ? optimizarLaminasVidrio(ventanas, descuentos, laminaAncho, laminaAlto) : [], [ventanas, descuentos, laminaAncho, laminaAlto])
+
+    // El optimizador lanza si una pieza no cabe en ninguna orientación de la lámina
+    // configurada (F3.3): se captura aquí para no tumbar la pestaña de Optimización.
+    const { laminasVidrio, errorLaminas } = useMemo((): { laminasVidrio: LaminaVidrio[]; errorLaminas: string | null } => {
+        if (vidrios.length === 0) return { laminasVidrio: [], errorLaminas: null }
+        try {
+            return {
+                laminasVidrio: optimizarLaminasVidrio(vidrios, {
+                    laminaAncho,
+                    laminaAlto,
+                    kerf: precios.kerfVidrio,
+                    minResto: precios.minRestoVidrio,
+                }),
+                errorLaminas: null,
+            }
+        } catch (error) {
+            return { laminasVidrio: [], errorLaminas: error instanceof Error ? error.message : String(error) }
+        }
+    }, [vidrios, laminaAncho, laminaAlto, precios.kerfVidrio, precios.minRestoVidrio])
 
     const agregarVentana = useCallback((
         nombre: string,
@@ -105,6 +127,12 @@ export function useVentanas(proyectoId: string | null, tamanoLamina?: TamanoLami
         setProyecto(proyectoActualizado)
     }, [proyecto])
 
+    const actualizarTamanoLamina = useCallback((tamanoLamina: TamanoLamina) => {
+        const nuevosPrecios = { ...obtenerPrecios(), tamanoLamina }
+        guardarPrecios(nuevosPrecios)
+        setPrecios(nuevosPrecios)
+    }, [])
+
     return {
         proyecto,
         ventanas,
@@ -112,10 +140,13 @@ export function useVentanas(proyectoId: string | null, tamanoLamina?: TamanoLami
         accesorios,
         vidrios,
         laminasVidrio,
+        errorLaminas,
+        tamanoLamina: precios.tamanoLamina,
         agregarVentana,
         eliminarVentana,
         eliminarProyectoActual,
         actualizarCliente,
         actualizarDatosProyecto,
+        actualizarTamanoLamina,
     }
 }

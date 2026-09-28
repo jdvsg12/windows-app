@@ -10,13 +10,16 @@ import type {
     SistemaVentana,
 } from "@/lib/types"
 import * as motor8025 from "./motor-8025"
+import { optimizarLaminasVidrio } from "./vidrio"
 import { calcularAreaTotalM2 } from "./comun"
 
 export interface EntradaCalculo {
     ventanas: readonly Ventana[]
     descuentos: DescuentosPorSistema
-    laminaAncho?: number
-    laminaAlto?: number
+    laminaAncho: number
+    laminaAlto: number
+    kerf?: number
+    minResto?: number
 }
 
 export interface SalidaCalculo {
@@ -32,12 +35,13 @@ export interface MotorReferencia {
 }
 
 function calcular8025(entrada: EntradaCalculo): SalidaCalculo {
-    const { ventanas, descuentos, laminaAncho, laminaAlto } = entrada
+    const { ventanas, descuentos, laminaAncho, laminaAlto, kerf, minResto } = entrada
+    const vidrios = motor8025.calcularVidrios(ventanas, descuentos)
     return {
         optimizacionPerfiles: motor8025.optimizarCortes(ventanas, descuentos),
         accesorios: motor8025.calcularAccesorios(ventanas, descuentos),
-        vidrios: motor8025.calcularVidrios(ventanas, descuentos),
-        laminasVidrio: motor8025.optimizarLaminasVidrio(ventanas, descuentos, laminaAncho, laminaAlto),
+        vidrios,
+        laminasVidrio: optimizarLaminasVidrio(vidrios, { laminaAncho, laminaAlto, kerf, minResto }),
         areaTotalM2: calcularAreaTotalM2(ventanas),
     }
 }

@@ -24,6 +24,8 @@ const PRECIOS_BASE: ConfiguracionPrecios = {
     precioEmpaque: 3000,
     precioVidrioLamina: 180000,
     tamanoLamina: "2500x3600",
+    kerfVidrio: 0,
+    minRestoVidrio: 200,
     manoDeObra: 30,
     imprevistos: 5,
     utilidad: 20,

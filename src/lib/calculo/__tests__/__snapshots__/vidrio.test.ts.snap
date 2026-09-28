@@ -1,0 +1,5 @@
+// Vitest Snapshot v1, https://vitest.dev/guide/snapshot.html
+
+exports[`optimizarLaminasVidrio · lámina 2500 x 3600 (proyecto real) > baseline: número de láminas usadas 1`] = `7`;
+
+exports[`optimizarLaminasVidrio · lámina 3300 x 2140 (proyecto real) > baseline: número de láminas usadas 1`] = `9`;
