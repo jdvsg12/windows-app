@@ -48,3 +48,8 @@ verificacion-*.txt
 verificar-*.js
 *.skills.md
 *.ui-skills.md
+
+# playwright
+/test-results/
+/playwright-report/
+/playwright/.cache/
