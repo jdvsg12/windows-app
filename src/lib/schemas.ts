@@ -82,21 +82,24 @@ export const ConfiguracionPreciosSchema = z.object({
     precioTornillo8mm: z.number(),
     precioTornillo10mm: z.number(),
     precioEmpaque: z.number(),
+    // Respaldo cuando un color/calibre no tiene precio propio en preciosVidrio.
     precioVidrioLamina: z.number(),
     // .default(): precios guardados antes de tener precio por color/calibre de vidrio.
-    preciosVidrio: z.record(z.string(), z.number().min(0)).default({}),
-    precioSandblasting: z.number().min(0).default(0),
-    recargosColorAluminio: z.record(z.string(), z.number()).default({}),
+    // Las claves no se validan contra la lista de colores: una clave vieja no debe tumbar
+    // todos los precios guardados. El tipo ConfiguracionPrecios las restringe en el código.
+    preciosVidrio: z.record(z.string(), z.number().min(0)).default({}), // por lámina, clave "<color>-<calibre>"
+    precioSandblasting: z.number().min(0).default(0), // por m² de vidrio con acabado sandblasting
+    recargosColorAluminio: z.record(z.string(), z.number()).default({}), // % sobre el precio base de cada perfil
     tamanoLamina: z.enum(["2440x3660", "2500x3600", "2440x3050", "2140x3300"]),
     // .default(): precios guardados antes de F3.3 no tienen estos campos (modelo D8/F3.3).
-    kerfVidrio: z.number().min(0).default(0),
-    minRestoVidrio: z.number().min(0).default(200),
+    kerfVidrio: z.number().min(0).default(0), // mm por corte; 0 = vidrio rayado y partido
+    minRestoVidrio: z.number().min(0).default(200), // mm de lado menor para que un sobrante sea "resto" y no desperdicio
     manoDeObra: z.number(),
     // .default(0): precios guardados antes de F3.2 no tienen "imprevistos" (era un
     // campo nuevo del modelo D8) y deben seguir cargando en vez de perder todos los
     // demás precios ya configurados por caer al fallback completo.
-    imprevistos: z.number().default(0),
-    utilidad: z.number(),
+    imprevistos: z.number().default(0), // % sobre el costo de producción (D8)
+    utilidad: z.number(), // % sobre el costo total (D8)
     costosAdicionales: z.array(CostoAdicionalSchema),
 })
 
