@@ -34,7 +34,10 @@ export function MaterialesTab({ accesorios, vidrios }: Props) {
                         {vidrios.map((v, i) => (
                             <div key={i} className="flex items-center justify-between p-3 bg-muted rounded-lg">
                                 <div>
-                                    <p className="font-medium">{v.ventana} - {v.tipo}</p>
+                                    <p className="font-medium">
+                                        {v.codigo && <span className="mr-2 font-mono">{v.codigo}</span>}
+                                        {v.ventana} - {v.tipo}
+                                    </p>
                                     <p className="text-sm text-muted-foreground">
                                         {v.ancho.toFixed(0)} × {v.alto.toFixed(0)} mm
                                         {v.grupo && ` · ${v.grupo}`}

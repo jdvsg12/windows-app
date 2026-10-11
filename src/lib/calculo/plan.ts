@@ -8,6 +8,7 @@ import {
     fusionarLaminasPorTipo,
     fusionarPerfilesPorColor,
 } from "./grupos"
+import { asignarCodigos } from "./codigos"
 import { calcularAccesorios, calcularVidrios, optimizarCortes } from "./motor-8025"
 import { calcularMetricasVidrio, optimizarLaminasVidrio, type MetricasVidrio } from "./vidrio"
 import {
@@ -59,7 +60,7 @@ export function calcularPlanCorte({ ventanas, descuentos, precios }: EntradaPlan
     const accesorios = calcularAccesorios(ventanas, descuentos)
     const vidriosPorTipo = agruparPorTipoVidrio(ventanas).map(({ etiqueta, ventanas: grupo }) => ({
         etiqueta,
-        vidrios: etiquetarVidrios(calcularVidrios(grupo, descuentos), etiqueta),
+        vidrios: etiquetarVidrios(asignarCodigos(calcularVidrios(grupo, descuentos), ventanas), etiqueta),
     }))
     const vidrios = vidriosPorTipo.flatMap((grupo) => grupo.vidrios)
 

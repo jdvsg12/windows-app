@@ -163,14 +163,17 @@ export function VentanasTab({ proyecto, ventanas, onAgregar, onEliminar, onActua
                 </Card>
             ) : (
                 <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
-                    {ventanas.map((ventana) => (
+                    {ventanas.map((ventana, i) => (
                         <Card
                             key={ventana.id}
                             className={editandoId === ventana.id ? "border-primary ring-1 ring-primary" : ""}
                         >
                             <CardContent className="p-4">
                                 <div className="flex items-center justify-between gap-2 mb-2">
-                                    <h3 className="font-semibold truncate">{ventana.nombre}</h3>
+                                    <h3 className="font-semibold truncate">
+                                        <span className="mr-1 font-mono text-muted-foreground">V{i + 1}</span>{" "}
+                                        {ventana.nombre}
+                                    </h3>
                                     <Badge variant="secondary" className="shrink-0">
                                         {getTipoVentanaLabel(ventana.tipoVentana)}
                                     </Badge>

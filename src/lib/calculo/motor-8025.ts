@@ -8,6 +8,7 @@ import {
     type Accesorios,
     type OptimizacionPerfil,
     type VidrioCorte,
+    type HojaVidrio,
     type DescuentosPorSistema,
     type DescuentosSistema,
     type SistemaVentana,
@@ -322,6 +323,8 @@ export function calcularAccesorios(ventanas: readonly Ventana[], descuentos: Des
  * @param descuentos - Tabla de descuentos por sistema (inyectada)
  * @returns Array con información de cada vidrio
  */
+const hojaVidrio = (tipo: HojaVidrio["tipo"], numero: number, cerradura: boolean): HojaVidrio => ({ tipo, numero, cerradura })
+
 export function calcularVidrios(ventanas: readonly Ventana[], descuentos: DescuentosPorSistema): VidrioCorte[] {
     const vidrios: VidrioCorte[] = []
 
@@ -349,11 +352,13 @@ export function calcularVidrios(ventanas: readonly Ventana[], descuentos: Descue
             const anchoVidrioCerradura = (x_mm + desfaseCerradura) - descuentosSistema.anchoVidrio
             const anchoVidrioCentral = x_mm - descuentosSistema.anchoVidrio
 
-            vidrios.push({ ventana: ventana.nombre, tipo: "Hoja Fija (Parche)", ancho: anchoVidrioFija, alto: altoVidrio, area: (anchoVidrioFija * altoVidrio) / 1000000 })
-            vidrios.push({ ventana: ventana.nombre, tipo: "Hoja Móvil (Cerradura)", ancho: anchoVidrioCerradura, alto: altoVidrio, area: (anchoVidrioCerradura * altoVidrio) / 1000000 })
+            // Orden físico desde la fija: F1, centrales M1…, y la de cerradura es la última móvil.
+            const moviles = cantidadHojas - 1
+            vidrios.push({ ventana: ventana.nombre, ventanaId: ventana.id, hoja: hojaVidrio("fija", 1, false), tipo: "Hoja Fija (Parche)", ancho: anchoVidrioFija, alto: altoVidrio, area: (anchoVidrioFija * altoVidrio) / 1000000 })
+            vidrios.push({ ventana: ventana.nombre, ventanaId: ventana.id, hoja: hojaVidrio("movil", moviles, true), tipo: "Hoja Móvil (Cerradura)", ancho: anchoVidrioCerradura, alto: altoVidrio, area: (anchoVidrioCerradura * altoVidrio) / 1000000 })
 
             for (let i = 0; i < cantidadHojas - 2; i++) {
-                vidrios.push({ ventana: ventana.nombre, tipo: `Hoja Móvil (Central ${i + 1})`, ancho: anchoVidrioCentral, alto: altoVidrio, area: (anchoVidrioCentral * altoVidrio) / 1000000 })
+                vidrios.push({ ventana: ventana.nombre, ventanaId: ventana.id, hoja: hojaVidrio("movil", i + 1, false), tipo: `Hoja Móvil (Central ${i + 1})`, ancho: anchoVidrioCentral, alto: altoVidrio, area: (anchoVidrioCentral * altoVidrio) / 1000000 })
             }
         } else {
             const anchoHoja = ventana.ancho / cantidadHojas
@@ -364,6 +369,8 @@ export function calcularVidrios(ventanas: readonly Ventana[], descuentos: Descue
             for (let i = 0; i < moviles; i++) {
                 vidrios.push({
                     ventana: ventana.nombre,
+                    ventanaId: ventana.id,
+                    hoja: hojaVidrio("movil", i + 1, i === moviles - 1),
                     tipo: `Hoja Móvil ${i + 1}`,
                     ancho: anchoVidrio,
                     alto: altoVidrio,
@@ -375,6 +382,8 @@ export function calcularVidrios(ventanas: readonly Ventana[], descuentos: Descue
                 for (let i = 0; i < config.fijas; i++) {
                     vidrios.push({
                         ventana: ventana.nombre,
+                        ventanaId: ventana.id,
+                        hoja: hojaVidrio("fija", i + 1, false),
                         tipo: `Hoja Fija ${i + 1}`,
                         ancho: anchoVidrio,
                         alto: altoVidrio,
