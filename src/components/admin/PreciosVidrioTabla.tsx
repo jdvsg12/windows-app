@@ -4,6 +4,7 @@ import { Input } from "@/components/ui/input"
 import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from "@/components/ui/table"
 import { CALIBRES_VIDRIO, COLORES_VIDRIO, claveVidrio, type ClaveVidrio, type ConfiguracionPrecios } from "@/lib/types"
 import { formatCurrency } from "@/lib/format"
+import { precioDesdeTexto } from "@/lib/precios"
 
 interface PreciosVidrioTablaProps {
     precios: ConfiguracionPrecios["preciosVidrio"]
@@ -15,10 +16,7 @@ interface PreciosVidrioTablaProps {
 export function PreciosVidrioTabla({ precios, precioGeneral, onChange }: PreciosVidrioTablaProps) {
     const placeholder = precioGeneral > 0 ? formatCurrency(precioGeneral) : "Sin precio"
 
-    const handleInput = (clave: ClaveVidrio, raw: string) => {
-        const value = Number(raw)
-        onChange(clave, raw === "" || !Number.isFinite(value) || value <= 0 ? undefined : value)
-    }
+    const handleInput = (clave: ClaveVidrio, raw: string) => onChange(clave, precioDesdeTexto(raw))
 
     return (
         <div className="space-y-2">
