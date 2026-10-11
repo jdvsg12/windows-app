@@ -1,28 +1,14 @@
-import { useState, useEffect, useMemo, useCallback } from "react"
+import { useState, useEffect, useCallback } from "react"
 import { useRouter } from "next/navigation"
 import {
     obtenerProyectoPorId,
     actualizarProyecto,
     eliminarProyecto,
-    obtenerDescuentos,
     obtenerPrecios,
     guardarPrecios,
 } from "@/lib/storage"
-import {
-    optimizarCortes,
-    calcularAccesorios,
-    calcularVidrios,
-} from "@/lib/calculo/motor-8025"
-import { optimizarLaminasVidrio } from "@/lib/calculo/vidrio"
-import {
-    agruparPorColorAluminio,
-    agruparPorTipoVidrio,
-    etiquetarVidrios,
-    fusionarLaminasPorTipo,
-    fusionarPerfilesPorColor,
-} from "@/lib/calculo/grupos"
-import type { Proyecto, Ventana, TamanoLamina, LaminaVidrio } from "@/lib/types"
-import { TAMANOS_LAMINA } from "@/lib/types"
+import { useCalculo } from "@/hooks/useCalculo"
+import type { Proyecto, Ventana, TamanoLamina } from "@/lib/types"
 
 export function useVentanas(proyectoId: string | null) {
     const router = useRouter()
@@ -31,8 +17,6 @@ export function useVentanas(proyectoId: string | null) {
     // Única fuente del tamaño de lámina (F3.3): precios.tamanoLamina, leído aquí y
     // actualizado a través de actualizarTamanoLamina — ya no un estado local de la página.
     const [precios, setPrecios] = useState(() => obtenerPrecios())
-
-    const { ancho: laminaAncho, alto: laminaAlto } = TAMANOS_LAMINA[precios.tamanoLamina]
 
     useEffect(() => {
         if (!proyectoId) return
@@ -43,52 +27,7 @@ export function useVentanas(proyectoId: string | null) {
         }
     }, [proyectoId])
 
-    // No module-level cache anymore (removed in F3.1): read fresh on every recompute.
-    const descuentos = useMemo(() => obtenerDescuentos(), [])
-
-    // Bars per aluminum color and sheets per glass type, the same grouping costeo charges for.
-    const optimizacion = useMemo(
-        () =>
-            ventanas.length > 0
-                ? fusionarPerfilesPorColor(
-                      agruparPorColorAluminio(ventanas).map(({ color, ventanas: grupo }) => ({
-                          color,
-                          optimizacion: optimizarCortes(grupo, descuentos),
-                      }))
-                  )
-                : {},
-        [ventanas, descuentos]
-    )
-    const accesorios = useMemo(() => ventanas.length > 0 ? calcularAccesorios(ventanas, descuentos) : null, [ventanas, descuentos])
-    const vidriosPorTipo = useMemo(
-        () =>
-            agruparPorTipoVidrio(ventanas).map(({ etiqueta, ventanas: grupo }) => ({
-                etiqueta,
-                vidrios: etiquetarVidrios(calcularVidrios(grupo, descuentos), etiqueta),
-            })),
-        [ventanas, descuentos]
-    )
-    const vidrios = useMemo(() => vidriosPorTipo.flatMap((grupo) => grupo.vidrios), [vidriosPorTipo])
-
-    // El optimizador lanza si una pieza no cabe en ninguna orientación de la lámina
-    // configurada (F3.3): se captura aquí para no tumbar la pestaña de Optimización.
-    const { laminasVidrio, errorLaminas } = useMemo((): { laminasVidrio: LaminaVidrio[]; errorLaminas: string | null } => {
-        if (vidrios.length === 0) return { laminasVidrio: [], errorLaminas: null }
-        const opciones = { laminaAncho, laminaAlto, kerf: precios.kerfVidrio, minResto: precios.minRestoVidrio }
-        try {
-            return {
-                laminasVidrio: fusionarLaminasPorTipo(
-                    vidriosPorTipo.map(({ etiqueta, vidrios: grupo }) => ({
-                        etiqueta,
-                        laminas: optimizarLaminasVidrio(grupo, opciones),
-                    }))
-                ),
-                errorLaminas: null,
-            }
-        } catch (error) {
-            return { laminasVidrio: [], errorLaminas: error instanceof Error ? error.message : String(error) }
-        }
-    }, [vidrios, vidriosPorTipo, laminaAncho, laminaAlto, precios.kerfVidrio, precios.minRestoVidrio])
+    const { optimizacion, accesorios, vidrios, laminasVidrio, errorLaminas } = useCalculo(ventanas, precios)
 
     const agregarVentana = useCallback((datos: Omit<Ventana, "id">, editandoId: string | null) => {
         if (!proyecto) return { nuevasVentanas: ventanas, editando: false }
