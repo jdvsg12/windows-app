@@ -1,7 +1,21 @@
 // lib/types.ts - Tipos unificados del sistema
 
-export type TipoVentana = "2hojas" | "2hojas_mixto" | "3hojas" | "4hojas" | "5hojas" | "6hojas"
-export type SistemaVentana = "5020" | "744" | "8025" | "7038"
+import type { z } from "zod"
+
+import type {
+    CalibreVidrioSchema,
+    ColorAluminioSchema,
+    ColorVidrioSchema,
+    ProyectoSchema,
+    SistemaVentanaSchema,
+    TipoCerraduraSchema,
+    TipoRodachinaSchema,
+    TipoVentanaSchema,
+    VentanaSchema,
+} from "./schemas"
+
+export type TipoVentana = z.infer<typeof TipoVentanaSchema>
+export type SistemaVentana = z.infer<typeof SistemaVentanaSchema>
 
 export const TIPOS_VENTANA: readonly { value: TipoVentana; label: string }[] = [
     { value: "2hojas", label: "2 Hojas" },
@@ -46,21 +60,12 @@ export function tipoParaFormulario(tipo: TipoVentana): { tipoVentana: TipoVentan
     return tipo === "2hojas_mixto" ? { tipoVentana: "2hojas", ambasMoviles: false } : { tipoVentana: tipo, ambasMoviles: true }
 }
 
-export type TipoCerradura = "impacto" | "dummy" | "manija"
-export type TipoRodachina = "plastica" | "metalica" | "pabose"
-export type CalibreVidrio = 4 | 5 | 6
-export type ColorVidrio =
-    | "incoloro"
-    | "bronce"
-    | "gris"
-    | "azul"
-    | "verde"
-    | "reflectivo_plata"
-    | "reflectivo_bronce"
-    | "reflectivo_azul"
-    | "reflectivo_verde"
+export type TipoCerradura = z.infer<typeof TipoCerraduraSchema>
+export type TipoRodachina = z.infer<typeof TipoRodachinaSchema>
+export type CalibreVidrio = z.infer<typeof CalibreVidrioSchema>
+export type ColorVidrio = z.infer<typeof ColorVidrioSchema>
 
-export type ColorAluminio = "natural" | "blanco" | "negro" | "bronce" | "champana" | "madera"
+export type ColorAluminio = z.infer<typeof ColorAluminioSchema>
 
 // Common aluminum finishes in Colombia: anodized (natural, bronze, champagne) and powder coat / wood-grain.
 export const COLORES_ALUMINIO: readonly { value: ColorAluminio; label: string }[] = [
@@ -156,21 +161,8 @@ export interface DatosBancarios {
     daviplata: string
 }
 
-export interface Ventana {
-    id: string
-    nombre: string
-    ancho: number // mm
-    alto: number // mm
-    tipoVentana: TipoVentana
-    sistema?: SistemaVentana
-    // Optional: windows saved before these fields existed must keep loading.
-    colorAluminio?: ColorAluminio
-    cerradura?: TipoCerradura
-    rodachina?: TipoRodachina
-    calibreVidrio?: CalibreVidrio
-    colorVidrio?: ColorVidrio
-    sandblasting?: boolean
-}
+// Medidas en mm.
+export type Ventana = z.infer<typeof VentanaSchema>
 
 export interface Corte {
     tipo: string
@@ -180,16 +172,9 @@ export interface Corte {
     sistema?: string
 }
 
-export interface Proyecto {
-    id: string
-    nombre: string
-    cliente: string
-    direccion?: string
-    fechaCreacion: string
-    ventanas: Ventana[]
-    duracionMeses: number // usado para absorber el overhead mensual (modelo D8)
-    transporte: number // costo directo de transporte de esta obra (modelo D8)
-}
+// duracionMeses absorbe el overhead mensual y transporte es costo directo de la obra (modelo D8).
+// Es el tipo de salida del esquema: los .default() garantizan ambos campos tras validar.
+export type Proyecto = z.infer<typeof ProyectoSchema>
 
 export interface ConfiguracionEmpresa {
     nombre: string

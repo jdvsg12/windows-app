@@ -1,30 +1,36 @@
 import { z } from "zod"
 
+export const TipoVentanaSchema = z.enum(["2hojas", "2hojas_mixto", "3hojas", "4hojas", "5hojas", "6hojas"])
+export const SistemaVentanaSchema = z.enum(["5020", "744", "8025", "7038"])
+export const ColorAluminioSchema = z.enum(["natural", "blanco", "negro", "bronce", "champana", "madera"])
+export const TipoCerraduraSchema = z.enum(["impacto", "dummy", "manija"])
+export const TipoRodachinaSchema = z.enum(["plastica", "metalica", "pabose"])
+export const CalibreVidrioSchema = z.union([z.literal(4), z.literal(5), z.literal(6)])
+export const ColorVidrioSchema = z.enum([
+    "incoloro",
+    "bronce",
+    "gris",
+    "azul",
+    "verde",
+    "reflectivo_plata",
+    "reflectivo_bronce",
+    "reflectivo_azul",
+    "reflectivo_verde",
+])
+
 export const VentanaSchema = z.object({
     id: z.string(),
     nombre: z.string(),
     ancho: z.number().positive(),
     alto: z.number().positive(),
-    tipoVentana: z.enum(["2hojas", "2hojas_mixto", "3hojas", "4hojas", "5hojas", "6hojas"]),
-    sistema: z.enum(["5020", "744", "8025", "7038"]).optional(),
+    tipoVentana: TipoVentanaSchema,
+    sistema: SistemaVentanaSchema.optional(),
     // .optional(): ventanas guardadas antes de agregar estas especificaciones no las tienen.
-    colorAluminio: z.enum(["natural", "blanco", "negro", "bronce", "champana", "madera"]).optional(),
-    cerradura: z.enum(["impacto", "dummy", "manija"]).optional(),
-    rodachina: z.enum(["plastica", "metalica", "pabose"]).optional(),
-    calibreVidrio: z.union([z.literal(4), z.literal(5), z.literal(6)]).optional(),
-    colorVidrio: z
-        .enum([
-            "incoloro",
-            "bronce",
-            "gris",
-            "azul",
-            "verde",
-            "reflectivo_plata",
-            "reflectivo_bronce",
-            "reflectivo_azul",
-            "reflectivo_verde",
-        ])
-        .optional(),
+    colorAluminio: ColorAluminioSchema.optional(),
+    cerradura: TipoCerraduraSchema.optional(),
+    rodachina: TipoRodachinaSchema.optional(),
+    calibreVidrio: CalibreVidrioSchema.optional(),
+    colorVidrio: ColorVidrioSchema.optional(),
     sandblasting: z.boolean().optional(),
 })
 
@@ -114,15 +120,15 @@ export const VentanaFormSchema = z.object({
     nombre: z.string().trim().min(1, "Ingresa un nombre"),
     ancho: dimensionSchema("ancho"),
     alto: dimensionSchema("alto"),
-    tipoVentana: VentanaSchema.shape.tipoVentana,
-    sistema: VentanaSchema.shape.sistema.unwrap(),
+    tipoVentana: TipoVentanaSchema,
+    sistema: SistemaVentanaSchema,
     ambasMoviles: z.boolean(),
-    colorAluminio: VentanaSchema.shape.colorAluminio.unwrap(),
-    cerradura: VentanaSchema.shape.cerradura.unwrap(),
-    rodachina: VentanaSchema.shape.rodachina.unwrap(),
+    colorAluminio: ColorAluminioSchema,
+    cerradura: TipoCerraduraSchema,
+    rodachina: TipoRodachinaSchema,
     // Native <select> values are strings; VentanasTab converts it to the stored number.
     calibreVidrio: z.enum(["4", "5", "6"]),
-    colorVidrio: VentanaSchema.shape.colorVidrio.unwrap(),
+    colorVidrio: ColorVidrioSchema,
     sandblasting: z.boolean(),
 })
 
