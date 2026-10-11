@@ -221,7 +221,10 @@
 /* Touch targets >= 44 px on touch screens only, so desktop density is unchanged.
    Unlayered on purpose: it wins over the height utilities baked into ui/ (which we do not edit). */
 @media (pointer: coarse) {
+  /* A Button rendered through `<XTrigger asChild>` loses data-slot="button" to the trigger's
+     own slot; its data-size survives, so that is how we still recognise it as a button. */
   [data-slot="button"],
+  [data-slot$="-trigger"][data-size],
   [data-slot="input"],
   [data-slot="textarea"],
   [data-slot="select-trigger"],
@@ -229,7 +232,8 @@
     min-height: 2.75rem;
   }
 
-  [data-slot="button"] {
+  [data-slot="button"],
+  [data-slot$="-trigger"][data-size] {
     min-width: 2.75rem;
   }
 
