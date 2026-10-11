@@ -7,10 +7,12 @@ import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@
 import { TAMANOS_LAMINA, type TamanoLamina } from "@/lib/types"
 import { Save, RotateCcw } from "lucide-react"
 import { NumberField } from "./NumberField"
+import { PreciosVidrioTabla } from "./PreciosVidrioTabla"
+import { RecargosColorAluminio } from "./RecargosColorAluminio"
 import { usePreciosForm, type PreciosFormData } from "./usePreciosForm"
 import { FormSkeleton } from "@/components/common/FormSkeleton"
 
-type NumericPrecioKey = Exclude<keyof PreciosFormData, "tamanoLamina">
+type NumericPrecioKey = Exclude<keyof PreciosFormData, "tamanoLamina" | "preciosVidrio" | "recargosColorAluminio">
 
 interface NumericFieldConfig {
     key: NumericPrecioKey
@@ -43,7 +45,8 @@ const COSTOS_FIELDS: readonly NumericFieldConfig[] = [
 ]
 
 export function PreciosPanel() {
-    const { formData, loading, saved, handleChange, handleSave, handleReset } = usePreciosForm()
+    const { formData, loading, saved, handleChange, handlePrecioVidrioChange, handleRecargoColorChange, handleSave, handleReset } =
+        usePreciosForm()
 
     const renderFields = (fields: readonly NumericFieldConfig[]) =>
         fields.map(({ key, label }) => (
@@ -64,8 +67,12 @@ export function PreciosPanel() {
                 <CardHeader>
                     <CardTitle className="text-lg">Perfiles (precios por unidad - metros)</CardTitle>
                 </CardHeader>
-                <CardContent className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-4">
-                    {renderFields(PERFILES_FIELDS)}
+                <CardContent className="space-y-6">
+                    <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-4">{renderFields(PERFILES_FIELDS)}</div>
+                    <RecargosColorAluminio
+                        recargos={formData.recargosColorAluminio}
+                        onChange={handleRecargoColorChange}
+                    />
                 </CardContent>
             </Card>
 
@@ -80,45 +87,67 @@ export function PreciosPanel() {
 
             <Card>
                 <CardHeader>
-                    <CardTitle className="text-lg">Vidrio y Mano de Obra</CardTitle>
+                    <CardTitle className="text-lg">Vidrio</CardTitle>
+                </CardHeader>
+                <CardContent className="space-y-6">
+                    <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
+                        <NumberField
+                            id="precioVidrioLamina"
+                            label="Precio general por lámina"
+                            hint="Se usa cuando un color y calibre no tiene precio propio"
+                            value={formData.precioVidrioLamina}
+                            onChange={(value) => handleChange("precioVidrioLamina", value)}
+                        />
+                        <NumberField
+                            id="precioSandblasting"
+                            label="Sandblasting (por m²)"
+                            value={formData.precioSandblasting}
+                            onChange={(value) => handleChange("precioSandblasting", value)}
+                        />
+                        <div className="space-y-2">
+                            <Label htmlFor="tamanoLamina">Tamaño de lámina</Label>
+                            <Select
+                                value={formData.tamanoLamina}
+                                onValueChange={(value) => handleChange("tamanoLamina", value as TamanoLamina)}
+                            >
+                                <SelectTrigger id="tamanoLamina">
+                                    <SelectValue />
+                                </SelectTrigger>
+                                <SelectContent>
+                                    {Object.entries(TAMANOS_LAMINA).map(([key, { label }]) => (
+                                        <SelectItem key={key} value={key}>
+                                            {label}
+                                        </SelectItem>
+                                    ))}
+                                </SelectContent>
+                            </Select>
+                        </div>
+                        <NumberField
+                            id="kerfVidrio"
+                            label="Kerf de corte (mm)"
+                            value={formData.kerfVidrio}
+                            onChange={(value) => handleChange("kerfVidrio", value)}
+                        />
+                        <NumberField
+                            id="minRestoVidrio"
+                            label="Mínimo resto reutilizable (mm)"
+                            value={formData.minRestoVidrio}
+                            onChange={(value) => handleChange("minRestoVidrio", value)}
+                        />
+                    </div>
+                    <PreciosVidrioTabla
+                        precios={formData.preciosVidrio}
+                        precioGeneral={formData.precioVidrioLamina}
+                        onChange={handlePrecioVidrioChange}
+                    />
+                </CardContent>
+            </Card>
+
+            <Card>
+                <CardHeader>
+                    <CardTitle className="text-lg">Mano de Obra y Margen</CardTitle>
                 </CardHeader>
                 <CardContent className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
-                    <NumberField
-                        id="precioVidrioLamina"
-                        label="Precio por Lama de Vidrio"
-                        value={formData.precioVidrioLamina}
-                        onChange={(value) => handleChange("precioVidrioLamina", value)}
-                    />
-                    <div className="space-y-2">
-                        <Label htmlFor="tamanoLamina">Tamaño de Lama</Label>
-                        <Select
-                            value={formData.tamanoLamina}
-                            onValueChange={(value) => handleChange("tamanoLamina", value as TamanoLamina)}
-                        >
-                            <SelectTrigger id="tamanoLamina">
-                                <SelectValue />
-                            </SelectTrigger>
-                            <SelectContent>
-                                {Object.entries(TAMANOS_LAMINA).map(([key, { label }]) => (
-                                    <SelectItem key={key} value={key}>
-                                        {label}
-                                    </SelectItem>
-                                ))}
-                            </SelectContent>
-                        </Select>
-                    </div>
-                    <NumberField
-                        id="kerfVidrio"
-                        label="Kerf de corte (mm)"
-                        value={formData.kerfVidrio}
-                        onChange={(value) => handleChange("kerfVidrio", value)}
-                    />
-                    <NumberField
-                        id="minRestoVidrio"
-                        label="Mínimo resto reutilizable (mm)"
-                        value={formData.minRestoVidrio}
-                        onChange={(value) => handleChange("minRestoVidrio", value)}
-                    />
                     {renderFields(COSTOS_FIELDS)}
                 </CardContent>
             </Card>

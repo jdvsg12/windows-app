@@ -15,7 +15,15 @@ import { optimizarCortes } from "@/lib/calculo/motor-8025"
 import { obtenerDescuentos } from "@/lib/storage"
 import { useVentanas } from "@/hooks/useVentanas"
 import { VentanasTab, MaterialesTab, OptimizacionTab, DeleteProjectDialog } from "@/components/calculators"
-import { getTipoVentanaLabel, type Proyecto } from "@/lib/types"
+import {
+    getCalibreVidrioLabel,
+    getCerraduraLabel,
+    getColorAluminioLabel,
+    getColorVidrioLabel,
+    getRodachinaLabel,
+    getTipoVentanaLabel,
+    type Proyecto,
+} from "@/lib/types"
 
 export default function CalculadorPageWrapper() {
     return (
@@ -57,6 +65,12 @@ function CalculadorPage() {
         const ws1 = XLSX.utils.json_to_sheet(ventanas.map((v) => ({
             Nombre: v.nombre, "Ancho (mm)": v.ancho, "Alto (mm)": v.alto,
             Tipo: getTipoVentanaLabel(v.tipoVentana),
+            "Color aluminio": v.colorAluminio ? getColorAluminioLabel(v.colorAluminio) : "",
+            Cerradura: v.cerradura ? getCerraduraLabel(v.cerradura) : "",
+            Rodachina: v.rodachina ? getRodachinaLabel(v.rodachina) : "",
+            "Calibre vidrio": v.calibreVidrio ? getCalibreVidrioLabel(v.calibreVidrio) : "",
+            "Color vidrio": v.colorVidrio ? getColorVidrioLabel(v.colorVidrio) : "",
+            Sandblasting: v.sandblasting ? "Sí" : "No",
         })))
         XLSX.utils.book_append_sheet(wb, ws1, "Ventanas")
         const opt = optimizarCortes(ventanas, obtenerDescuentos())

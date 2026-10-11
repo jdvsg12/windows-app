@@ -14,7 +14,7 @@ import {
     calcularVidrios,
 } from "@/lib/calculo/motor-8025"
 import { optimizarLaminasVidrio } from "@/lib/calculo/vidrio"
-import type { Proyecto, Ventana, TipoVentana, SistemaVentana, TamanoLamina, LaminaVidrio } from "@/lib/types"
+import type { Proyecto, Ventana, TamanoLamina, LaminaVidrio } from "@/lib/types"
 import { TAMANOS_LAMINA } from "@/lib/types"
 
 export function useVentanas(proyectoId: string | null) {
@@ -62,24 +62,10 @@ export function useVentanas(proyectoId: string | null) {
         }
     }, [vidrios, laminaAncho, laminaAlto, precios.kerfVidrio, precios.minRestoVidrio])
 
-    const agregarVentana = useCallback((
-        nombre: string,
-        ancho: number,
-        alto: number,
-        tipoVentana: TipoVentana,
-        sistema: SistemaVentana,
-        editandoId: string | null
-    ) => {
+    const agregarVentana = useCallback((datos: Omit<Ventana, "id">, editandoId: string | null) => {
         if (!proyecto) return { nuevasVentanas: ventanas, editando: false }
 
-        const nuevaVentana: Ventana = {
-            id: editandoId || crypto.randomUUID(),
-            nombre,
-            ancho,
-            alto,
-            tipoVentana,
-            sistema,
-        }
+        const nuevaVentana: Ventana = { ...datos, id: editandoId || crypto.randomUUID() }
 
         let nuevasVentanas: Ventana[]
         if (editandoId) {
