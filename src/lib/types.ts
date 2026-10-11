@@ -6,6 +6,10 @@ import type {
     CalibreVidrioSchema,
     ColorAluminioSchema,
     ColorVidrioSchema,
+    ConfiguracionEmpresaSchema,
+    ConfiguracionOverheadSchema,
+    ConfiguracionPreciosSchema,
+    CostoAdicionalSchema,
     ProyectoSchema,
     SistemaVentanaSchema,
     TipoCerraduraSchema,
@@ -176,64 +180,23 @@ export interface Corte {
 // Es el tipo de salida del esquema: los .default() garantizan ambos campos tras validar.
 export type Proyecto = z.infer<typeof ProyectoSchema>
 
-export interface ConfiguracionEmpresa {
-    nombre: string
-    nit: string
-    direccion: string
-    ciudad: string
-    telefonos: string
-    email: string
-    representante: string
-    cedula: string
-    logo?: string
-    datosBancarios: string
-}
+export type ConfiguracionEmpresa = z.infer<typeof ConfiguracionEmpresaSchema>
 
-export interface ConfiguracionPrecios {
-    precioCabezal: number
-    precioSillar: number
-    precioJamba: number
-    precioEnganche: number
-    precioTraslape: number
-    precioHorizontalSuperior: number
-    precioHorizontalInferior: number
-    precioGuia: number
-    precioRodachina: number
-    precioCerradura: number
-    precioTornillo8mm: number
-    precioTornillo10mm: number
-    precioEmpaque: number
-    precioVidrioLamina: number // respaldo cuando un color/calibre no tiene precio propio en preciosVidrio
-    preciosVidrio: Partial<Record<ClaveVidrio, number>> // precio por lámina según color y calibre
-    precioSandblasting: number // por m² de vidrio con acabado sandblasting
-    recargosColorAluminio: Partial<Record<ColorAluminio, number>> // % sobre el precio base de cada perfil según el color
-    tamanoLamina: TamanoLamina
-    kerfVidrio: number // mm que consume cada corte de vidrio (F3.3); 0 por defecto (vidrio rayado y partido)
-    minRestoVidrio: number // mm de lado menor a partir del cual un sobrante de lámina es "resto" reutilizable y no desperdicio
-    manoDeObra: number
-    imprevistos: number // % sobre el costo de producción (modelo de costeo D8)
-    utilidad: number // % sobre el costo total (modelo de costeo D8)
-    costosAdicionales: CostoAdicional[]
+// El esquema acepta cualquier clave en estos dos mapas (ver ConfiguracionPreciosSchema);
+// en el código se restringen a las claves válidas.
+export type ConfiguracionPrecios = Omit<
+    z.infer<typeof ConfiguracionPreciosSchema>,
+    "preciosVidrio" | "recargosColorAluminio"
+> & {
+    preciosVidrio: Partial<Record<ClaveVidrio, number>>
+    recargosColorAluminio: Partial<Record<ColorAluminio, number>>
 }
 
 // Overhead mensual del taller (modelo de costeo D8): se absorbe por tiempo
 // (overhead × meses de obra), no por m². Ver lib/calculo/costeo.ts.
-export interface ConfiguracionOverhead {
-    servicioLuz: number
-    servicioAgua: number
-    servicioInternet: number
-    servicioGas: number
-    arriendo: number
-    herramienta: number
-    admin: number
-}
+export type ConfiguracionOverhead = z.infer<typeof ConfiguracionOverheadSchema>
 
-export interface CostoAdicional {
-    id: string
-    nombre: string
-    valor: number
-    tipo: "fijo" | "porcentaje"
-}
+export type CostoAdicional = z.infer<typeof CostoAdicionalSchema>
 
 export interface VidrioCorte {
     ventana: string
