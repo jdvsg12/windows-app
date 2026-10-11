@@ -43,6 +43,7 @@ function CalculadorPage() {
         accesorios,
         vidrios,
         laminasVidrio,
+        metricasVidrio,
         errorLaminas,
         tamanoLamina,
         agregarVentana,
@@ -176,6 +177,7 @@ function CalculadorPage() {
                     <OptimizacionTab
                         optimizacion={optimizacion}
                         laminasVidrio={laminasVidrio}
+                        metricasVidrio={metricasVidrio}
                         errorLaminas={errorLaminas}
                         tamanoLamina={tamanoLamina}
                         onTamanoLaminaChange={actualizarTamanoLamina}

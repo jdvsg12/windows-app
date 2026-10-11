@@ -27,7 +27,7 @@ export function useVentanas(proyectoId: string | null) {
         }
     }, [proyectoId])
 
-    const { optimizacion, accesorios, vidrios, laminasVidrio, errorLaminas } = useCalculo(ventanas, precios)
+    const { optimizacion, accesorios, vidrios, laminasVidrio, metricasVidrio, errorLaminas } = useCalculo(ventanas, precios)
 
     const agregarVentana = useCallback((datos: Omit<Ventana, "id">, editandoId: string | null) => {
         if (!proyecto) return { nuevasVentanas: ventanas, editando: false }
@@ -93,6 +93,7 @@ export function useVentanas(proyectoId: string | null) {
         accesorios,
         vidrios,
         laminasVidrio,
+        metricasVidrio,
         errorLaminas,
         tamanoLamina: precios.tamanoLamina,
         agregarVentana,

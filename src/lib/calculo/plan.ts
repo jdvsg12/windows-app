@@ -9,7 +9,7 @@ import {
     fusionarPerfilesPorColor,
 } from "./grupos"
 import { calcularAccesorios, calcularVidrios, optimizarCortes } from "./motor-8025"
-import { optimizarLaminasVidrio } from "./vidrio"
+import { calcularMetricasVidrio, optimizarLaminasVidrio, type MetricasVidrio } from "./vidrio"
 import {
     TAMANOS_LAMINA,
     type Accesorios,
@@ -32,6 +32,7 @@ export interface PlanCorte {
     accesorios: Accesorios | null
     vidrios: VidrioCorte[]
     laminasVidrio: LaminaVidrio[]
+    metricasVidrio: MetricasVidrio
     // El optimizador lanza si una pieza no cabe en ninguna orientación de la lámina
     // configurada (F3.3): se devuelve el mensaje para no tumbar la pestaña de Optimización.
     errorLaminas: string | null
@@ -39,7 +40,14 @@ export interface PlanCorte {
 
 export function calcularPlanCorte({ ventanas, descuentos, precios }: EntradaPlanCorte): PlanCorte {
     if (ventanas.length === 0) {
-        return { optimizacion: {}, accesorios: null, vidrios: [], laminasVidrio: [], errorLaminas: null }
+        return {
+            optimizacion: {},
+            accesorios: null,
+            vidrios: [],
+            laminasVidrio: [],
+            metricasVidrio: calcularMetricasVidrio([]),
+            errorLaminas: null,
+        }
     }
 
     const optimizacion = fusionarPerfilesPorColor(
@@ -64,13 +72,21 @@ export function calcularPlanCorte({ ventanas, descuentos, precios }: EntradaPlan
                 laminas: optimizarLaminasVidrio(grupo, opciones),
             }))
         )
-        return { optimizacion, accesorios, vidrios, laminasVidrio, errorLaminas: null }
+        return {
+            optimizacion,
+            accesorios,
+            vidrios,
+            laminasVidrio,
+            metricasVidrio: calcularMetricasVidrio(laminasVidrio),
+            errorLaminas: null,
+        }
     } catch (error) {
         return {
             optimizacion,
             accesorios,
             vidrios,
             laminasVidrio: [],
+            metricasVidrio: calcularMetricasVidrio([]),
             errorLaminas: error instanceof Error ? error.message : String(error),
         }
     }

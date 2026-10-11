@@ -9,7 +9,7 @@ import {
 } from "../grupos"
 import { calcularAccesorios, calcularVidrios, optimizarCortes } from "../motor-8025"
 import { calcularPlanCorte, type EntradaPlanCorte } from "../plan"
-import { optimizarLaminasVidrio } from "../vidrio"
+import { calcularMetricasVidrio, optimizarLaminasVidrio } from "../vidrio"
 import { DESCUNTOS_DEFAULT, TAMANOS_LAMINA, type Ventana } from "@/lib/types"
 import { VENTANAS_8025 } from "@/lib/__tests__/fixtures/ventanas-8025"
 
@@ -47,9 +47,9 @@ function planComoAntes(ventanas: Ventana[]) {
 
 describe("plan de corte (pestañas Materiales y Optimización)", () => {
     it("da exactamente lo mismo que los useMemo de useVentanas antes de AWA-20", () => {
-        expect(calcularPlanCorte({ ventanas: mezcla, descuentos: DESCUNTOS_DEFAULT, precios })).toEqual(
-            planComoAntes(mezcla)
-        )
+        const { metricasVidrio, ...plan } = calcularPlanCorte({ ventanas: mezcla, descuentos: DESCUNTOS_DEFAULT, precios })
+        expect(plan).toEqual(planComoAntes(mezcla))
+        expect(metricasVidrio).toEqual(calcularMetricasVidrio(plan.laminasVidrio))
     })
 
     it("sin ventanas no calcula nada", () => {
@@ -58,6 +58,7 @@ describe("plan de corte (pestañas Materiales y Optimización)", () => {
             accesorios: null,
             vidrios: [],
             laminasVidrio: [],
+            metricasVidrio: calcularMetricasVidrio([]),
             errorLaminas: null,
         })
     })

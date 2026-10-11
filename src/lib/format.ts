@@ -14,4 +14,6 @@ export const formatMeters = (value: number | undefined, decimals = 2): string =>
 
 export const formatCount = (value: number | undefined, decimals = 1): string => formatNumber(value, decimals)
 
+export const formatPercent = (value: number | undefined, decimals = 1): string => `${formatNumber(value, decimals)} %`
+
 export const formatDate = (date: Date | string): string => new Date(date).toLocaleDateString("es-CO")

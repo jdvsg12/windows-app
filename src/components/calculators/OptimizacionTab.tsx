@@ -5,16 +5,19 @@ import { Label } from "@/components/ui/label"
 import { NativeSelect } from "@/components/common/NativeSelect"
 import { StatCard } from "@/components/common/StatCard"
 import { PiezaBadge } from "./PiezaBadge"
+import { MetricasVidrioResumen } from "./MetricasVidrioResumen"
 import { ESTILOS_HOJA, obtenerEstiloPerfil, obtenerTipoHoja } from "@/lib/design/piezas"
 import { cn } from "@/lib/utils"
 import { formatMeters } from "@/lib/format"
 import { Layers, Ruler, SquareStack } from "lucide-react"
+import type { MetricasVidrio } from "@/lib/calculo/vidrio"
 import type { OptimizacionPerfil, LaminaVidrio, TamanoLamina } from "@/lib/types"
 import { TAMANOS_LAMINA } from "@/lib/types"
 
 interface Props {
     optimizacion: Record<string, OptimizacionPerfil>
     laminasVidrio: LaminaVidrio[]
+    metricasVidrio: MetricasVidrio
     errorLaminas: string | null
     tamanoLamina: TamanoLamina
     onTamanoLaminaChange: (tamano: TamanoLamina) => void
@@ -23,7 +26,7 @@ interface Props {
 const ESTILO_RESTO = { codigo: "R", clases: "bg-resto border-resto-border text-resto-fg" }
 const ESTILO_DESPERDICIO = { codigo: "S", clases: "bg-desperdicio border-desperdicio-border text-desperdicio-fg" }
 
-export function OptimizacionTab({ optimizacion, laminasVidrio, errorLaminas, tamanoLamina, onTamanoLaminaChange }: Props) {
+export function OptimizacionTab({ optimizacion, laminasVidrio, metricasVidrio, errorLaminas, tamanoLamina, onTamanoLaminaChange }: Props) {
     return (
         <div className="space-y-4">
             <div className="grid grid-cols-2 md:grid-cols-3 gap-4">
@@ -99,6 +102,7 @@ export function OptimizacionTab({ optimizacion, laminasVidrio, errorLaminas, tam
                         </div>
                     </CardHeader>
                     <CardContent>
+                        <MetricasVidrioResumen metricas={metricasVidrio} />
                         <div className="mb-4 flex flex-wrap items-center gap-4 text-sm text-muted-foreground">
                             {(["fija", "movil"] as const).map((tipo) => (
                                 <span key={tipo} className="inline-flex items-center gap-2">
