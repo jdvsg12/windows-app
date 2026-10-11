@@ -185,14 +185,16 @@ export type ContenidoCotizacion = z.infer<typeof ContenidoCotizacionSchema>
 
 export type ConfiguracionEmpresa = z.infer<typeof ConfiguracionEmpresaSchema>
 
-// El esquema acepta cualquier clave en estos dos mapas (ver ConfiguracionPreciosSchema);
+// El esquema acepta cualquier clave en estos mapas (ver ConfiguracionPreciosSchema);
 // en el código se restringen a las claves válidas.
 export type ConfiguracionPrecios = Omit<
     z.infer<typeof ConfiguracionPreciosSchema>,
-    "preciosVidrio" | "recargosColorAluminio"
+    "preciosVidrio" | "recargosColorAluminio" | "preciosCerradura" | "preciosRodachina"
 > & {
     preciosVidrio: Partial<Record<ClaveVidrio, number>>
     recargosColorAluminio: Partial<Record<ColorAluminio, number>>
+    preciosCerradura: Partial<Record<TipoCerradura, number>>
+    preciosRodachina: Partial<Record<TipoRodachina, number>>
 }
 
 // Overhead mensual del taller (modelo de costeo D8): se absorbe por tiempo

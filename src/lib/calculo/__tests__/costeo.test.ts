@@ -1,6 +1,6 @@
 import { describe, expect, it } from "vitest"
 
-import { calcularCosteo, intentarCosteo, type EntradaCosteo } from "../costeo"
+import { calcularCosteo, intentarCosteo, precioPorTipo, type EntradaCosteo } from "../costeo"
 import { calcularVidrios } from "../motor-8025"
 import { DESCUNTOS_DEFAULT, type ConfiguracionPrecios, type ConfiguracionOverhead } from "@/lib/types"
 import { VENTANAS_8025 } from "@/lib/__tests__/fixtures/ventanas-8025"
@@ -27,6 +27,8 @@ const PRECIOS_BASE: ConfiguracionPrecios = {
     preciosVidrio: {},
     precioSandblasting: 0,
     recargosColorAluminio: {},
+    preciosCerradura: {},
+    preciosRodachina: {},
     tamanoLamina: "2500x3600",
     kerfVidrio: 0,
     minRestoVidrio: 200,
@@ -229,5 +231,49 @@ describe("intentarCosteo", () => {
             costos: null,
             error: expect.any(String),
         })
+    })
+})
+
+describe("calcularCosteo · precio por tipo de cerradura y rodachina", () => {
+    const materiales = (entrada: EntradaCosteo) => calcularCosteo(entrada).costoMateriales
+    const conManija = { ...ventana, id: "m", cerradura: "manija" as const, rodachina: "metalica" as const }
+    const conImpacto = { ...ventana, id: "i", cerradura: "impacto" as const, rodachina: "plastica" as const }
+
+    it("precioPorTipo: precio propio si el tipo lo tiene, si no el general", () => {
+        const precios: ConfiguracionPrecios["preciosCerradura"] = { manija: 40000 }
+        expect(precioPorTipo(precios, "manija", 25000)).toBe(40000)
+        expect(precioPorTipo(precios, "impacto", 25000)).toBe(25000)
+        expect(precioPorTipo(precios, undefined, 25000)).toBe(25000)
+    })
+
+    it("sin precios por tipo, el costo es el mismo de siempre", () => {
+        const sinTipos = entradaBase({ ventanas: [conManija, conImpacto] })
+        const conMapasVacios = entradaBase({
+            ventanas: [conManija, conImpacto],
+            precios: { ...PRECIOS_BASE, preciosCerradura: {}, preciosRodachina: {} },
+        })
+        expect(materiales(conMapasVacios)).toBe(materiales(sinTipos))
+    })
+
+    it("solo encarece las ventanas cuya cerradura tiene precio propio", () => {
+        const base = entradaBase({ ventanas: [conManija, conImpacto] })
+        const manijaMasCara = entradaBase({
+            ventanas: [conManija, conImpacto],
+            precios: { ...PRECIOS_BASE, preciosCerradura: { manija: PRECIOS_BASE.precioCerradura + 15000 } },
+        })
+        // Una ventana con manija lleva exactamente 1 cerradura.
+        expect(materiales(manijaMasCara) - materiales(base)).toBeCloseTo(15000, 6)
+    })
+
+    it("cobra cada rodachina al precio de su tipo", () => {
+        const base = materiales(entradaBase({ ventanas: [conManija] }))
+        const metalicaMasCara = materiales(
+            entradaBase({
+                ventanas: [conManija],
+                precios: { ...PRECIOS_BASE, preciosRodachina: { metalica: PRECIOS_BASE.precioRodachina + 1000 } },
+            })
+        )
+        // 3 hojas: 2 móviles × 2 rodachinas = 4 rodachinas, 1000 más cada una.
+        expect(metalicaMasCara - base).toBeCloseTo(4000, 6)
     })
 })
