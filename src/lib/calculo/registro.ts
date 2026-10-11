@@ -25,6 +25,9 @@ export interface EntradaCalculo {
 export interface SalidaCalculo {
     optimizacionPerfiles: Record<string, OptimizacionPerfil>
     accesorios: Accesorios
+    // Los mismos accesorios ventana por ventana, en el orden de entrada: el costeo los necesita
+    // para cobrar cada cerradura y rodachina al precio de su tipo.
+    accesoriosPorVentana: Accesorios[]
     vidrios: VidrioCorte[]
     laminasVidrio: LaminaVidrio[]
     areaTotalM2: number
@@ -40,6 +43,7 @@ function calcular8025(entrada: EntradaCalculo): SalidaCalculo {
     return {
         optimizacionPerfiles: motor8025.optimizarCortes(ventanas, descuentos),
         accesorios: motor8025.calcularAccesorios(ventanas, descuentos),
+        accesoriosPorVentana: ventanas.map((ventana) => motor8025.calcularAccesorios([ventana], descuentos)),
         vidrios,
         laminasVidrio: optimizarLaminasVidrio(vidrios, { laminaAncho, laminaAlto, kerf, minResto }),
         areaTotalM2: calcularAreaTotalM2(ventanas),

@@ -4,15 +4,19 @@ import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card"
 import { Label } from "@/components/ui/label"
 import { Button } from "@/components/ui/button"
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select"
-import { TAMANOS_LAMINA, type TamanoLamina } from "@/lib/types"
+import { CERRADURAS, RODACHINAS, TAMANOS_LAMINA, type TamanoLamina } from "@/lib/types"
 import { Save, RotateCcw } from "lucide-react"
 import { NumberField } from "./NumberField"
+import { PreciosPorTipo } from "./PreciosPorTipo"
 import { PreciosVidrioTabla } from "./PreciosVidrioTabla"
 import { RecargosColorAluminio } from "./RecargosColorAluminio"
 import { usePreciosForm, type PreciosFormData } from "./usePreciosForm"
 import { FormSkeleton } from "@/components/common/FormSkeleton"
 
-type NumericPrecioKey = Exclude<keyof PreciosFormData, "tamanoLamina" | "preciosVidrio" | "recargosColorAluminio">
+type NumericPrecioKey = Exclude<
+    keyof PreciosFormData,
+    "tamanoLamina" | "preciosVidrio" | "recargosColorAluminio" | "preciosCerradura" | "preciosRodachina"
+>
 
 interface NumericFieldConfig {
     key: NumericPrecioKey
@@ -31,8 +35,8 @@ const PERFILES_FIELDS: readonly NumericFieldConfig[] = [
 ]
 
 const ACCESORIOS_FIELDS: readonly NumericFieldConfig[] = [
-    { key: "precioRodachina", label: "Rodachina" },
-    { key: "precioCerradura", label: "Cerradura" },
+    { key: "precioRodachina", label: "Rodachina (precio general)" },
+    { key: "precioCerradura", label: "Cerradura (precio general)" },
     { key: "precioTornillo8mm", label: "Tornillo 8mm" },
     { key: "precioTornillo10mm", label: "Tornillo 10mm" },
     { key: "precioEmpaque", label: "Empaque (metro)" },
@@ -45,8 +49,18 @@ const COSTOS_FIELDS: readonly NumericFieldConfig[] = [
 ]
 
 export function PreciosPanel() {
-    const { formData, loading, saved, handleChange, handlePrecioVidrioChange, handleRecargoColorChange, handleSave, handleReset } =
-        usePreciosForm()
+    const {
+        formData,
+        loading,
+        saved,
+        handleChange,
+        handlePrecioVidrioChange,
+        handlePrecioCerraduraChange,
+        handlePrecioRodachinaChange,
+        handleRecargoColorChange,
+        handleSave,
+        handleReset,
+    } = usePreciosForm()
 
     const renderFields = (fields: readonly NumericFieldConfig[]) =>
         fields.map(({ key, label }) => (
@@ -80,8 +94,24 @@ export function PreciosPanel() {
                 <CardHeader>
                     <CardTitle className="text-lg">Accesorios (precios por unidad)</CardTitle>
                 </CardHeader>
-                <CardContent className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-4">
-                    {renderFields(ACCESORIOS_FIELDS)}
+                <CardContent className="space-y-6">
+                    <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-4">{renderFields(ACCESORIOS_FIELDS)}</div>
+                    <PreciosPorTipo
+                        titulo="Cerradura por tipo"
+                        idPrefijo="admin-cerradura"
+                        opciones={CERRADURAS}
+                        precios={formData.preciosCerradura}
+                        precioGeneral={formData.precioCerradura}
+                        onChange={handlePrecioCerraduraChange}
+                    />
+                    <PreciosPorTipo
+                        titulo="Rodachina por tipo"
+                        idPrefijo="admin-rodachina"
+                        opciones={RODACHINAS}
+                        precios={formData.preciosRodachina}
+                        precioGeneral={formData.precioRodachina}
+                        onChange={handlePrecioRodachinaChange}
+                    />
                 </CardContent>
             </Card>
 
