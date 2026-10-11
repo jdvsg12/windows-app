@@ -1,6 +1,6 @@
 # Handoff — windows-app
 
-> Última actualización: 2026-10-10 (AWA-12: especificaciones de ventana, color de aluminio y precios de vidrio)
+> Última actualización: 2026-10-11 (cierre del día 3 del plan: AWA-16 a AWA-24, y tarea nueva de precios del cotizador)
 
 Este archivo es el punto de entrada para retomar el trabajo: qué se hizo, qué falta y cómo se trabaja de ahora en adelante. Se actualiza en cada sesión relevante, no solo al cerrar una fase.
 
@@ -13,65 +13,79 @@ Este archivo es el punto de entrada para retomar el trabajo: qué se hizo, qué 
   - `stage` = test / staging en Vercel.
 - **Nunca commitear directo a `main` ni a `stage`.** Todo cambio entra por Pull Request: rama nueva → PR → revisión.
 - 🔴 **Regla de oro: ningún PR se mergea sin que el usuario lo indique explícitamente.** El harness de Claude Code además bloquea el merge de PRs a nivel de herramienta ("Merge Without Review") — el usuario tiene que mergear él mismo (botón en GitHub o `gh pr merge <n> --merge --delete-branch`), sea desde GitHub o pidiéndolo en el chat.
-- **Nomenclatura de ramas y PR: `AWA-<número>`**, incremental, en el orden en que se van creando. El número no se reutiliza ni se salta, aunque una rama termine sin usarse.
+- **Nomenclatura de ramas y PR: `AWA-<número>`**, incremental, en el orden en que se van creando. El número no se reutiliza ni se salta, aunque una rama termine sin usarse. Si entra una tarea no planeada, toma el siguiente número y las del plan se corren uno.
   - Rama: `AWA-<número>-nombre-corto`. Título del PR: `AWA-<número>: descripción breve`.
-- **Flujo completo:** rama nueva desde `stage` → cambios → PR a `stage` → **esperar OK del usuario** → merge → verificar en el deploy de staging → PR de `stage` a `main` → **esperar OK del usuario** → merge.
-- Commits en inglés, imperativo presente (`feat:`, `fix:`, `refactor:`, `chore:`, `docs:`), según `AGENTS.md`.
-- **Nunca sobrescribir `localStorage`/IndexedDB del navegador del usuario.** Pruebas visuales en un puerto aislado (`pnpm dev -p 3100` = otro origen), datos de prueba borrados al terminar la verificación.
-- **Antes de mergear un PR nuevo, sincronizar la rama contra el `stage` más reciente** (rebase/merge) y confirmar que el CI pasa ahí — un PR abierto desde un `stage` desactualizado puede traer un CI roto que ya se arregló en otra rama (pasó con AWA-2, ver más abajo).
+- **Flujo completo:** rama nueva desde `stage` → cambios → PR **a `stage`** → **esperar OK del usuario** → merge → verificar en el deploy de staging → PR de `stage` a `main` → **esperar OK del usuario** → merge.
+  - El botón "Create PR" de la app propone `main` como base: los PRs de tareas se abren igual contra `stage` y se avisa en la respuesta.
+- Commits en inglés, imperativo presente (`feat:`, `fix:`, `refactor:`, `chore:`, `docs:`, `test:`), según `AGENTS.md`. Un commit = un cambio lógico.
+- **Nunca sobrescribir `localStorage`/IndexedDB del navegador del usuario.** Pruebas visuales en un puerto aislado (`pnpm dev -p 3100` = otro origen), datos de prueba borrados al terminar la verificación. Next solo permite un `next dev` por carpeta: para usar el 3100 hay que parar el del 3000 y volver a levantarlo al terminar.
+- **Antes de mergear un PR nuevo, sincronizar la rama contra el `stage` más reciente** (rebase/merge) y confirmar que el CI pasa ahí.
+- **Antes de cambiar el comportamiento del motor, capturar las salidas actuales en tests** (caracterización). Si un snapshot cambia, revisar el diff: solo debe cambiar lo que se quiso cambiar.
+
+### Comandos de verificación
+
+| Comando | Qué corre |
+|---|---|
+| `pnpm exec tsc --noEmit` | Tipos |
+| `pnpm lint` | ESLint (hoy: 0 errores, 2 avisos de `<img>` ya existentes) |
+| `pnpm test` | Vitest: 347 tests en 13 archivos (con AWA-24) |
+| `pnpm test:e2e` | Playwright: 13 tests × escritorio y móvil (Pixel 7). Levanta su propio build en el puerto **3200** y cada test usa un navegador limpio: nunca toca el servidor ni los datos del desarrollador |
+| `pnpm build` | Build de producción |
 
 ---
 
-## Estado actual (2026-10-10)
+## Estado actual (2026-10-11)
 
-- **`stage` al día con F3.1, F3.2 y F3.3** (PRs #11, #12 y #13: `AWA-9`, `AWA-10` y `AWA-11`). `main` no se ha tocado desde F2: falta el PR `stage → main`.
-- **Rama abierta: `AWA-12-ventana-especificaciones`** (sale de `origin/stage` en `5994457`). **Sin commit al escribir esto.** `tsc`, lint y 294 tests pasan. Se verificó en navegador aislado (puerto 3100, en un contenedor: los datos del navegador del usuario no se tocaron).
-- **Siguiente paso inmediato:** decidir si se arregla el desfase de la pestaña Optimización (ver "Pendiente de AWA-12") antes del PR, y después commit + PR `AWA-12` a `stage`.
+- **`main`** tiene el release AWA-15 (#17): F2, F3 y AWA-12 a AWA-14.
+- **`stage`** tiene además AWA-16 a AWA-23 (#18 a #25). **Falta el release `stage → main`**: incluye el arreglo crítico del transporte (AWA-22), conviene no esperar mucho.
+- **Abierto, esperando revisión:** AWA-24 (#26, Heliconias) y AWA-25 (este HANDOFF).
+- **Siguiente tarea del plan:** AWA-26 (ganchos de grano del vidrio e inventario de restos).
 
-### AWA-12 — qué incluye
+### Hecho en los días 2 y 3 (2026-10-10 / 11)
 
-Pedido del usuario: más datos al agregar ventanas, y precios de vidrio por tipo.
+| PR | Tarea | Qué quedó |
+|---|---|---|
+| #21 AWA-16 | `ContenidoTab` | Fecha, cliente, descripción y opciones se guardan en el proyecto (`contenidoCotizacion`, con `.default()`); react-hook-form + autoguardado. La fecha es la del día hasta que se edita algo. Arregló que Cliente abriera vacío |
+| #18 AWA-17 | Borrar proyecto en móvil | Los botones dentro de un `DialogTrigger asChild` perdían el tamaño táctil de 44 px (D5); arreglado en `globals.css` |
+| #19 / #20 AWA-18/19 | Tipos desde Zod | `Ventana`, `Proyecto`, sus opciones y las 4 configuraciones salen de `z.infer`. Las 11 interfaces que quedan en `types.ts` no tienen esquema (salidas del motor) |
+| #22 AWA-20 | `useCalculo` | El plan de corte es la función pura `calcularPlanCorte` (`lib/calculo/plan.ts`) memoizada por `useCalculo`; el costeo es un `useMemo` sobre `intentarCosteo`. Autoguardar el contenido ya no recalcula costos |
+| #24 AWA-21 | Merma, bordeado y cantos | `calcularMetricasVidrio` + resumen en Optimización. Merma = vidrio de lámina que no queda en piezas (restos incluidos), **sin la última lámina de cada tipo de vidrio** (definición confirmada por el usuario) |
+| #23 AWA-22 | 🔴 Bug del transporte (no planeado) | Vaciar Transporte/Duración guardaba `null` y **todos los proyectos desaparecían** del dashboard. `ProyectoSchema` repara esos campos con `.catch()` (los proyectos ocultos vuelven) y el formulario no guarda vacíos. Los campos de precio tenían un "0" pegado ("045000"): nuevo `components/common/NumberInput`. Se agregó **Playwright** |
+| #25 AWA-23 | Códigos de pieza | `V3-M1` = ventana 3 del proyecto, hoja móvil 1. Hojas numeradas desde la fija (F1, M1, M2…), cerradura en la última móvil: no depende de en qué extremo va la fija. Se ven en Optimización, Materiales, tarjetas (`V1`) y Excel |
+| #26 AWA-24 | Heliconias (abierto) | **7 láminas es el mínimo para cualquier acomodo** (17 piezas largas que solo se apilan) y un **plan de referencia de 7** validado como guillotina. El optimizador sigue en 8 (llegar a 7 tomó ~84 s de búsqueda). Nota de por qué no se usó una librería en `vidrio.ts` |
 
-1. **Formulario de ventana** (`VentanaForm` + `VentanaEspecificacionesFields` nuevo):
-   - Casilla **"Ambas hojas móviles"**, visible solo con "2 Hojas". **Decisión del usuario (2026-10-10): es opcional y viene desmarcada**, así que una ventana nueva de 2 hojas es por defecto 1 móvil + 1 fija (`2hojas_mixto`); marcada → `2hojas` (2 móviles). Las ventanas `2hojas` ya guardadas se abren con la casilla marcada y no cambian. Helpers puros `tipoDesdeFormulario` / `tipoParaFormulario` en `lib/types.ts`, con tests.
-   - ⚠️ Esto **vuelve a habilitar 1 móvil + 1 fija**, que en F1 se había bloqueado (regla de 1 cerradura por ventana). Sigue pendiente definir en qué extremo va la hoja fija.
-   - **Color de aluminio** (Natural anodizado mate, Blanco, Negro, Bronce, Champaña, Madera; por defecto Natural).
-   - **Cerradura** (Impacto / Dummy / Manija), **Rodachina** (Plástica / Metálica / Pabose), **Calibre de vidrio** (4 / 5 / 6 mm), **Color de vidrio** (Incoloro, Bronce, Gris humo, Azul, Verde, Reflectivo plata/bronce/azul/verde) y casilla **Acabado sandblasting**.
-   - Colores: Vidrio Andino (fabricante nacional) solo publica incoloro. Los demás son los que suelen manejar las vidrierías en Colombia: el usuario debe confirmar la lista.
-   - Valores por defecto de ventana nueva: Impacto, Plástica, 4 mm, Incoloro, sin sandblasting. El formulario conserva las especificaciones de la ventana anterior, igual que ya hacía con el sistema.
-   - Los campos son **opcionales en `VentanaSchema`**: las ventanas guardadas antes siguen cargando y salen como "Sin especificaciones".
-   - Tarjetas de ventana y export a Excel muestran las especificaciones.
-   - `agregarVentana(datos, editandoId)` en `useVentanas` ahora recibe un objeto en vez de 6 argumentos posicionales.
-   - Nuevo `components/ui/checkbox.tsx` (shadcn estándar sobre el paquete `radix-ui` ya instalado, sin dependencias nuevas).
-2. **Precios** (Admin → Precios, `PreciosVidrioTabla` y `RecargosColorAluminio` nuevos):
-   - **Recargo % por color de aluminio** sobre el precio base de cada perfil (`recargosColorAluminio`; 0 % = precio base). Se eligió porcentaje y no una tabla perfil × color (8 × 6 precios) por ser más fácil de mantener: si el proveedor da precio por perfil y color, se cambia a tabla.
-   - Tabla de **precio por lámina para cada color × calibre** (`preciosVidrio`, clave `"<color>-<calibre>"`). Celda vacía = usa el **precio general por lámina** (`precioVidrioLamina`, que pasa a ser el respaldo).
-   - **Sandblasting por m²** (`precioSandblasting`).
-   - Ambos con `.default()` en el esquema: los precios ya guardados cargan sin perder nada.
-   - La tarjeta vieja "Vidrio y Mano de Obra" se separó en "Vidrio" y "Mano de Obra y Margen".
-3. **Costeo** (`lib/calculo/costeo.ts`):
-   - Los perfiles se optimizan **en barras separadas por color de aluminio** (no se mezclan colores en una barra de 6 m), y cada color lleva su recargo. Las ventanas sin color se costean como Natural.
-   - Cada tipo de vidrio (color + calibre) se empaqueta en **sus propias láminas** con su propio precio: no se puede cortar bronce e incoloro de la misma lámina.
-   - Las ventanas sin especificaciones se costean como **incoloro 4 mm** (`VIDRIO_POR_DEFECTO`).
-   - El sandblasting se suma por m² de vidrio de las ventanas que lo llevan, **dentro de la línea "Vidrio"** de la cotización, no como línea aparte.
-   - Con un solo tipo de vidrio el resultado es idéntico al anterior: los snapshots de caracterización no cambiaron.
+### Pendientes que salieron en estos días
 
-### Pendiente de AWA-12 (decidir antes o después del PR)
+- **Precios del cotizador incompletos (tarea nueva, AWA-28).** La pestaña Precios del cotizador no muestra todo lo que ahora se elige al cargar una ventana:
 
-- 🔴 **Desfase Optimización ↔ cotización:** las pestañas Materiales y Optimización (`useVentanas`) todavía mezclan todos los colores: barras de perfil sin importar el color del aluminio y láminas sin importar el tipo de vidrio. En un proyecto con colores mezclados, las barras y láminas que muestra el plan no coinciden con las que cobra la cotización. Arreglo (AWA-13): agrupar barras por color de aluminio y láminas por tipo de vidrio, y mostrarlas por grupo.
-- Cerradura y rodachina **no cambian el precio** todavía (hoy hay un solo `precioCerradura` / `precioRodachina`). Falta precio por tipo, si el usuario lo quiere.
-- Las especificaciones no salen aún en la cotización ni en el PDF (solo en las tarjetas y en el Excel).
+  | Elección en la ventana | ¿Cambia el precio? | Cotizador → Precios | Admin → Precios |
+  |---|---|---|---|
+  | Color de aluminio | Sí (recargo %) | ❌ | ✅ |
+  | Color y calibre de vidrio | Sí (precio por lámina) | ❌ solo el general | ✅ tabla color × calibre |
+  | Sandblasting | Sí (por m²) | ❌ | ✅ |
+  | Tipo de cerradura | ❌ un solo precio | uno solo | uno solo |
+  | Tipo de rodachina | ❌ un solo precio | uno solo | uno solo |
+
+  Los tres primeros **sí se cobran** (los usa `costeo.ts`), solo que no se pueden ver ni cambiar desde el cotizador. Plan: (1) precio por tipo de cerradura y de rodachina, con `.default()` para no perder precios guardados, costeado por ventana; (2) el cotizador reutiliza los componentes de Admin (`PreciosVidrioTabla`, `RecargosColorAluminio`, sandblasting) en vez de mantener dos listas de campos duplicadas (`PreciosTab` vs `PreciosPanel`). **Falta del usuario:** el precio de cada tipo de cerradura y rodachina (o arrancar con todos iguales al actual).
+  - ⚠️ Hoy cambiar un precio desde el cotizador cambia el precio **global**, no el de esa cotización. Se resuelve con el snapshot al emitir (D9, AWA-43).
+- Playwright no corre en el CI de GitHub Actions (falta el paso que instala el navegador).
+- Si la lámina de diferencia en Heliconias importa en obras reales: botón "Optimizar a fondo" que corra la búsqueda exhaustiva en un Web Worker.
+- `DatosEmpresa` y `DatosBancarios` en `types.ts` no se usan (código muerto).
+- La X de cerrar de los diálogos mide 16 px en pantallas táctiles (el botón Cancelar sí cumple 44 px).
+- ⚠️ Con el bug de AWA-22, si alguien creó un proyecto nuevo mientras los demás estaban ocultos, la lista guardada se sobrescribió: esos proyectos no se recuperan.
+
+---
 
 ## Seguridad — estado
 
-1. ✅ **Deploy público — resuelto.** `windows-app-gilt.vercel.app` respondía `200` sin login por `ssoProtection.deploymentType = "all_except_custom_domains"` en el proyecto de Vercel. Se cambió a `"all"` vía API. Verificado: ahora responde `302` a `vercel.com/sso-api`, igual que el resto de deploys.
-2. ✅ **Datos reales de la empresa hardcodeados — resuelto (AWA-7).** NIT, dirección, nombre y cédula del representante, dos cuentas bancarias y un WhatsApp personal estaban en `CONFIGURACION_DEFAULT` (`lib/storage.ts`), visibles en el código y en el bundle del cliente. Ahora se leen de 9 variables `NEXT_PUBLIC_COMPANY_*`, ya cargadas en Vercel (Production/Preview/Development) con los mismos valores reales. `.env.example` documenta los nombres sin valores reales.
-   - ⚠️ **Esto NO borra el historial de git** — los datos siguen legibles en commits viejos. Reescribir el historial es una acción disruptiva (force-push, rompe clones existentes) que necesita aprobación explícita aparte; no se hizo.
-3. **Contraseña de admin (`admin123`) — decisión explícita del usuario: se deja igual "para probar", se revisa en una fase siguiente.** No confundir con "resuelto"; sigue hardcodeada y sin autenticación real. Ligado a F4 (Supabase auth).
-4. **Revocar el token de GitHub viejo** que estaba incrustado en la URL del remoto — sigue pendiente, sin hacer.
-5. **Upgrade de Next.js.** 16.0.11 tiene vulnerabilidades críticas (RCE); corrige desde 16.3.3+ (última: 16.3.6). Sin decidir si ahora o en F5. Auditoría (`pnpm audit`): 19 paquetes afectados, 3 críticos (`next`, `jspdf`, `tar`).
-6. **`jspdf`** (crítica, HTML injection): solo cliente, datos propios del usuario, riesgo real bajo hoy; F5 lo reemplaza por `@react-pdf/renderer`.
-7. **`xlsx`** sin parche disponible; la app solo escribe (no lee archivos ajenos), así que la ruta vulnerable no se ejecuta. Evaluar SheetJS oficial (0.20.3) o aceptar el riesgo.
+1. ✅ **Deploy público — resuelto.** `windows-app-gilt.vercel.app` responde `302` a `vercel.com/sso-api` (SSO en todos los deploys).
+2. ✅ **Datos reales de la empresa fuera del código (AWA-7).** Se leen de 9 variables `NEXT_PUBLIC_COMPANY_*` cargadas en Vercel.
+   - ⚠️ **Esto NO borra el historial de git** — los datos siguen legibles en commits viejos. Reescribirlo (force-push) necesita aprobación explícita aparte; no se hizo.
+3. **Contraseña de admin (`admin123`)** — decisión del usuario: se deja "para probar" hasta F4 (Supabase auth). No está resuelto.
+4. **Revocar el token de GitHub viejo** que estaba en la URL del remoto — pendiente, lo hace el usuario.
+5. ✅ **Next.js** actualizado a 16.3.8 (AWA-14), cierra el RCE de 16.0.11.
+6. **`jspdf`** (crítica, HTML injection): solo cliente y datos propios; F5 lo reemplaza por `@react-pdf/renderer`.
+7. **`xlsx`** sin parche; la app solo escribe archivos. Evaluar SheetJS oficial (0.20.3) o aceptar el riesgo (AWA-37).
 
 ### Entornos Vercel
 - Confirmar que `stage` tenga un dominio fijo de pruebas en vez de URLs de preview que cambian en cada push.
@@ -81,126 +95,102 @@ Pedido del usuario: más datos al agregar ventanas, y precios de vidrio por tipo
 
 ## Plan de escalamiento — avance
 
-Referencia: el prompt de arquitectura (decisiones D1–D13, fases F1–F5 y módulo optimizador de vidrio). Leyenda: ✅ hecho · 🟡 parcial · ⬜ pendiente. Cada ítem está verificado contra el código en `stage` + AWA-12, no solo contra el historial.
+Referencia: el prompt de arquitectura (decisiones D1–D13, fases F1–F5 y módulo optimizador de vidrio). Leyenda: ✅ hecho · 🟡 parcial · ⬜ pendiente. Verificado contra el código en `stage` (+ AWA-24).
 
 ### Decisiones cerradas
 
 | | Decisión | Estado | Evidencia / qué falta |
 |---|---|---|---|
-| D1 | Solo 80-25 habilitada | ✅ | `lib/calculo/registro.ts` (`REGISTRO_MOTORES`, `opcionesSistema`); el formulario deshabilita las no validadas |
-| D2 | Offline-first, motor y PDF en cliente | 🟡 | Motor puro isomorfo en `lib/calculo/` ✅; registrado en `AGENTS.md` ✅. El PDF corre en cliente pero sigue en `jspdf`/`html2canvas` (F5) |
+| D1 | Solo 80-25 habilitada | ✅ | `lib/calculo/registro.ts`; el formulario deshabilita las no validadas |
+| D2 | Offline-first, motor y PDF en cliente | 🟡 | Motor puro isomorfo en `lib/calculo/` ✅. El PDF sigue en `jspdf`/`html2canvas` (F5) |
 | D3 | Vercel + Supabase us-east | 🟡 | Vercel ✅ (con SSO). Supabase ⬜ (F4) |
-| D4 | Marca ALUVE en tokens, sin modo oscuro | ✅ | `globals.css` + `lib/design/tokens.ts` (espejo hex para el PDF), con tests |
-| D5 | Touch targets ≥44 px con `pointer: coarse` | ✅ | `@media (pointer: coarse)` en `globals.css`, sin tocar `ui/` |
-| D6 | Paleta de piezas por tipo de perfil + segundo indicador | ✅ | `lib/design/piezas.ts` (`ESTILOS_PERFIL`, códigos F/M, R/S) |
-| D7 | Autosave con debounce + indicador | 🟡 | `useAutosave` + `SaveIndicator` en ConfiguracionTab y datos del proyecto ✅. Estado "offline" ⬜. `ContenidoTab` sin persistencia ⬜ |
-| D8 | Costeo por absorción en el tiempo | 🟡 | Cascada única en `lib/calculo/costeo.ts` ✅; las dos `calcularCostos` viejas eliminadas; Overhead en Admin; duración/transporte por proyecto. AWA-12 añade precio de vidrio por tipo y recargo por color de aluminio. ⬜ "precios con descuento de proveedor" |
-| D9 | Snapshot al emitir cotización | ⬜ | F4 |
+| D4 | Marca ALUVE en tokens, sin modo oscuro | ✅ | `globals.css` + `lib/design/tokens.ts`, con tests |
+| D5 | Touch targets ≥44 px con `pointer: coarse` | ✅ | `globals.css`; desde AWA-17 también los botones dentro de un `*Trigger asChild` |
+| D6 | Paleta de piezas por tipo de perfil + segundo indicador | ✅ | `lib/design/piezas.ts` (códigos F/M, R/S) + códigos `V3-M1` (AWA-23) |
+| D7 | Autosave con debounce + indicador | 🟡 | ConfiguracionTab, datos del proyecto y ContenidoTab ✅. Estado "offline" ⬜ (AWA-44) |
+| D8 | Costeo por absorción en el tiempo | 🟡 | Cascada única en `costeo.ts` ✅, vidrio por tipo y recargo por color ✅. ⬜ precio por tipo de cerradura/rodachina (AWA-28) y descuento de proveedor (AWA-39) |
+| D9 | Snapshot al emitir cotización | ⬜ | AWA-43 |
 | D10 | Roles owner/operario | ⬜ | F4 (sigue `admin123`) |
 | D11 | PDF con `@react-pdf/renderer` | ⬜ | F5 |
-| D12 | Vitest como dev dep | ✅ | 290 tests en 8 archivos |
-| D13 | Logo ≤512 KB y ≤400 px | ✅ | `lib/logo.ts` (canvas + error inline) |
+| D12 | Vitest como dev dep | ✅ | 347 tests + Playwright para e2e |
+| D13 | Logo ≤512 KB y ≤400 px | ✅ | `lib/logo.ts` |
 
 ### Fases
 
 **F1 — Tokens de diseño · ✅ completa**
-- ✅ Escala de color ALUVE + success/warning/info, tipografía semántica, layout, touch targets (D5), paleta de piezas (D6), colores compartidos PDF/preview (`lib/design/tokens.ts`).
-- ✅ `AGENTS.md` actualizado: orden "tipos → motor (puro isomorfo) → módulo → hook → componente" y arquitectura offline-first.
 
-**F2 — Componentes reutilizables · 🟡 casi completa**
-- ✅ `PageHeader`, `StatCard`, `EmptyState`, `SectionTitle`; `lib/format.ts`; `CreateProjectForm` compartido.
-- ✅ `ConfiguracionTab` con react-hook-form + Zod + autosave.
-- ✅ Datos reales de la empresa fuera del código (variables `NEXT_PUBLIC_COMPANY_*`); logo validado (D13); código muerto eliminado; skeletons.
-- ⬜ `ContenidoTab` a react-hook-form + persistencia: decisión de producto pendiente (dónde se guarda).
-- ⬜ Botón borrar proyecto en móvil: sin verificar en esta auditoría.
+**F2 — Componentes reutilizables · ✅ completa**
+- ✅ `PageHeader`, `StatCard`, `EmptyState`, `SectionTitle`, `NumberInput`; `lib/format.ts`; `CreateProjectForm` compartido.
+- ✅ `ConfiguracionTab` y `ContenidoTab` con react-hook-form + Zod + autosave.
+- ✅ Botón borrar proyecto en móvil (AWA-17).
 
-**F3 — Motor de cálculo isomorfo · 🟡 núcleo hecho**
-- ✅ 3.0 Tests de caracterización del motor 80-25 (6 tipos, medidas límite, barras, láminas) con snapshots.
-- ✅ 3.1 Motor 80-25 extraído a módulo puro (sin storage ni caché; descuentos inyectados) — `AWA-9`.
-- ✅ Contrato `EntradaCalculo`/`SalidaCalculo` + `MotorReferencia` + registro (D1).
-- ✅ 3.2 Modelo de costeo D8 — `AWA-10`.
-- ✅ 3.3 Optimizador de vidrio (ver módulo abajo) — `AWA-11`.
-- 🟡 Tipos derivados de Zod: los esquemas existen, pero `types.ts` aún mantiene 17 interfaces paralelas (`Ventana`, `Proyecto`, `ConfiguracionPrecios`…).
-- ⬜ `useCalculo` reemplazando los `useMemo` de `useVentanas`/`useCotizador`.
+**F3 — Motor de cálculo isomorfo · 🟡 casi completa**
+- ✅ Caracterización del motor 80-25, motor puro, contrato + registro, costeo D8, optimizador de vidrio.
+- ✅ Tipos derivados de Zod (AWA-18/19).
+- ✅ `useCalculo` + `calcularPlanCorte` (AWA-20).
 - ⬜ Backlog: motores 50-20 / 70-44 / 70-38 (uno por PR, cuando el usuario entregue fórmulas y casos).
 
-**F4 — Supabase · ⬜ sin empezar**
-- ⬜ Esquema con `organization_id` + RLS, auth y roles (quitar `admin123`), repositorios en lugar de `storage.ts`, IndexedDB local-first + sincronización, snapshot al emitir (D9), logo en Storage, migración desde `localStorage` con respaldo, tests de RLS + seed del piloto.
+**F4 — Supabase · ⬜ sin empezar** — esquema con `organization_id` + RLS, auth y roles (quitar `admin123`), sincronización, logo en Storage, tests de RLS + seed del piloto.
 
-**F5 — PDF con react-pdf · ⬜ sin empezar**
-- ⬜ Cotización y archivos de corte en `@react-pdf/renderer`, versionado (buffer de 3 + "guardada"), mapeo del editor de texto enriquecido, visor react-pdf como vista previa. Cierra la vulnerabilidad de `jspdf`.
+**F5 — PDF con react-pdf · ⬜ sin empezar** — cotización y archivos de corte en `@react-pdf/renderer`, versionado, mapeo del editor de texto enriquecido, vista previa. Cierra la vulnerabilidad de `jspdf`.
 
 ### Módulo optimizador de corte de vidrio
 
 | Requisito | Estado | Evidencia / qué falta |
 |---|---|---|
 | Módulo puro isomorfo, testeable | ✅ | `lib/calculo/vidrio.ts` + `vidrio.test.ts` |
-| Cortes guillotina, mínimo de láminas | ✅ | Empaquetado guillotina tipo "shelf" escrito en casa |
-| Documentar librería elegida vs. propia | ⬜ | No quedó escrito por qué no se usó una librería maxrects/guillotine |
-| Kerf configurable, default 0 | ✅ | `precios.kerfVidrio`, en Admin |
-| Tamaño de lámina configurable, una sola fuente | ✅ | `precios.tamanoLamina` |
-| Mínimo de resto reutilizable configurable | ✅ | `precios.minRestoVidrio` (default 200 mm) |
-| Clasificación resto (R) / desperdicio | ✅ | `RestoLamina.tipo`; marcados en la pestaña Optimización |
-| Costo por láminas enteras × precio | ✅ | `costeo.ts`; con AWA-12, por tipo de vidrio |
-| Merma % excluyendo la última lámina | ⬜ | No implementada |
-| Etiquetas de pieza `V3-M1` (ventana + hoja) | 🟡 | Existe el tipo de hoja F/M (`piezas.ts`); falta el código de dos niveles generado |
-| Caso Heliconias (29 piezas → 7 láminas, 40,063 m², 146,490 m / 116 cantos) | 🟡 | Totales de piezas, m², bordeado y cantos ✅. Láminas: el test acepta ≤8, no las 7 exactas |
-| Gancho para dirección/grano del vidrio | ⬜ | |
-| Gancho para inventario de restos | ⬜ | |
-| PDF del plan de corte (una página por lámina + lista maestra) | ⬜ | Depende de F5 |
-| Snapshot del plan de corte al emitir | ⬜ | Depende de F4 (D9) |
-| Láminas separadas por color/calibre | 🟡 | En el costeo ✅ (AWA-12); en la pestaña Optimización ⬜ |
+| Cortes guillotina | ✅ | Verificado con `esGuillotina` (helper de tests) |
+| Documentar librería elegida vs. propia | ✅ | Encabezado de `vidrio.ts` (AWA-24) |
+| Kerf configurable, default 0 | ✅ | `precios.kerfVidrio` |
+| Tamaño de lámina, una sola fuente | ✅ | `precios.tamanoLamina` |
+| Mínimo de resto reutilizable | ✅ | `precios.minRestoVidrio` (200 mm) |
+| Clasificación resto (R) / desperdicio (S) | ✅ | `RestoLamina.tipo` |
+| Costo por láminas enteras × precio | ✅ | `costeo.ts`, por tipo de vidrio |
+| Merma % excluyendo la última lámina | ✅ | `calcularMetricasVidrio` (AWA-21), por tipo de vidrio |
+| Etiquetas de pieza `V3-M1` | ✅ | `lib/calculo/codigos.ts` (AWA-23) |
+| Caso Heliconias (29 piezas, 40,063 m², 146,490 m / 116 cantos) | ✅ | Totales ✅. Láminas: mínimo demostrado 7, plan de referencia de 7; el optimizador da 8 (aceptado ≤8) |
+| Láminas separadas por color/calibre | ✅ | Costeo y pestaña Optimización (AWA-13) |
+| Gancho para dirección/grano del vidrio | ⬜ | AWA-26 |
+| Gancho para inventario de restos | ⬜ | AWA-26 |
+| PDF del plan de corte | ⬜ | F5 (AWA-34/35) |
+| Snapshot del plan de corte al emitir | ⬜ | AWA-43 |
 
 ---
 
-## Plan de trabajo — 4 PRs por día (revisado 2026-10-10)
+## Plan de trabajo — 4 PRs por día (revisado 2026-10-11)
 
-Decisiones del usuario que cambian el plan:
-- **Las referencias (50-20, 70-44, 70-38) las irá agregando con el tiempo**: quedan fuera del calendario fijo y cada una entra cuando llegan sus fórmulas, descuentos y casos de prueba (~3 PRs por referencia: motor + caracterización, descuentos, habilitar en el registro).
-- **Supabase va de último**, cuando estén listos los descuentos: su objetivo es tener varios usuarios usando la app. Lo local-first que no necesita Supabase (repositorios, IndexedDB, migración, snapshot al emitir, indicador offline) se adelanta.
-- **El color del aluminio entra en las cuentas** (hecho en AWA-12).
+Decisiones del usuario que siguen vigentes:
+- **Referencias nuevas (50-20, 70-44, 70-38)** fuera del calendario fijo: cada una entra cuando llegan sus fórmulas, descuentos y casos (~3 PRs por referencia).
+- **Supabase va de último** (objetivo: varios usuarios). Lo local-first que no lo necesita se adelanta.
 
-Supuestos: días hábiles de lunes a viernes; el 12-oct es festivo, así que arranca el **martes 13-oct**. Cada PR mide aprox. ¼ de día, sale de `stage` y sigue el flujo de siempre (PR → OK del usuario → merge → verificar staging). Las fases grandes arrancan con su plan aprobado. Al cierre de cada bloque hay un PR de release `stage → main`.
+Días 1 a 3 cumplidos (AWA-12 a AWA-24, ver "Hecho"). Los números se corrieron: AWA-22 fue el bug del transporte y AWA-25 es esta actualización del HANDOFF.
 
-| Día | Fecha | PRs | Bloque |
-|---|---|---|---|
-| 1 | mar 13-oct | **AWA-12** especificaciones + color de aluminio + precios de vidrio (listo) · **AWA-13** Materiales/Optimización agrupados por color de aluminio y tipo de vidrio · **AWA-14** upgrade de Next.js ≥16.3.3 (vulnerabilidad RCE) · **AWA-15** release `stage → main` | Cierre + seguridad |
-| 2 | mié 14-oct | **AWA-16** `ContenidoTab`: persistencia + react-hook-form · **AWA-17** botón borrar proyecto en móvil · **AWA-18** tipos desde Zod I (`Ventana`, `Proyecto`) · **AWA-19** tipos desde Zod II (configuraciones) | Restos de F2/F3 |
-| 3 | jue 15-oct | **AWA-20** `useCalculo` en lugar de los `useMemo` · **AWA-21** merma sin la última lámina + métricas de bordeado y cantos · **AWA-22** códigos de pieza `V3-M1` · **AWA-23** Heliconias en 7 láminas exactas + nota de por qué no se usó una librería | F3 optimizador |
-| 4 | vie 16-oct | **AWA-24** ganchos de grano del vidrio e inventario de restos · **AWA-25** precio por tipo de cerradura y rodachina · **AWA-26** especificaciones en la cotización y el PDF actual · **AWA-27** release `stage → main` | Cierre de F3 |
-| 5 | lun 19-oct | **AWA-28** base de `@react-pdf/renderer` (documento, fuentes, tokens) · **AWA-29** cotización en react-pdf · **AWA-30** mapeo del editor de texto enriquecido · **AWA-31** vista previa con el visor de react-pdf; se quitan `jspdf`/`html2canvas` | F5 PDF |
-| 6 | mar 20-oct | **AWA-32** PDF del plan de corte: una página por lámina con diagrama · **AWA-33** plan de corte: tablas por lámina + lista maestra + totales · **AWA-34** versionado de PDF (buffer de 3 + "guardada") · **AWA-35** reemplazo o actualización de `xlsx` | F5 plan de corte |
-| 7 | mié 21-oct | **AWA-36** release `stage → main` · **AWA-37** descuento de proveedor en los precios (D8) · **AWA-38** interfaz de repositorios (`storage.ts` detrás, sin cambiar comportamiento) · **AWA-39** repositorio IndexedDB | Descuentos + local-first |
-| 8 | jue 22-oct | **AWA-40** migración `localStorage → IndexedDB` con respaldo JSON y validación Zod · **AWA-41** emitir cotización con snapshot local (D9) · **AWA-42** indicador offline en el autosave (D7) · **AWA-43** release `stage → main` | Cierre local-first |
+| Día | PRs | Bloque |
+|---|---|---|
+| 4 | **AWA-26** ganchos de grano del vidrio e inventario de restos · **AWA-27** release `stage → main` (lleva el arreglo del transporte) · **AWA-28** precios del cotizador completos + precio por tipo de cerradura y rodachina · **AWA-29** especificaciones en la cotización y el PDF actual | Cierre de F3 |
+| 5 | **AWA-30** base de `@react-pdf/renderer` · **AWA-31** cotización en react-pdf · **AWA-32** mapeo del editor de texto enriquecido · **AWA-33** vista previa con el visor; se quitan `jspdf`/`html2canvas` | F5 PDF |
+| 6 | **AWA-34** PDF del plan de corte: una página por lámina · **AWA-35** tablas por lámina + lista maestra · **AWA-36** versionado de PDF · **AWA-37** reemplazo o actualización de `xlsx` | F5 plan de corte |
+| 7 | **AWA-38** release `stage → main` · **AWA-39** descuento de proveedor (D8) · **AWA-40** interfaz de repositorios · **AWA-41** repositorio IndexedDB | Descuentos + local-first |
+| 8 | **AWA-42** migración `localStorage → IndexedDB` con respaldo · **AWA-43** emitir cotización con snapshot (D9) · **AWA-44** indicador offline (D7) · **AWA-45** release `stage → main` | Cierre local-first |
 
-**Calendario fijo: 32 PRs (AWA-12 a AWA-43) en 8 días hábiles → fin ideal el jueves 22-oct-2026. Realista: ~2 semanas (fin entre el 27 y el 30 de octubre).**
-
-Después, sin fecha fija (depende de lo que entregue el usuario):
-- **Referencias nuevas** a medida que lleguen: ~3 PRs cada una (~1 día).
-- **F4 Supabase — multiusuario** (~12 PRs, 3 días ideales, 1–1,5 semanas realistas): esquema con `organization_id` + RLS (2 PRs), tests de RLS, auth email/contraseña (quita `admin123`), roles owner/operario, invitar usuarios al taller, sync envío, sync recepción + conflictos, logo en Storage, seed del piloto + entornos de Vercel, release.
-
-Por qué el estimado realista es mayor que el ideal:
-- El cuello de botella es la revisión: el usuario debe revisar, mergear y probar en staging 4 PRs al día. Un día con 2 merges corre el plan.
-- Los PRs de un mismo día dependen entre sí: se trabajan apilados y cada uno se rebasa cuando el anterior entra a `stage`.
-- La migración a IndexedDB toca datos reales del taller: hay que ir con calma.
+Después, sin fecha fija: referencias nuevas según lleguen; **F4 Supabase — multiusuario** (~12 PRs); Playwright en el CI.
 
 Bloqueos que dependen del usuario:
-- **Antes del día 1:** confirmar las listas de colores de vidrio y de aluminio, y si el recargo % por color sirve o hace falta precio por perfil y color.
-- **Antes del día 2:** dónde se guarda `ContenidoTab` (propuesta: campos nuevos en `Proyecto`).
-- **Antes del día 4:** precios por tipo de cerradura/rodachina y en qué extremo va la hoja fija.
+- **Antes de AWA-28:** precio de cada tipo de cerradura (impacto / dummy / manija) y rodachina (plástica / metálica / pabose), o arrancar con todos iguales al actual.
+- Confirmar las listas de colores de vidrio y de aluminio, y si el recargo % por color sirve o hace falta precio por perfil y color.
+- En qué extremo va la hoja fija (ya no bloquea los códigos de pieza; sí el dibujo de la ventana).
 - **Antes del día 5:** aprobar el plan detallado de F5.
 - **Antes del día 7:** cómo funciona el descuento de proveedor (¿% general, por perfil, por proveedor?).
-- **Para F4:** crear el proyecto de Supabase (región us-east) y definir cómo se dan de alta los usuarios.
+- **Para F4:** crear el proyecto de Supabase (us-east) y definir el alta de usuarios.
 - Manual: revocar el token viejo de GitHub.
 
 ## Cómo continuar
 
-1. **Cerrar AWA-12:** decidir lo de la pestaña Optimización → commit por bloques (`feat: window specs…`, `feat: glass prices by color and thickness…`, `docs: handoff`) → PR `AWA-12: especificaciones de ventana y precios de vidrio` a `stage` → **esperar OK del usuario** para mergear.
-2. **Verificar `stage`** antes de asumir nada: `git fetch origin && gh run list --branch stage --limit 1`. `gh` no está instalado en la máquina del usuario: correrlo desde otro entorno o revisar GitHub.
-3. Seguir el **plan de trabajo** de arriba: cierre de F3 → F5 (PDF) → descuentos + local-first → referencias según lleguen → F4 Supabase de último.
-6. Pendientes menores: revocar el token viejo de GitHub, upgrade de Next.js (16.0.11 → ≥16.3.3 por vulnerabilidad RCE), dominio fijo de `stage`, decidir persistencia de `ContenidoTab`.
+1. Revisar y mergear #26 (AWA-24) y el PR de AWA-25.
+2. Seguir con **AWA-26** y el release **AWA-27**.
+3. Pedir al usuario los precios por tipo de cerradura y rodachina antes de AWA-28.
 
-### Notas de entorno (sesión 2026-10-10)
-- El repo vive en la máquina del usuario; ahí no hay `pnpm` ni `gh` en el PATH. `tsc`, `eslint` y `vitest` se corren desde `node_modules/.bin/`.
-- Git en la carpeta conectada necesita permiso de borrado para limpiar sus `.lock` (ya concedido en esta sesión; en otra hay que pedirlo de nuevo).
-- Las pruebas visuales se hicieron en un contenedor aparte (copia del código + Playwright), así que el `localStorage` del usuario quedó intacto.
+### Notas de entorno (sesión 2026-10-11)
+- Máquina del usuario: `pnpm`, `gh` y Node 20 en el PATH. `gh` tiene dos cuentas (`jdvsg12` y `dev2-prog`); este repo usa **`jdvsg12`**: el remoto lleva el usuario en la URL y `.envrc` (direnv, ignorado por git) fija `GH_TOKEN` de esa cuenta. Desde Claude Code, `direnv exec . gh …`.
+- Puertos: **3000** = servidor de desarrollo del usuario (`.claude/launch.json`, config `dev`), **3100** = pruebas visuales aisladas (config `dev-test`), **3200** = Playwright.
+- El navegador de Playwright (chromium v1248) ya está en `~/.cache/ms-playwright`.
