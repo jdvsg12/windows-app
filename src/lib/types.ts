@@ -6,6 +6,7 @@ import type {
     CalibreVidrioSchema,
     ColorAluminioSchema,
     ColorVidrioSchema,
+    ContenidoCotizacionSchema,
     ConfiguracionEmpresaSchema,
     ConfiguracionOverheadSchema,
     ConfiguracionPreciosSchema,
@@ -179,6 +180,8 @@ export interface Corte {
 // duracionMeses absorbe el overhead mensual y transporte es costo directo de la obra (modelo D8).
 // Es el tipo de salida del esquema: los .default() garantizan ambos campos tras validar.
 export type Proyecto = z.infer<typeof ProyectoSchema>
+
+export type ContenidoCotizacion = z.infer<typeof ContenidoCotizacionSchema>
 
 export type ConfiguracionEmpresa = z.infer<typeof ConfiguracionEmpresaSchema>
 

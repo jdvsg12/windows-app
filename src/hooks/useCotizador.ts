@@ -6,7 +6,6 @@ import {
     guardarPrecios,
     obtenerOverhead,
     obtenerDescuentos,
-    actualizarProyecto,
 } from "@/lib/storage"
 import { calcularCosteo } from "@/lib/calculo/costeo"
 import type { Proyecto, ConfiguracionEmpresa, ConfiguracionPrecios, CostosCalculadosCotizador } from "@/lib/types"
@@ -59,12 +58,6 @@ export function useCotizador(proyecto: Proyecto | null) {
         guardarPrecios(newPrecios)
     }, [])
 
-    const updateCliente = useCallback((cliente: string) => {
-        if (!proyecto) return
-        const proyectoActualizado = { ...proyecto, cliente }
-        actualizarProyecto(proyectoActualizado)
-    }, [proyecto])
-
     return {
         config,
         precios,
@@ -72,6 +65,5 @@ export function useCotizador(proyecto: Proyecto | null) {
         errorCosteo,
         updateConfig,
         updatePrecios,
-        updateCliente,
     }
 }
