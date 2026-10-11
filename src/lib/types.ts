@@ -214,6 +214,8 @@ export interface VidrioCorte {
     ventanaId?: string
     hoja?: HojaVidrio
     codigo?: string // "V3-M1": ventana 3 del proyecto, hoja móvil 1
+    // false: vidrio con veta o diseño que no se puede girar al cortar (default: se puede).
+    permitirGiro?: boolean
     tipo: string
     ancho: number // mm
     alto: number // mm
@@ -241,6 +243,7 @@ export interface LaminaVidrio {
     }>
     restos: RestoLamina[]
     grupo?: string // tipo de vidrio de todas las piezas de esta lámina
+    restoId?: string // la "lámina" es un resto del inventario, no una lámina nueva que haya que comprar
     areaUsada: number
     areaSobrante: number
 }

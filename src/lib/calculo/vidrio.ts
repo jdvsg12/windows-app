@@ -22,6 +22,7 @@ interface EspacioLibre {
 
 interface LaminaExtendida {
     numero: number
+    restoId?: string
     anchoLamina: number
     altoLamina: number
     areaLamina: number
@@ -36,11 +37,22 @@ export interface OpcionesOptimizacionVidrio {
     laminaAlto: number
     kerf?: number // mm consumidos por cada corte (default 0: vidrio rayado y partido, sin pérdida)
     minResto?: number // mm de lado menor a partir del cual un sobrante es "resto" y no desperdicio (default 200)
+    // Restos guardados de obras anteriores: se usan antes de abrir láminas nuevas. Hoy nadie los
+    // pasa todavía (no hay inventario guardado); es el gancho para cuando exista.
+    restosInventario?: readonly RestoInventario[]
 }
+
+export interface RestoInventario {
+    id: string
+    ancho: number // mm
+    alto: number // mm
+}
+
+const sePuedeGirar = (vidrio: VidrioCorte): boolean => vidrio.permitirGiro !== false && vidrio.ancho !== vidrio.alto
 
 function cabeEnLamina(vidrio: VidrioCorte, laminaAncho: number, laminaAlto: number): boolean {
     const cabeDerecho = vidrio.ancho <= laminaAncho && vidrio.alto <= laminaAlto
-    const cabeRotado = vidrio.alto <= laminaAncho && vidrio.ancho <= laminaAlto
+    const cabeRotado = sePuedeGirar(vidrio) && vidrio.alto <= laminaAncho && vidrio.ancho <= laminaAlto
     return cabeDerecho || cabeRotado
 }
 
@@ -65,8 +77,8 @@ function buscarEspacioEnLamina(
             }
         }
 
-        // Opción 2: rotado 90° (solo si no es cuadrado)
-        if (vidrio.ancho !== vidrio.alto && altoConMargen <= espacio.ancho && anchoConMargen <= espacio.alto) {
+        // Opción 2: rotado 90° (no si es cuadrado ni si la veta del vidrio lo impide)
+        if (sePuedeGirar(vidrio) && altoConMargen <= espacio.ancho && anchoConMargen <= espacio.alto) {
             const desperdicio = espacio.ancho * espacio.alto - altoConMargen * anchoConMargen
             if (desperdicio < menorDesperdicio) {
                 menorDesperdicio = desperdicio
@@ -151,6 +163,21 @@ function crearNuevaLamina(
     }
 }
 
+function laminaDesdeResto(resto: RestoInventario, indice: number): LaminaExtendida {
+    const areaLamina = (resto.ancho * resto.alto) / 1_000_000
+    return {
+        numero: indice + 1,
+        restoId: resto.id,
+        anchoLamina: resto.ancho,
+        altoLamina: resto.alto,
+        areaLamina,
+        vidrios: [],
+        areaUsada: 0,
+        areaSobrante: areaLamina,
+        espaciosLibres: [{ x: 0, y: 0, ancho: resto.ancho, alto: resto.alto }],
+    }
+}
+
 function clasificarRestos(espaciosLibres: readonly EspacioLibre[], minResto: number): RestoLamina[] {
     return espaciosLibres.map((espacio) => ({
         x: espacio.x,
@@ -183,7 +210,11 @@ export function optimizarLaminasVidrio(
     }
 
     const vidriosOrdenados = [...vidrios].sort((a, b) => b.area - a.area)
-    const laminas: LaminaExtendida[] = []
+    // Los restos van primero y del más chico al más grande: una pieza ocupa el resto más pequeño
+    // donde cabe y deja los grandes para piezas grandes.
+    const laminas: LaminaExtendida[] = [...(opciones.restosInventario ?? [])]
+        .sort((a, b) => a.ancho * a.alto - b.ancho * b.alto)
+        .map(laminaDesdeResto)
 
     vidriosOrdenados.forEach((vidrio) => {
         let colocado = false
@@ -199,15 +230,19 @@ export function optimizarLaminasVidrio(
         }
     })
 
-    return laminas.map((lamina) => ({
-        numero: lamina.numero,
-        anchoLamina: lamina.anchoLamina,
-        altoLamina: lamina.altoLamina,
-        vidrios: lamina.vidrios,
-        restos: clasificarRestos(lamina.espaciosLibres, minResto),
-        areaUsada: lamina.areaUsada,
-        areaSobrante: lamina.areaSobrante,
-    }))
+    // Los restos del inventario que no se usaron no son láminas del plan.
+    return laminas
+        .filter((lamina) => lamina.vidrios.length > 0)
+        .map((lamina, i) => ({
+            numero: i + 1,
+            ...(lamina.restoId ? { restoId: lamina.restoId } : {}),
+            anchoLamina: lamina.anchoLamina,
+            altoLamina: lamina.altoLamina,
+            vidrios: lamina.vidrios,
+            restos: clasificarRestos(lamina.espaciosLibres, minResto),
+            areaUsada: lamina.areaUsada,
+            areaSobrante: lamina.areaSobrante,
+        }))
 }
 
 export interface MetricasVidrio {
