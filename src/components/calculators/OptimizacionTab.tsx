@@ -5,16 +5,19 @@ import { Label } from "@/components/ui/label"
 import { NativeSelect } from "@/components/common/NativeSelect"
 import { StatCard } from "@/components/common/StatCard"
 import { PiezaBadge } from "./PiezaBadge"
-import { ESTILOS_HOJA, obtenerEstiloPerfil, obtenerTipoHoja } from "@/lib/design/piezas"
+import { MetricasVidrioResumen } from "./MetricasVidrioResumen"
+import { ESTILOS_HOJA, etiquetaPieza, obtenerEstiloPerfil, obtenerTipoHoja } from "@/lib/design/piezas"
 import { cn } from "@/lib/utils"
 import { formatMeters } from "@/lib/format"
 import { Layers, Ruler, SquareStack } from "lucide-react"
+import type { MetricasVidrio } from "@/lib/calculo/vidrio"
 import type { OptimizacionPerfil, LaminaVidrio, TamanoLamina } from "@/lib/types"
 import { TAMANOS_LAMINA } from "@/lib/types"
 
 interface Props {
     optimizacion: Record<string, OptimizacionPerfil>
     laminasVidrio: LaminaVidrio[]
+    metricasVidrio: MetricasVidrio
     errorLaminas: string | null
     tamanoLamina: TamanoLamina
     onTamanoLaminaChange: (tamano: TamanoLamina) => void
@@ -23,7 +26,7 @@ interface Props {
 const ESTILO_RESTO = { codigo: "R", clases: "bg-resto border-resto-border text-resto-fg" }
 const ESTILO_DESPERDICIO = { codigo: "S", clases: "bg-desperdicio border-desperdicio-border text-desperdicio-fg" }
 
-export function OptimizacionTab({ optimizacion, laminasVidrio, errorLaminas, tamanoLamina, onTamanoLaminaChange }: Props) {
+export function OptimizacionTab({ optimizacion, laminasVidrio, metricasVidrio, errorLaminas, tamanoLamina, onTamanoLaminaChange }: Props) {
     return (
         <div className="space-y-4">
             <div className="grid grid-cols-2 md:grid-cols-3 gap-4">
@@ -99,6 +102,7 @@ export function OptimizacionTab({ optimizacion, laminasVidrio, errorLaminas, tam
                         </div>
                     </CardHeader>
                     <CardContent>
+                        <MetricasVidrioResumen metricas={metricasVidrio} />
                         <div className="mb-4 flex flex-wrap items-center gap-4 text-sm text-muted-foreground">
                             {(["fija", "movil"] as const).map((tipo) => (
                                 <span key={tipo} className="inline-flex items-center gap-2">
@@ -136,7 +140,7 @@ export function OptimizacionTab({ optimizacion, laminasVidrio, errorLaminas, tam
                                             style={{ width: `${width}px`, height: `${height}px` }}
                                         >
                                             {lamina.vidrios.map((item, i) => {
-                                                const hoja = ESTILOS_HOJA[obtenerTipoHoja(item.vidrio.tipo)]
+                                                const hoja = ESTILOS_HOJA[obtenerTipoHoja(item.vidrio)]
                                                 const left = (item.x / lamina.anchoLamina) * 100
                                                 const top = (item.y / lamina.altoLamina) * 100
                                                 const w = (item.vidrio.ancho / lamina.anchoLamina) * 100
@@ -153,9 +157,9 @@ export function OptimizacionTab({ optimizacion, laminasVidrio, errorLaminas, tam
                                                             fontSize: Math.min(w, h) > 8 ? "10px" : "0",
                                                             lineHeight: 1.2,
                                                         }}
-                                                        title={`${item.vidrio.ventana} - ${item.vidrio.tipo}\n${item.vidrio.ancho.toFixed(0)}×${item.vidrio.alto.toFixed(0)} mm${item.rotado ? " (rotado)" : ""}`}
+                                                        title={`${item.vidrio.codigo ? `${item.vidrio.codigo} · ` : ""}${item.vidrio.ventana} - ${item.vidrio.tipo}\n${item.vidrio.ancho.toFixed(0)}×${item.vidrio.alto.toFixed(0)} mm${item.rotado ? " (rotado)" : ""}`}
                                                     >
-                                                        <span className="truncate w-full leading-tight font-semibold">#{i + 1} {item.vidrio.ventana}</span>
+                                                        <span className="truncate w-full leading-tight font-semibold">{etiquetaPieza(item.vidrio)}</span>
                                                         <span className="truncate w-full leading-tight">
                                                             {item.vidrio.ancho.toFixed(0)}×{item.vidrio.alto.toFixed(0)}
                                                             {item.rotado && <span className="ml-0.5">↻</span>}
@@ -189,12 +193,13 @@ export function OptimizacionTab({ optimizacion, laminasVidrio, errorLaminas, tam
                                         </div>
                                         <div className="space-y-1">
                                             {lamina.vidrios.map((item, i) => {
-                                                const hoja = ESTILOS_HOJA[obtenerTipoHoja(item.vidrio.tipo)]
+                                                const hoja = ESTILOS_HOJA[obtenerTipoHoja(item.vidrio)]
                                                 return (
                                                     <div key={i} className="flex flex-wrap items-center justify-between gap-x-4 gap-y-1 rounded border bg-card p-2 text-sm">
                                                         <div className="flex min-w-0 items-center gap-2">
                                                             <span className="w-7 shrink-0 text-right font-mono text-caption text-muted-foreground">#{i + 1}</span>
                                                             <PiezaBadge estilo={hoja} />
+                                                            {item.vidrio.codigo && <span className="shrink-0 font-mono font-semibold">{item.vidrio.codigo}</span>}
                                                             <span className="truncate">{item.vidrio.ventana} - {item.vidrio.tipo}</span>
                                                         </div>
                                                         <span className="text-muted-foreground">

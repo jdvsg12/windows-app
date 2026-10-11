@@ -1,8 +1,8 @@
 import { describe, expect, it } from "vitest"
 
-import { optimizarLaminasVidrio } from "../vidrio"
+import { calcularMetricasVidrio, optimizarLaminasVidrio } from "../vidrio"
 import { calcularVidrios } from "../motor-8025"
-import { DESCUNTOS_DEFAULT, type VidrioCorte } from "@/lib/types"
+import { DESCUNTOS_DEFAULT, type LaminaVidrio, type VidrioCorte } from "@/lib/types"
 import { VENTANAS_CON_VIDRIO_QUE_CABE } from "@/lib/__tests__/fixtures/ventanas-8025"
 import { seSolapan, type Rectangulo } from "@/lib/__tests__/helpers"
 
@@ -145,5 +145,120 @@ describe("optimizarLaminasVidrio · pieza que no cabe en ninguna lámina", () =>
                 laminaAlto: 2140,
             })
         ).toThrow(/no cabe/)
+    })
+})
+
+// Lámina 2000x1000 (2 m²) con un área usada dada, para medir la merma a mano.
+const lamina = (numero: number, areaUsada: number, grupo?: string): LaminaVidrio => ({
+    numero,
+    anchoLamina: 2000,
+    altoLamina: 1000,
+    vidrios: [{ vidrio: { ...pieza(1000, 1000), area: areaUsada }, x: 0, y: 0, rotado: false }],
+    restos: [],
+    grupo,
+    areaUsada,
+    areaSobrante: 2 - areaUsada,
+})
+
+describe("calcularMetricasVidrio · merma sin la última lámina", () => {
+    it("no cuenta la última lámina: 2 completas al 75 % y la última casi vacía dan 25 %", () => {
+        expect(calcularMetricasVidrio([lamina(1, 1.5), lamina(2, 1.5), lamina(3, 0.1)]).mermaPct).toBeCloseTo(25, 6)
+    })
+
+    it("con una sola lámina no hay merma medible", () => {
+        expect(calcularMetricasVidrio([lamina(1, 0.5)]).mermaPct).toBeNull()
+    })
+
+    it("cada tipo de vidrio excluye su propia última lámina", () => {
+        const laminas = [
+            lamina(1, 1.8, "Incoloro 4 mm"),
+            lamina(2, 0.2, "Incoloro 4 mm"),
+            lamina(3, 1.0, "Bronce 5 mm"),
+            lamina(4, 0.3, "Bronce 5 mm"),
+        ]
+        // Solo cuentan la 1 (sobran 0,2) y la 3 (sobra 1,0): 1,2 de 4 m².
+        expect(calcularMetricasVidrio(laminas).mermaPct).toBeCloseTo(30, 6)
+    })
+
+    it("un tipo con una sola lámina no aporta merma aunque otro tipo sí", () => {
+        const laminas = [lamina(1, 1.5, "Incoloro 4 mm"), lamina(2, 0.4, "Incoloro 4 mm"), lamina(3, 0.2, "Gris 6 mm")]
+        expect(calcularMetricasVidrio(laminas).mermaPct).toBeCloseTo(25, 6)
+    })
+
+    it("sin láminas todo da cero y la merma es null", () => {
+        expect(calcularMetricasVidrio([])).toEqual({
+            piezas: 0,
+            areaNetaM2: 0,
+            bordeadoM: 0,
+            cantos: 0,
+            laminas: 0,
+            mermaPct: null,
+        })
+    })
+})
+
+describe("optimizarLaminasVidrio · gancho de veta (piezas que no se pueden girar)", () => {
+    const opciones = { laminaAncho: 2000, laminaAlto: 1000 }
+
+    // Tras una pieza de 1100x1000 queda un hueco de 900x1000: una pieza de 1000x900 solo entra girada.
+    it("sin veta, la pieza se gira para aprovechar el hueco y todo cabe en una lámina", () => {
+        const laminas = optimizarLaminasVidrio([pieza(1100, 1000), pieza(1000, 900)], opciones)
+        expect(laminas).toHaveLength(1)
+        expect(laminas[0].vidrios.find((v) => v.vidrio.area === 0.9)?.rotado).toBe(true)
+    })
+
+    it("con veta no se gira: va derecha a otra lámina aunque cueste una más", () => {
+        const conVeta = { ...pieza(1000, 900), permitirGiro: false }
+        const laminas = optimizarLaminasVidrio([pieza(1100, 1000), conVeta], opciones)
+        expect(laminas).toHaveLength(2)
+        const colocada = laminas.flatMap((l) => l.vidrios).find((v) => v.vidrio.area === 0.9)!
+        expect(colocada.rotado).toBe(false)
+        expect([colocada.vidrio.ancho, colocada.vidrio.alto]).toEqual([1000, 900])
+    })
+
+    it("una pieza con veta que solo cabe girada es un error, no un corte en contra de la veta", () => {
+        expect(() => optimizarLaminasVidrio([{ ...pieza(1000, 1500), permitirGiro: false }], opciones)).toThrow(/no cabe/)
+    })
+})
+
+describe("optimizarLaminasVidrio · gancho de inventario de restos", () => {
+    const opciones = { laminaAncho: 2000, laminaAlto: 1000 }
+
+    it("sin restos el resultado no cambia", () => {
+        const piezas = [pieza(800, 600), pieza(500, 400)]
+        expect(optimizarLaminasVidrio(piezas, { ...opciones, restosInventario: [] })).toEqual(
+            optimizarLaminasVidrio(piezas, opciones)
+        )
+    })
+
+    it("usa un resto del inventario antes de abrir una lámina nueva", () => {
+        const laminas = optimizarLaminasVidrio([pieza(500, 400)], {
+            ...opciones,
+            restosInventario: [{ id: "r1", ancho: 600, alto: 450 }],
+        })
+        expect(laminas).toHaveLength(1)
+        expect(laminas[0]).toMatchObject({ restoId: "r1", anchoLamina: 600, altoLamina: 450 })
+    })
+
+    it("usa el resto más chico donde cabe y descarta los que no se usaron", () => {
+        const laminas = optimizarLaminasVidrio([pieza(500, 400)], {
+            ...opciones,
+            restosInventario: [
+                { id: "grande", ancho: 1500, alto: 900 },
+                { id: "chico", ancho: 520, alto: 420 },
+            ],
+        })
+        expect(laminas.map((l) => l.restoId)).toEqual(["chico"])
+    })
+
+    it("lo que no cabe en los restos va a láminas nuevas, numeradas después", () => {
+        const laminas = optimizarLaminasVidrio([pieza(1800, 900), pieza(500, 400)], {
+            ...opciones,
+            restosInventario: [{ id: "r1", ancho: 600, alto: 450 }],
+        })
+        expect(laminas.map((l) => [l.numero, l.restoId])).toEqual([
+            [1, "r1"],
+            [2, undefined],
+        ])
     })
 })

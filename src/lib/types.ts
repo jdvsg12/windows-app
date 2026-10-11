@@ -1,7 +1,26 @@
 // lib/types.ts - Tipos unificados del sistema
 
-export type TipoVentana = "2hojas" | "2hojas_mixto" | "3hojas" | "4hojas" | "5hojas" | "6hojas"
-export type SistemaVentana = "5020" | "744" | "8025" | "7038"
+import type { z } from "zod"
+
+import type {
+    CalibreVidrioSchema,
+    ColorAluminioSchema,
+    ColorVidrioSchema,
+    ContenidoCotizacionSchema,
+    ConfiguracionEmpresaSchema,
+    ConfiguracionOverheadSchema,
+    ConfiguracionPreciosSchema,
+    CostoAdicionalSchema,
+    ProyectoSchema,
+    SistemaVentanaSchema,
+    TipoCerraduraSchema,
+    TipoRodachinaSchema,
+    TipoVentanaSchema,
+    VentanaSchema,
+} from "./schemas"
+
+export type TipoVentana = z.infer<typeof TipoVentanaSchema>
+export type SistemaVentana = z.infer<typeof SistemaVentanaSchema>
 
 export const TIPOS_VENTANA: readonly { value: TipoVentana; label: string }[] = [
     { value: "2hojas", label: "2 Hojas" },
@@ -46,21 +65,12 @@ export function tipoParaFormulario(tipo: TipoVentana): { tipoVentana: TipoVentan
     return tipo === "2hojas_mixto" ? { tipoVentana: "2hojas", ambasMoviles: false } : { tipoVentana: tipo, ambasMoviles: true }
 }
 
-export type TipoCerradura = "impacto" | "dummy" | "manija"
-export type TipoRodachina = "plastica" | "metalica" | "pabose"
-export type CalibreVidrio = 4 | 5 | 6
-export type ColorVidrio =
-    | "incoloro"
-    | "bronce"
-    | "gris"
-    | "azul"
-    | "verde"
-    | "reflectivo_plata"
-    | "reflectivo_bronce"
-    | "reflectivo_azul"
-    | "reflectivo_verde"
+export type TipoCerradura = z.infer<typeof TipoCerraduraSchema>
+export type TipoRodachina = z.infer<typeof TipoRodachinaSchema>
+export type CalibreVidrio = z.infer<typeof CalibreVidrioSchema>
+export type ColorVidrio = z.infer<typeof ColorVidrioSchema>
 
-export type ColorAluminio = "natural" | "blanco" | "negro" | "bronce" | "champana" | "madera"
+export type ColorAluminio = z.infer<typeof ColorAluminioSchema>
 
 // Common aluminum finishes in Colombia: anodized (natural, bronze, champagne) and powder coat / wood-grain.
 export const COLORES_ALUMINIO: readonly { value: ColorAluminio; label: string }[] = [
@@ -156,21 +166,8 @@ export interface DatosBancarios {
     daviplata: string
 }
 
-export interface Ventana {
-    id: string
-    nombre: string
-    ancho: number // mm
-    alto: number // mm
-    tipoVentana: TipoVentana
-    sistema?: SistemaVentana
-    // Optional: windows saved before these fields existed must keep loading.
-    colorAluminio?: ColorAluminio
-    cerradura?: TipoCerradura
-    rodachina?: TipoRodachina
-    calibreVidrio?: CalibreVidrio
-    colorVidrio?: ColorVidrio
-    sandblasting?: boolean
-}
+// Medidas en mm.
+export type Ventana = z.infer<typeof VentanaSchema>
 
 export interface Corte {
     tipo: string
@@ -180,78 +177,45 @@ export interface Corte {
     sistema?: string
 }
 
-export interface Proyecto {
-    id: string
-    nombre: string
-    cliente: string
-    direccion?: string
-    fechaCreacion: string
-    ventanas: Ventana[]
-    duracionMeses: number // usado para absorber el overhead mensual (modelo D8)
-    transporte: number // costo directo de transporte de esta obra (modelo D8)
-}
+// duracionMeses absorbe el overhead mensual y transporte es costo directo de la obra (modelo D8).
+// Es el tipo de salida del esquema: los .default() garantizan ambos campos tras validar.
+export type Proyecto = z.infer<typeof ProyectoSchema>
 
-export interface ConfiguracionEmpresa {
-    nombre: string
-    nit: string
-    direccion: string
-    ciudad: string
-    telefonos: string
-    email: string
-    representante: string
-    cedula: string
-    logo?: string
-    datosBancarios: string
-}
+export type ContenidoCotizacion = z.infer<typeof ContenidoCotizacionSchema>
 
-export interface ConfiguracionPrecios {
-    precioCabezal: number
-    precioSillar: number
-    precioJamba: number
-    precioEnganche: number
-    precioTraslape: number
-    precioHorizontalSuperior: number
-    precioHorizontalInferior: number
-    precioGuia: number
-    precioRodachina: number
-    precioCerradura: number
-    precioTornillo8mm: number
-    precioTornillo10mm: number
-    precioEmpaque: number
-    precioVidrioLamina: number // respaldo cuando un color/calibre no tiene precio propio en preciosVidrio
-    preciosVidrio: Partial<Record<ClaveVidrio, number>> // precio por lámina según color y calibre
-    precioSandblasting: number // por m² de vidrio con acabado sandblasting
-    recargosColorAluminio: Partial<Record<ColorAluminio, number>> // % sobre el precio base de cada perfil según el color
-    tamanoLamina: TamanoLamina
-    kerfVidrio: number // mm que consume cada corte de vidrio (F3.3); 0 por defecto (vidrio rayado y partido)
-    minRestoVidrio: number // mm de lado menor a partir del cual un sobrante de lámina es "resto" reutilizable y no desperdicio
-    manoDeObra: number
-    imprevistos: number // % sobre el costo de producción (modelo de costeo D8)
-    utilidad: number // % sobre el costo total (modelo de costeo D8)
-    costosAdicionales: CostoAdicional[]
+export type ConfiguracionEmpresa = z.infer<typeof ConfiguracionEmpresaSchema>
+
+// El esquema acepta cualquier clave en estos dos mapas (ver ConfiguracionPreciosSchema);
+// en el código se restringen a las claves válidas.
+export type ConfiguracionPrecios = Omit<
+    z.infer<typeof ConfiguracionPreciosSchema>,
+    "preciosVidrio" | "recargosColorAluminio"
+> & {
+    preciosVidrio: Partial<Record<ClaveVidrio, number>>
+    recargosColorAluminio: Partial<Record<ColorAluminio, number>>
 }
 
 // Overhead mensual del taller (modelo de costeo D8): se absorbe por tiempo
 // (overhead × meses de obra), no por m². Ver lib/calculo/costeo.ts.
-export interface ConfiguracionOverhead {
-    servicioLuz: number
-    servicioAgua: number
-    servicioInternet: number
-    servicioGas: number
-    arriendo: number
-    herramienta: number
-    admin: number
-}
+export type ConfiguracionOverhead = z.infer<typeof ConfiguracionOverheadSchema>
 
-export interface CostoAdicional {
-    id: string
-    nombre: string
-    valor: number
-    tipo: "fijo" | "porcentaje"
+export type CostoAdicional = z.infer<typeof CostoAdicionalSchema>
+
+// Hoja de la ventana a la que va una pieza de vidrio. numero cuenta por posición física
+// desde la hoja fija (F1, M1, M2…); la cerradura va en la última móvil.
+export interface HojaVidrio {
+    tipo: "fija" | "movil"
+    numero: number
+    cerradura: boolean
 }
 
 export interface VidrioCorte {
     ventana: string
+    ventanaId?: string
+    hoja?: HojaVidrio
+    codigo?: string // "V3-M1": ventana 3 del proyecto, hoja móvil 1
+    // false: vidrio con veta o diseño que no se puede girar al cortar (default: se puede).
+    permitirGiro?: boolean
     tipo: string
     ancho: number // mm
     alto: number // mm
@@ -279,6 +243,7 @@ export interface LaminaVidrio {
     }>
     restos: RestoLamina[]
     grupo?: string // tipo de vidrio de todas las piezas de esta lámina
+    restoId?: string // la "lámina" es un resto del inventario, no una lámina nueva que haya que comprar
     areaUsada: number
     areaSobrante: number
 }

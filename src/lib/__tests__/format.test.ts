@@ -1,6 +1,6 @@
 import { describe, expect, it } from "vitest"
 
-import { formatArea, formatCount, formatCurrency, formatDate, formatMeters, formatMm } from "@/lib/format"
+import { formatArea, formatCount, formatCurrency, formatDate, formatMeters, formatMm, formatPercent } from "@/lib/format"
 
 describe("lib/format", () => {
     it("formatCurrency: sin decimales, con separador de miles es-CO", () => {
@@ -23,6 +23,11 @@ describe("lib/format", () => {
     it("formatMeters: 2 decimales por defecto, con m", () => {
         expect(formatMeters(69.36)).toBe("69,36 m")
         expect(formatMeters(undefined)).toBe("0,00 m")
+    })
+
+    it("formatPercent: 1 decimal por defecto, con el símbolo separado", () => {
+        expect(formatPercent(18.456)).toBe("18,5 %")
+        expect(formatPercent(0)).toBe("0,0 %")
     })
 
     it("formatCount: 1 decimal por defecto, sin unidad", () => {

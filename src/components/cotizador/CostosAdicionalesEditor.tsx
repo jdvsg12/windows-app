@@ -3,6 +3,7 @@
 import { Button } from "@/components/ui/button"
 import { Input } from "@/components/ui/input"
 import { NativeSelect } from "@/components/common/NativeSelect"
+import { NumberInput } from "@/components/common/NumberInput"
 import { SectionTitle } from "@/components/common/SectionTitle"
 import { Plus, X } from "lucide-react"
 import type { CostoAdicional } from "@/lib/types"
@@ -44,12 +45,11 @@ export function CostosAdicionalesEditor({ costos, onChange }: CostosAdicionalesE
                             onChange={(e) => handleUpdate(costo.id, { nombre: e.target.value })}
                             className="w-full sm:w-auto sm:flex-1"
                         />
-                        <Input
-                            type="number"
+                        <NumberInput
                             aria-label="Valor del costo adicional"
                             placeholder="Valor"
                             value={costo.valor}
-                            onChange={(e) => handleUpdate(costo.id, { valor: Number(e.target.value) })}
+                            onValueChange={(valor) => handleUpdate(costo.id, { valor })}
                             className="w-28"
                         />
                         <NativeSelect

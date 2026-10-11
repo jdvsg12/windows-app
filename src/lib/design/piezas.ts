@@ -1,3 +1,5 @@
+import type { VidrioCorte } from "@/lib/types"
+
 // Visual identity of pieces. Class names are written out in full so Tailwind can see them.
 // Color is never the only cue: profiles carry a monogram and glass panes carry a number and a letter.
 
@@ -51,6 +53,10 @@ export const ESTILOS_HOJA: Record<HojaTipo, EstiloPieza & { nombre: string }> = 
     movil: { codigo: "M", nombre: "Móvil", clases: "bg-hoja-movil border-hoja-movil-border text-hoja-movil-fg" },
 }
 
-// VidrioCorte.tipo is free text today ("Hoja Fija (Parche)", "Hoja Móvil 2"). F3 replaces this parsing
-// with a structured piece; until then anything that is not explicitly fixed is a movable leaf.
-export const obtenerTipoHoja = (tipoVidrio: string): HojaTipo => (/fija/i.test(tipoVidrio) ? "fija" : "movil")
+// Pieces from the engine carry a structured leaf; the free-text tipo ("Hoja Fija (Parche)") is
+// only a fallback for pieces built elsewhere: anything not explicitly fixed is a movable leaf.
+export const obtenerTipoHoja = (vidrio: Pick<VidrioCorte, "hoja" | "tipo">): HojaTipo =>
+    vidrio.hoja?.tipo ?? (/fija/i.test(vidrio.tipo) ? "fija" : "movil")
+
+// Short label for a glass piece: its code ("V3-M1") when it has one, else the window name.
+export const etiquetaPieza = (vidrio: Pick<VidrioCorte, "codigo" | "ventana">): string => vidrio.codigo ?? vidrio.ventana

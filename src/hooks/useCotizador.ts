@@ -1,4 +1,4 @@
-import { useState, useEffect, useCallback } from "react"
+import { useState, useEffect, useMemo, useCallback } from "react"
 import {
     obtenerConfiguracion,
     guardarConfiguracion,
@@ -6,16 +6,13 @@ import {
     guardarPrecios,
     obtenerOverhead,
     obtenerDescuentos,
-    actualizarProyecto,
 } from "@/lib/storage"
-import { calcularCosteo } from "@/lib/calculo/costeo"
-import type { Proyecto, ConfiguracionEmpresa, ConfiguracionPrecios, CostosCalculadosCotizador } from "@/lib/types"
+import { intentarCosteo } from "@/lib/calculo/costeo"
+import type { Proyecto, ConfiguracionEmpresa, ConfiguracionPrecios } from "@/lib/types"
 
 export function useCotizador(proyecto: Proyecto | null) {
     const [config, setConfig] = useState<ConfiguracionEmpresa | null>(null)
     const [precios, setPrecios] = useState<ConfiguracionPrecios | null>(null)
-    const [costosCalculados, setCostosCalculados] = useState<CostosCalculadosCotizador | null>(null)
-    const [errorCosteo, setErrorCosteo] = useState<string | null>(null)
 
     useEffect(() => {
         const configuracion = obtenerConfiguracion()
@@ -25,27 +22,25 @@ export function useCotizador(proyecto: Proyecto | null) {
         setPrecios(preciosConfig)
     }, [])
 
-    useEffect(() => {
-        if (proyecto && precios) {
-            try {
-                const costos = calcularCosteo({
-                    ventanas: proyecto.ventanas,
-                    descuentos: obtenerDescuentos(),
-                    precios,
-                    overhead: obtenerOverhead(),
-                    transporteProyecto: proyecto.transporte,
-                    duracionMesesProyecto: proyecto.duracionMeses,
-                })
-                setCostosCalculados(costos)
-                setErrorCosteo(null)
-            } catch (error) {
-                // Una pieza de vidrio que no cabe en la lámina configurada (F3.3) no debe
-                // tumbar el cotizador: se muestra el error en vez de un costo silenciosamente mal.
-                setCostosCalculados(null)
-                setErrorCosteo(error instanceof Error ? error.message : String(error))
-            }
-        }
-    }, [proyecto, precios])
+    const ventanas = proyecto?.ventanas
+    const transporte = proyecto?.transporte
+    const duracionMeses = proyecto?.duracionMeses
+    // Depende solo de lo que entra al costeo: guardar el contenido de la cotización
+    // (cliente, descripción…) actualiza el proyecto pero no recalcula costos.
+    const { costos: costosCalculados, error: errorCosteo } = useMemo(
+        () =>
+            ventanas && precios && transporte !== undefined && duracionMeses !== undefined
+                ? intentarCosteo({
+                      ventanas,
+                      descuentos: obtenerDescuentos(),
+                      precios,
+                      overhead: obtenerOverhead(),
+                      transporteProyecto: transporte,
+                      duracionMesesProyecto: duracionMeses,
+                  })
+                : { costos: null, error: null },
+        [ventanas, precios, transporte, duracionMeses]
+    )
 
     const updateConfig = useCallback((updates: Partial<ConfiguracionEmpresa>) => {
         if (!config) return false
@@ -59,12 +54,6 @@ export function useCotizador(proyecto: Proyecto | null) {
         guardarPrecios(newPrecios)
     }, [])
 
-    const updateCliente = useCallback((cliente: string) => {
-        if (!proyecto) return
-        const proyectoActualizado = { ...proyecto, cliente }
-        actualizarProyecto(proyectoActualizado)
-    }, [proyecto])
-
     return {
         config,
         precios,
@@ -72,6 +61,5 @@ export function useCotizador(proyecto: Proyecto | null) {
         errorCosteo,
         updateConfig,
         updatePrecios,
-        updateCliente,
     }
 }

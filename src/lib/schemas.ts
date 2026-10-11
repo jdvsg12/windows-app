@@ -1,31 +1,47 @@
 import { z } from "zod"
 
+export const TipoVentanaSchema = z.enum(["2hojas", "2hojas_mixto", "3hojas", "4hojas", "5hojas", "6hojas"])
+export const SistemaVentanaSchema = z.enum(["5020", "744", "8025", "7038"])
+export const ColorAluminioSchema = z.enum(["natural", "blanco", "negro", "bronce", "champana", "madera"])
+export const TipoCerraduraSchema = z.enum(["impacto", "dummy", "manija"])
+export const TipoRodachinaSchema = z.enum(["plastica", "metalica", "pabose"])
+export const CalibreVidrioSchema = z.union([z.literal(4), z.literal(5), z.literal(6)])
+export const ColorVidrioSchema = z.enum([
+    "incoloro",
+    "bronce",
+    "gris",
+    "azul",
+    "verde",
+    "reflectivo_plata",
+    "reflectivo_bronce",
+    "reflectivo_azul",
+    "reflectivo_verde",
+])
+
 export const VentanaSchema = z.object({
     id: z.string(),
     nombre: z.string(),
     ancho: z.number().positive(),
     alto: z.number().positive(),
-    tipoVentana: z.enum(["2hojas", "2hojas_mixto", "3hojas", "4hojas", "5hojas", "6hojas"]),
-    sistema: z.enum(["5020", "744", "8025", "7038"]).optional(),
+    tipoVentana: TipoVentanaSchema,
+    sistema: SistemaVentanaSchema.optional(),
     // .optional(): ventanas guardadas antes de agregar estas especificaciones no las tienen.
-    colorAluminio: z.enum(["natural", "blanco", "negro", "bronce", "champana", "madera"]).optional(),
-    cerradura: z.enum(["impacto", "dummy", "manija"]).optional(),
-    rodachina: z.enum(["plastica", "metalica", "pabose"]).optional(),
-    calibreVidrio: z.union([z.literal(4), z.literal(5), z.literal(6)]).optional(),
-    colorVidrio: z
-        .enum([
-            "incoloro",
-            "bronce",
-            "gris",
-            "azul",
-            "verde",
-            "reflectivo_plata",
-            "reflectivo_bronce",
-            "reflectivo_azul",
-            "reflectivo_verde",
-        ])
-        .optional(),
+    colorAluminio: ColorAluminioSchema.optional(),
+    cerradura: TipoCerraduraSchema.optional(),
+    rodachina: TipoRodachinaSchema.optional(),
+    calibreVidrio: CalibreVidrioSchema.optional(),
+    colorVidrio: ColorVidrioSchema.optional(),
     sandblasting: z.boolean().optional(),
+})
+
+// Lo que el usuario escribe en la pestaña Contenido del cotizador. Todo con .default():
+// los proyectos guardados antes de AWA-16 no tienen este bloque.
+export const ContenidoCotizacionSchema = z.object({
+    // "yyyy-MM-dd"; sin fecha guardada la cotización sale con la fecha del día.
+    fecha: z.string().optional(),
+    descripcion: z.string().default(""),
+    mostrarMedidas: z.boolean().default(true),
+    mostrarValores: z.boolean().default(true),
 })
 
 export const ProyectoSchema = z.object({
@@ -38,9 +54,22 @@ export const ProyectoSchema = z.object({
     // .default() en vez de required: los proyectos guardados antes de F3.2 no tienen
     // estos campos, y deben seguir cargando (con estos valores neutros) en vez de
     // fallar la validación y perderse.
-    duracionMeses: z.number().positive().default(1),
-    transporte: z.number().min(0).default(0),
+    // .catch(): un valor inválido ya guardado (null por un NaN del formulario) no puede
+    // invalidar el arreglo entero de proyectos y hacerlos desaparecer todos.
+    duracionMeses: z.number().positive().default(1).catch(1),
+    transporte: z.number().min(0).default(0).catch(0),
+    contenidoCotizacion: ContenidoCotizacionSchema.default({}),
 })
+
+export const ContenidoCotizacionFormSchema = z.object({
+    cliente: z.string(),
+    fecha: z.string().regex(/^\d{4}-\d{2}-\d{2}$/),
+    descripcion: z.string(),
+    mostrarMedidas: z.boolean(),
+    mostrarValores: z.boolean(),
+})
+
+export type ContenidoCotizacionFormValues = z.infer<typeof ContenidoCotizacionFormSchema>
 
 export const ConfiguracionEmpresaSchema = z.object({
     nombre: z.string(),
@@ -76,21 +105,24 @@ export const ConfiguracionPreciosSchema = z.object({
     precioTornillo8mm: z.number(),
     precioTornillo10mm: z.number(),
     precioEmpaque: z.number(),
+    // Respaldo cuando un color/calibre no tiene precio propio en preciosVidrio.
     precioVidrioLamina: z.number(),
     // .default(): precios guardados antes de tener precio por color/calibre de vidrio.
-    preciosVidrio: z.record(z.string(), z.number().min(0)).default({}),
-    precioSandblasting: z.number().min(0).default(0),
-    recargosColorAluminio: z.record(z.string(), z.number()).default({}),
+    // Las claves no se validan contra la lista de colores: una clave vieja no debe tumbar
+    // todos los precios guardados. El tipo ConfiguracionPrecios las restringe en el código.
+    preciosVidrio: z.record(z.string(), z.number().min(0)).default({}), // por lámina, clave "<color>-<calibre>"
+    precioSandblasting: z.number().min(0).default(0), // por m² de vidrio con acabado sandblasting
+    recargosColorAluminio: z.record(z.string(), z.number()).default({}), // % sobre el precio base de cada perfil
     tamanoLamina: z.enum(["2440x3660", "2500x3600", "2440x3050", "2140x3300"]),
     // .default(): precios guardados antes de F3.3 no tienen estos campos (modelo D8/F3.3).
-    kerfVidrio: z.number().min(0).default(0),
-    minRestoVidrio: z.number().min(0).default(200),
+    kerfVidrio: z.number().min(0).default(0), // mm por corte; 0 = vidrio rayado y partido
+    minRestoVidrio: z.number().min(0).default(200), // mm de lado menor para que un sobrante sea "resto" y no desperdicio
     manoDeObra: z.number(),
     // .default(0): precios guardados antes de F3.2 no tienen "imprevistos" (era un
     // campo nuevo del modelo D8) y deben seguir cargando en vez de perder todos los
     // demás precios ya configurados por caer al fallback completo.
-    imprevistos: z.number().default(0),
-    utilidad: z.number(),
+    imprevistos: z.number().default(0), // % sobre el costo de producción (D8)
+    utilidad: z.number(), // % sobre el costo total (D8)
     costosAdicionales: z.array(CostoAdicionalSchema),
 })
 
@@ -114,15 +146,15 @@ export const VentanaFormSchema = z.object({
     nombre: z.string().trim().min(1, "Ingresa un nombre"),
     ancho: dimensionSchema("ancho"),
     alto: dimensionSchema("alto"),
-    tipoVentana: VentanaSchema.shape.tipoVentana,
-    sistema: VentanaSchema.shape.sistema.unwrap(),
+    tipoVentana: TipoVentanaSchema,
+    sistema: SistemaVentanaSchema,
     ambasMoviles: z.boolean(),
-    colorAluminio: VentanaSchema.shape.colorAluminio.unwrap(),
-    cerradura: VentanaSchema.shape.cerradura.unwrap(),
-    rodachina: VentanaSchema.shape.rodachina.unwrap(),
+    colorAluminio: ColorAluminioSchema,
+    cerradura: TipoCerraduraSchema,
+    rodachina: TipoRodachinaSchema,
     // Native <select> values are strings; VentanasTab converts it to the stored number.
     calibreVidrio: z.enum(["4", "5", "6"]),
-    colorVidrio: VentanaSchema.shape.colorVidrio.unwrap(),
+    colorVidrio: ColorVidrioSchema,
     sandblasting: z.boolean(),
 })
 

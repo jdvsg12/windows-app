@@ -1,9 +1,9 @@
 import { describe, expect, it } from "vitest"
 
-import { LAMINA_HELICONIAS, PIEZAS_HELICONIAS, TOTALES_HELICONIAS } from "./fixtures/heliconias"
-import { optimizarLaminasVidrio } from "@/lib/calculo/vidrio"
+import { LAMINA_HELICONIAS, PIEZAS_HELICONIAS, PLAN_7_LAMINAS_HELICONIAS, TOTALES_HELICONIAS } from "./fixtures/heliconias"
+import { calcularMetricasVidrio, optimizarLaminasVidrio } from "@/lib/calculo/vidrio"
 import type { VidrioCorte } from "@/lib/types"
-import { seSolapan, type Rectangulo } from "./helpers"
+import { esGuillotina, seSolapan, type Rectangulo } from "./helpers"
 
 // Integrity of the transcription of Heliconias.pdf. Only kerf-independent totals are golden
 // (see the comment in the fixture): piece count, net area, edging length and edge count.
@@ -53,9 +53,18 @@ describe("optimizador de vidrio (módulo nuevo, F3.3)", () => {
         kerf: 0,
     })
 
+    it("las métricas del plan dan los totales golden de Heliconias (piezas, m², bordeado, cantos)", () => {
+        const metricas = calcularMetricasVidrio(laminas)
+        expect(metricas.piezas).toBe(TOTALES_HELICONIAS.piezas)
+        expect(metricas.areaNetaM2).toBeCloseTo(TOTALES_HELICONIAS.areaNetaM2, 3)
+        expect(metricas.bordeadoM).toBeCloseTo(TOTALES_HELICONIAS.bordeadoM, 3)
+        expect(metricas.cantos).toBe(TOTALES_HELICONIAS.cantos)
+        expect(metricas.laminas).toBe(laminas.length)
+    })
+
     it("kerf 0: guillotina válida, sin solapes y ≤8 láminas para las 29 piezas de Heliconias", () => {
-        // ≤8, no ≤7: ver la nota en fixtures/heliconias.ts sobre por qué ese es el límite
-        // real bajo la restricción de guillotina para este set de piezas, confirmado con el usuario.
+        // ≤8: el óptimo es 7 (ver PLAN_7_LAMINAS_HELICONIAS), pero el optimizador interactivo
+        // da 8; ver la nota en fixtures/heliconias.ts. Confirmado con el usuario.
         expect(laminas.length).toBeLessThanOrEqual(8)
 
         const colocadas = laminas.flatMap((lamina) => lamina.vidrios)
@@ -71,6 +80,7 @@ describe("optimizador de vidrio (módulo nuevo, F3.3)", () => {
             rectangulos.forEach((a, i) => {
                 rectangulos.slice(i + 1).forEach((b) => expect(seSolapan(a, b)).toBe(false))
             })
+            expect(esGuillotina(rectangulos, { x: 0, y: 0, ancho: lamina.anchoLamina, alto: lamina.altoLamina })).toBe(true)
             for (const { vidrio, x, y } of lamina.vidrios) {
                 expect(x + vidrio.ancho).toBeLessThanOrEqual(lamina.anchoLamina)
                 expect(y + vidrio.alto).toBeLessThanOrEqual(lamina.altoLamina)
@@ -98,5 +108,57 @@ describe("optimizador de vidrio (módulo nuevo, F3.3)", () => {
         expect(Number.isInteger(laminas.length)).toBe(true)
         expect(laminas.length).toBeGreaterThan(0)
         expect(laminas.length * precioLamina).toBe(laminas.length * 180_000)
+    })
+})
+
+describe("Heliconias · cuántas láminas hacen falta (3300 x 2140, kerf 0)", () => {
+    const { ancho: laminaAncho, alto: laminaAlto } = LAMINA_HELICONIAS
+
+    it("cota inferior: las piezas más largas que 2140 solo se apilan, así que hacen falta al menos 7", () => {
+        const largas = PIEZAS_HELICONIAS.filter(({ ancho, alto }) => Math.max(ancho, alto) > laminaAlto)
+        // Más anchas que media lámina: nunca dos lado a lado.
+        expect(largas.every(({ ancho, alto }) => Math.max(ancho, alto) > laminaAncho / 2)).toBe(true)
+        const sumaLadosCortos = largas.reduce((total, { ancho, alto }) => total + Math.min(ancho, alto), 0)
+        expect(largas).toHaveLength(17)
+        expect(sumaLadosCortos).toBe(13_852)
+        expect(Math.ceil(sumaLadosCortos / laminaAlto)).toBe(7)
+    })
+
+    describe("plan de referencia en 7 láminas", () => {
+        it("usa cada una de las 29 piezas exactamente una vez, con sus medidas (girada o no)", () => {
+            const colocadas = PLAN_7_LAMINAS_HELICONIAS.flat()
+            expect(colocadas.map(({ n }) => n).sort((a, b) => a - b)).toEqual(PIEZAS_HELICONIAS.map(({ n }) => n))
+            for (const colocada of colocadas) {
+                const pieza = PIEZAS_HELICONIAS.find(({ n }) => n === colocada.n)!
+                const medidas = [colocada.ancho, colocada.alto].sort((a, b) => a - b)
+                expect(medidas).toEqual([pieza.ancho, pieza.alto].sort((a, b) => a - b))
+            }
+            expect(PLAN_7_LAMINAS_HELICONIAS).toHaveLength(7)
+        })
+
+        it.each(PLAN_7_LAMINAS_HELICONIAS.map((lamina, i) => [i + 1, lamina] as const))(
+            "lámina %i: dentro de la lámina, sin solapes y solo con cortes de guillotina",
+            (_numero, lamina) => {
+                for (const pieza of lamina) {
+                    expect(pieza.x).toBeGreaterThanOrEqual(0)
+                    expect(pieza.y).toBeGreaterThanOrEqual(0)
+                    expect(pieza.x + pieza.ancho).toBeLessThanOrEqual(laminaAncho)
+                    expect(pieza.y + pieza.alto).toBeLessThanOrEqual(laminaAlto)
+                }
+                lamina.forEach((a, i) => lamina.slice(i + 1).forEach((b) => expect(seSolapan(a, b)).toBe(false)))
+                expect(esGuillotina(lamina, { x: 0, y: 0, ancho: laminaAncho, alto: laminaAlto })).toBe(true)
+            }
+        )
+    })
+
+    it("el verificador de guillotina rechaza un acomodo en molinete (no se puede cortar de lado a lado)", () => {
+        const molinete: Rectangulo[] = [
+            { x: 0, y: 0, ancho: 2, alto: 1 },
+            { x: 2, y: 0, ancho: 1, alto: 2 },
+            { x: 1, y: 2, ancho: 2, alto: 1 },
+            { x: 0, y: 1, ancho: 1, alto: 2 },
+            { x: 1, y: 1, ancho: 1, alto: 1 },
+        ]
+        expect(esGuillotina(molinete, { x: 0, y: 0, ancho: 3, alto: 3 })).toBe(false)
     })
 })

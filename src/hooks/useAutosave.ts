@@ -24,10 +24,12 @@ export function useAutosave<T>({ value, onSave, delayMs = 600, enabled = true }:
 
     useEffect(() => {
         if (!enabled || serialized === lastSerializedRef.current) return
-        lastSerializedRef.current = serialized
 
         setStatus("saving")
         const timeoutId = setTimeout(() => {
+            // Marked only once it is really saved: a save cancelled by a newer edit (or by the
+            // form turning invalid) must not make the same content look already saved later.
+            lastSerializedRef.current = serialized
             const result = onSaveRef.current(value)
             setStatus(result === false ? "error" : "saved")
         }, delayMs)
