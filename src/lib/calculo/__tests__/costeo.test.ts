@@ -1,6 +1,6 @@
 import { describe, expect, it } from "vitest"
 
-import { calcularCosteo, type EntradaCosteo } from "../costeo"
+import { calcularCosteo, intentarCosteo, type EntradaCosteo } from "../costeo"
 import { calcularVidrios } from "../motor-8025"
 import { DESCUNTOS_DEFAULT, type ConfiguracionPrecios, type ConfiguracionOverhead } from "@/lib/types"
 import { VENTANAS_8025 } from "@/lib/__tests__/fixtures/ventanas-8025"
@@ -215,5 +215,19 @@ describe("calcularCosteo · color del aluminio", () => {
             perfilesDe([natural], precios) + perfilesDe([negra], precios),
             6
         )
+    })
+})
+
+describe("intentarCosteo", () => {
+    it("devuelve el mismo costo que calcularCosteo cuando todo cabe", () => {
+        expect(intentarCosteo(entradaBase())).toEqual({ costos: calcularCosteo(entradaBase()), error: null })
+    })
+
+    it("un vidrio que no cabe en la lámina devuelve el error en vez de lanzar", () => {
+        const enorme = { ...ventana, id: "x", ancho: 9000, alto: 9000 }
+        expect(intentarCosteo(entradaBase({ ventanas: [enorme] }))).toEqual({
+            costos: null,
+            error: expect.any(String),
+        })
     })
 })

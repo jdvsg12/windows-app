@@ -236,3 +236,18 @@ export function calcularCosteo(entrada: EntradaCosteo): CostosCalculadosCotizado
         valoresPorVentana,
     }
 }
+
+export interface ResultadoCosteo {
+    costos: CostosCalculadosCotizador | null
+    error: string | null
+}
+
+// Una pieza de vidrio que no cabe en la lámina configurada (F3.3) no debe tumbar el
+// cotizador: se devuelve el mensaje en vez de un costo silenciosamente mal.
+export function intentarCosteo(entrada: EntradaCosteo): ResultadoCosteo {
+    try {
+        return { costos: calcularCosteo(entrada), error: null }
+    } catch (error) {
+        return { costos: null, error: error instanceof Error ? error.message : String(error) }
+    }
+}
