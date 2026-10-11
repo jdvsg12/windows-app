@@ -209,3 +209,38 @@ export function optimizarLaminasVidrio(
         areaSobrante: lamina.areaSobrante,
     }))
 }
+
+export interface MetricasVidrio {
+    piezas: number
+    areaNetaM2: number
+    bordeadoM: number // perímetro de todas las piezas: lo que se pule
+    cantos: number // 4 por pieza
+    laminas: number
+    // % del área de lámina que no queda en piezas, sin contar la última lámina de cada tipo
+    // de vidrio; null cuando ningún tipo pasa de una lámina (no hay nada que medir).
+    mermaPct: number | null
+}
+
+// La última lámina de cada tipo queda a medio usar y su sobrante vuelve al stock: contarla
+// haría ver como merma cualquier pedido pequeño. Cada tipo de vidrio tiene su propia última
+// lámina porque no se cortan colores o calibres distintos de la misma lámina.
+export function calcularMetricasVidrio(laminas: readonly LaminaVidrio[]): MetricasVidrio {
+    const piezas = laminas.flatMap((lamina) => lamina.vidrios.map(({ vidrio }) => vidrio))
+
+    const ultimaPorGrupo = new Map<string | undefined, number>()
+    for (const lamina of laminas) {
+        ultimaPorGrupo.set(lamina.grupo, Math.max(ultimaPorGrupo.get(lamina.grupo) ?? 0, lamina.numero))
+    }
+    const completas = laminas.filter((lamina) => ultimaPorGrupo.get(lamina.grupo) !== lamina.numero)
+    const areaCompletas = completas.reduce((total, l) => total + (l.anchoLamina * l.altoLamina) / 1_000_000, 0)
+    const usadaCompletas = completas.reduce((total, l) => total + l.areaUsada, 0)
+
+    return {
+        piezas: piezas.length,
+        areaNetaM2: piezas.reduce((total, vidrio) => total + vidrio.area, 0),
+        bordeadoM: piezas.reduce((total, vidrio) => total + (2 * (vidrio.ancho + vidrio.alto)) / 1000, 0),
+        cantos: piezas.length * 4,
+        laminas: laminas.length,
+        mermaPct: areaCompletas > 0 ? ((areaCompletas - usadaCompletas) / areaCompletas) * 100 : null,
+    }
+}

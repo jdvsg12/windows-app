@@ -1,8 +1,8 @@
 import { describe, expect, it } from "vitest"
 
-import { optimizarLaminasVidrio } from "../vidrio"
+import { calcularMetricasVidrio, optimizarLaminasVidrio } from "../vidrio"
 import { calcularVidrios } from "../motor-8025"
-import { DESCUNTOS_DEFAULT, type VidrioCorte } from "@/lib/types"
+import { DESCUNTOS_DEFAULT, type LaminaVidrio, type VidrioCorte } from "@/lib/types"
 import { VENTANAS_CON_VIDRIO_QUE_CABE } from "@/lib/__tests__/fixtures/ventanas-8025"
 import { seSolapan, type Rectangulo } from "@/lib/__tests__/helpers"
 
@@ -145,5 +145,54 @@ describe("optimizarLaminasVidrio · pieza que no cabe en ninguna lámina", () =>
                 laminaAlto: 2140,
             })
         ).toThrow(/no cabe/)
+    })
+})
+
+// Lámina 2000x1000 (2 m²) con un área usada dada, para medir la merma a mano.
+const lamina = (numero: number, areaUsada: number, grupo?: string): LaminaVidrio => ({
+    numero,
+    anchoLamina: 2000,
+    altoLamina: 1000,
+    vidrios: [{ vidrio: { ...pieza(1000, 1000), area: areaUsada }, x: 0, y: 0, rotado: false }],
+    restos: [],
+    grupo,
+    areaUsada,
+    areaSobrante: 2 - areaUsada,
+})
+
+describe("calcularMetricasVidrio · merma sin la última lámina", () => {
+    it("no cuenta la última lámina: 2 completas al 75 % y la última casi vacía dan 25 %", () => {
+        expect(calcularMetricasVidrio([lamina(1, 1.5), lamina(2, 1.5), lamina(3, 0.1)]).mermaPct).toBeCloseTo(25, 6)
+    })
+
+    it("con una sola lámina no hay merma medible", () => {
+        expect(calcularMetricasVidrio([lamina(1, 0.5)]).mermaPct).toBeNull()
+    })
+
+    it("cada tipo de vidrio excluye su propia última lámina", () => {
+        const laminas = [
+            lamina(1, 1.8, "Incoloro 4 mm"),
+            lamina(2, 0.2, "Incoloro 4 mm"),
+            lamina(3, 1.0, "Bronce 5 mm"),
+            lamina(4, 0.3, "Bronce 5 mm"),
+        ]
+        // Solo cuentan la 1 (sobran 0,2) y la 3 (sobra 1,0): 1,2 de 4 m².
+        expect(calcularMetricasVidrio(laminas).mermaPct).toBeCloseTo(30, 6)
+    })
+
+    it("un tipo con una sola lámina no aporta merma aunque otro tipo sí", () => {
+        const laminas = [lamina(1, 1.5, "Incoloro 4 mm"), lamina(2, 0.4, "Incoloro 4 mm"), lamina(3, 0.2, "Gris 6 mm")]
+        expect(calcularMetricasVidrio(laminas).mermaPct).toBeCloseTo(25, 6)
+    })
+
+    it("sin láminas todo da cero y la merma es null", () => {
+        expect(calcularMetricasVidrio([])).toEqual({
+            piezas: 0,
+            areaNetaM2: 0,
+            bordeadoM: 0,
+            cantos: 0,
+            laminas: 0,
+            mermaPct: null,
+        })
     })
 })

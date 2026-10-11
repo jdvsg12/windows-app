@@ -1,7 +1,7 @@
 import { describe, expect, it } from "vitest"
 
 import { LAMINA_HELICONIAS, PIEZAS_HELICONIAS, TOTALES_HELICONIAS } from "./fixtures/heliconias"
-import { optimizarLaminasVidrio } from "@/lib/calculo/vidrio"
+import { calcularMetricasVidrio, optimizarLaminasVidrio } from "@/lib/calculo/vidrio"
 import type { VidrioCorte } from "@/lib/types"
 import { seSolapan, type Rectangulo } from "./helpers"
 
@@ -51,6 +51,15 @@ describe("optimizador de vidrio (módulo nuevo, F3.3)", () => {
         laminaAncho: LAMINA_HELICONIAS.ancho,
         laminaAlto: LAMINA_HELICONIAS.alto,
         kerf: 0,
+    })
+
+    it("las métricas del plan dan los totales golden de Heliconias (piezas, m², bordeado, cantos)", () => {
+        const metricas = calcularMetricasVidrio(laminas)
+        expect(metricas.piezas).toBe(TOTALES_HELICONIAS.piezas)
+        expect(metricas.areaNetaM2).toBeCloseTo(TOTALES_HELICONIAS.areaNetaM2, 3)
+        expect(metricas.bordeadoM).toBeCloseTo(TOTALES_HELICONIAS.bordeadoM, 3)
+        expect(metricas.cantos).toBe(TOTALES_HELICONIAS.cantos)
+        expect(metricas.laminas).toBe(laminas.length)
     })
 
     it("kerf 0: guillotina válida, sin solapes y ≤8 láminas para las 29 piezas de Heliconias", () => {
