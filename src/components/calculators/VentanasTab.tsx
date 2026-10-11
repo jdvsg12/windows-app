@@ -30,9 +30,10 @@ import {
     type Ventana,
 } from "@/lib/types"
 
+// Un input numérico vacío da NaN: invalid_type_error lo vuelve un mensaje en vez de un dato a guardar.
 const DatosProyectoSchema = z.object({
-    duracionMeses: z.number().positive(),
-    transporte: z.number().min(0),
+    duracionMeses: z.number({ invalid_type_error: "Ingresa los meses" }).positive("Debe ser mayor que 0"),
+    transporte: z.number({ invalid_type_error: "Ingresa un monto (0 si no hay)" }).min(0, "No puede ser negativo"),
 })
 type DatosProyectoValues = z.infer<typeof DatosProyectoSchema>
 
@@ -68,9 +69,15 @@ export function VentanasTab({ proyecto, ventanas, onAgregar, onEliminar, onActua
 
     const datosForm = useForm<DatosProyectoValues>({
         resolver: zodResolver(DatosProyectoSchema),
+        mode: "onChange",
         values: { duracionMeses: proyecto.duracionMeses, transporte: proyecto.transporte },
     })
-    const datosStatus = useAutosave({ value: datosForm.watch(), onSave: onActualizarDatosProyecto })
+    // Solo se guarda un formulario válido: un campo a medio escribir nunca llega al proyecto.
+    const datosStatus = useAutosave({
+        value: datosForm.watch(),
+        onSave: onActualizarDatosProyecto,
+        enabled: datosForm.formState.isValid,
+    })
 
     const handleSubmit = (values: VentanaFormValues) => {
         onAgregar(ventanaDesdeFormulario(values), editandoId)
@@ -104,6 +111,7 @@ export function VentanasTab({ proyecto, ventanas, onAgregar, onEliminar, onActua
                                                 step="0.1"
                                                 min="0"
                                                 {...field}
+                                                value={Number.isNaN(field.value) ? "" : field.value}
                                                 onChange={(e) => field.onChange(e.target.valueAsNumber)}
                                             />
                                         </FormControl>
@@ -123,6 +131,7 @@ export function VentanasTab({ proyecto, ventanas, onAgregar, onEliminar, onActua
                                                 step="1000"
                                                 min="0"
                                                 {...field}
+                                                value={Number.isNaN(field.value) ? "" : field.value}
                                                 onChange={(e) => field.onChange(e.target.valueAsNumber)}
                                             />
                                         </FormControl>
