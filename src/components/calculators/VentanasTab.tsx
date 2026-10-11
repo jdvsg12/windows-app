@@ -17,7 +17,18 @@ import { DeleteWindowDialog } from "./DeleteWindowDialog"
 import { VentanaForm } from "./VentanaForm"
 import { z } from "zod"
 import type { VentanaFormValues } from "@/lib/schemas"
-import { getTipoVentanaLabel, type Proyecto, type Ventana, type TipoVentana, type SistemaVentana } from "@/lib/types"
+import {
+    getCalibreVidrioLabel,
+    getCerraduraLabel,
+    getColorAluminioLabel,
+    getColorVidrioLabel,
+    getRodachinaLabel,
+    getTipoVentanaLabel,
+    tipoDesdeFormulario,
+    type CalibreVidrio,
+    type Proyecto,
+    type Ventana,
+} from "@/lib/types"
 
 const DatosProyectoSchema = z.object({
     duracionMeses: z.number().positive(),
@@ -25,10 +36,28 @@ const DatosProyectoSchema = z.object({
 })
 type DatosProyectoValues = z.infer<typeof DatosProyectoSchema>
 
+const ventanaDesdeFormulario = ({ ambasMoviles, ancho, alto, tipoVentana, calibreVidrio, ...resto }: VentanaFormValues): Omit<Ventana, "id"> => ({
+    ...resto,
+    ancho: Number.parseFloat(ancho),
+    alto: Number.parseFloat(alto),
+    tipoVentana: tipoDesdeFormulario(tipoVentana, ambasMoviles),
+    calibreVidrio: Number(calibreVidrio) as CalibreVidrio,
+})
+
+const especificacionesDe = (ventana: Ventana): string[] =>
+    [
+        ventana.colorAluminio && `Aluminio ${getColorAluminioLabel(ventana.colorAluminio)}`,
+        ventana.cerradura && `Cerradura ${getCerraduraLabel(ventana.cerradura)}`,
+        ventana.rodachina && `Rodachina ${getRodachinaLabel(ventana.rodachina)}`,
+        ventana.calibreVidrio && `Vidrio ${getCalibreVidrioLabel(ventana.calibreVidrio)}`,
+        ventana.colorVidrio && getColorVidrioLabel(ventana.colorVidrio),
+        ventana.sandblasting && "Sandblasting",
+    ].filter((item): item is string => Boolean(item))
+
 interface VentanasTabProps {
     proyecto: Proyecto
     ventanas: Ventana[]
-    onAgregar: (nombre: string, ancho: number, alto: number, tipo: TipoVentana, sistema: SistemaVentana, editandoId: string | null) => void
+    onAgregar: (datos: Omit<Ventana, "id">, editandoId: string | null) => void
     onEliminar: (id: string) => void
     onActualizarDatosProyecto: (datos: DatosProyectoValues) => void
 }
@@ -43,8 +72,8 @@ export function VentanasTab({ proyecto, ventanas, onAgregar, onEliminar, onActua
     })
     const datosStatus = useAutosave({ value: datosForm.watch(), onSave: onActualizarDatosProyecto })
 
-    const handleSubmit = ({ nombre, ancho, alto, tipoVentana, sistema }: VentanaFormValues) => {
-        onAgregar(nombre, Number.parseFloat(ancho), Number.parseFloat(alto), tipoVentana, sistema, editandoId)
+    const handleSubmit = (values: VentanaFormValues) => {
+        onAgregar(ventanaDesdeFormulario(values), editandoId)
         setEditandoId(null)
     }
 
@@ -140,8 +169,11 @@ export function VentanasTab({ proyecto, ventanas, onAgregar, onEliminar, onActua
                                 <p className="text-sm text-muted-foreground mb-1">
                                     {ventana.ancho} × {ventana.alto} mm
                                 </p>
-                                <p className="text-sm text-muted-foreground mb-3">
+                                <p className="text-sm text-muted-foreground mb-1">
                                     Sistema: {ventana.sistema || "5020"}
+                                </p>
+                                <p className="text-sm text-muted-foreground mb-3">
+                                    {especificacionesDe(ventana).join(" · ") || "Sin especificaciones"}
                                 </p>
                                 <div className="flex gap-2">
                                     <Button

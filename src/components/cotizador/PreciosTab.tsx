@@ -75,7 +75,7 @@ export function PreciosTab({ precios, costosCalculados, errorCosteo, onUpdatePre
                         <div className="grid grid-cols-2 gap-4">
                             <PrecioField
                                 id="precioVidrioLamina"
-                                label="Precio Vidrio (por lámina)"
+                                label="Precio general vidrio (por lámina)"
                                 value={precios.precioVidrioLamina}
                                 onChange={(value) => update("precioVidrioLamina", value)}
                             />

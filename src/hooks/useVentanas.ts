@@ -14,7 +14,14 @@ import {
     calcularVidrios,
 } from "@/lib/calculo/motor-8025"
 import { optimizarLaminasVidrio } from "@/lib/calculo/vidrio"
-import type { Proyecto, Ventana, TipoVentana, SistemaVentana, TamanoLamina, LaminaVidrio } from "@/lib/types"
+import {
+    agruparPorColorAluminio,
+    agruparPorTipoVidrio,
+    etiquetarVidrios,
+    fusionarLaminasPorTipo,
+    fusionarPerfilesPorColor,
+} from "@/lib/calculo/grupos"
+import type { Proyecto, Ventana, TamanoLamina, LaminaVidrio } from "@/lib/types"
 import { TAMANOS_LAMINA } from "@/lib/types"
 
 export function useVentanas(proyectoId: string | null) {
@@ -39,47 +46,54 @@ export function useVentanas(proyectoId: string | null) {
     // No module-level cache anymore (removed in F3.1): read fresh on every recompute.
     const descuentos = useMemo(() => obtenerDescuentos(), [])
 
-    const optimizacion = useMemo(() => ventanas.length > 0 ? optimizarCortes(ventanas, descuentos) : {}, [ventanas, descuentos])
+    // Bars per aluminum color and sheets per glass type, the same grouping costeo charges for.
+    const optimizacion = useMemo(
+        () =>
+            ventanas.length > 0
+                ? fusionarPerfilesPorColor(
+                      agruparPorColorAluminio(ventanas).map(({ color, ventanas: grupo }) => ({
+                          color,
+                          optimizacion: optimizarCortes(grupo, descuentos),
+                      }))
+                  )
+                : {},
+        [ventanas, descuentos]
+    )
     const accesorios = useMemo(() => ventanas.length > 0 ? calcularAccesorios(ventanas, descuentos) : null, [ventanas, descuentos])
-    const vidrios = useMemo(() => ventanas.length > 0 ? calcularVidrios(ventanas, descuentos) : [], [ventanas, descuentos])
+    const vidriosPorTipo = useMemo(
+        () =>
+            agruparPorTipoVidrio(ventanas).map(({ etiqueta, ventanas: grupo }) => ({
+                etiqueta,
+                vidrios: etiquetarVidrios(calcularVidrios(grupo, descuentos), etiqueta),
+            })),
+        [ventanas, descuentos]
+    )
+    const vidrios = useMemo(() => vidriosPorTipo.flatMap((grupo) => grupo.vidrios), [vidriosPorTipo])
 
     // El optimizador lanza si una pieza no cabe en ninguna orientación de la lámina
     // configurada (F3.3): se captura aquí para no tumbar la pestaña de Optimización.
     const { laminasVidrio, errorLaminas } = useMemo((): { laminasVidrio: LaminaVidrio[]; errorLaminas: string | null } => {
         if (vidrios.length === 0) return { laminasVidrio: [], errorLaminas: null }
+        const opciones = { laminaAncho, laminaAlto, kerf: precios.kerfVidrio, minResto: precios.minRestoVidrio }
         try {
             return {
-                laminasVidrio: optimizarLaminasVidrio(vidrios, {
-                    laminaAncho,
-                    laminaAlto,
-                    kerf: precios.kerfVidrio,
-                    minResto: precios.minRestoVidrio,
-                }),
+                laminasVidrio: fusionarLaminasPorTipo(
+                    vidriosPorTipo.map(({ etiqueta, vidrios: grupo }) => ({
+                        etiqueta,
+                        laminas: optimizarLaminasVidrio(grupo, opciones),
+                    }))
+                ),
                 errorLaminas: null,
             }
         } catch (error) {
             return { laminasVidrio: [], errorLaminas: error instanceof Error ? error.message : String(error) }
         }
-    }, [vidrios, laminaAncho, laminaAlto, precios.kerfVidrio, precios.minRestoVidrio])
+    }, [vidrios, vidriosPorTipo, laminaAncho, laminaAlto, precios.kerfVidrio, precios.minRestoVidrio])
 
-    const agregarVentana = useCallback((
-        nombre: string,
-        ancho: number,
-        alto: number,
-        tipoVentana: TipoVentana,
-        sistema: SistemaVentana,
-        editandoId: string | null
-    ) => {
+    const agregarVentana = useCallback((datos: Omit<Ventana, "id">, editandoId: string | null) => {
         if (!proyecto) return { nuevasVentanas: ventanas, editando: false }
 
-        const nuevaVentana: Ventana = {
-            id: editandoId || crypto.randomUUID(),
-            nombre,
-            ancho,
-            alto,
-            tipoVentana,
-            sistema,
-        }
+        const nuevaVentana: Ventana = { ...datos, id: editandoId || crypto.randomUUID() }
 
         let nuevasVentanas: Ventana[]
         if (editandoId) {

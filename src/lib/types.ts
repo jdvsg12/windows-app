@@ -36,6 +36,94 @@ export function opcionesTipo(actual?: TipoVentana): OpcionTipo[] {
     return opciones
 }
 
+// "2 Hojas" in the form covers two engine types: both leaves movable ("2hojas") or one movable + one
+// fixed ("2hojas_mixto"). The form shows a single option plus an "ambas móviles" checkbox.
+export function tipoDesdeFormulario(tipo: TipoVentana, ambasMoviles: boolean): TipoVentana {
+    return tipo === "2hojas" && !ambasMoviles ? "2hojas_mixto" : tipo
+}
+
+export function tipoParaFormulario(tipo: TipoVentana): { tipoVentana: TipoVentana; ambasMoviles: boolean } {
+    return tipo === "2hojas_mixto" ? { tipoVentana: "2hojas", ambasMoviles: false } : { tipoVentana: tipo, ambasMoviles: true }
+}
+
+export type TipoCerradura = "impacto" | "dummy" | "manija"
+export type TipoRodachina = "plastica" | "metalica" | "pabose"
+export type CalibreVidrio = 4 | 5 | 6
+export type ColorVidrio =
+    | "incoloro"
+    | "bronce"
+    | "gris"
+    | "azul"
+    | "verde"
+    | "reflectivo_plata"
+    | "reflectivo_bronce"
+    | "reflectivo_azul"
+    | "reflectivo_verde"
+
+export type ColorAluminio = "natural" | "blanco" | "negro" | "bronce" | "champana" | "madera"
+
+// Common aluminum finishes in Colombia: anodized (natural, bronze, champagne) and powder coat / wood-grain.
+export const COLORES_ALUMINIO: readonly { value: ColorAluminio; label: string }[] = [
+    { value: "natural", label: "Natural (anodizado mate)" },
+    { value: "blanco", label: "Blanco" },
+    { value: "negro", label: "Negro" },
+    { value: "bronce", label: "Bronce" },
+    { value: "champana", label: "Champaña" },
+    { value: "madera", label: "Madera" },
+]
+
+export const COLOR_ALUMINIO_POR_DEFECTO: ColorAluminio = "natural"
+
+export const CERRADURAS: readonly { value: TipoCerradura; label: string }[] = [
+    { value: "impacto", label: "Impacto" },
+    { value: "dummy", label: "Dummy" },
+    { value: "manija", label: "Manija" },
+]
+
+export const RODACHINAS: readonly { value: TipoRodachina; label: string }[] = [
+    { value: "plastica", label: "Plástica" },
+    { value: "metalica", label: "Metálica" },
+    { value: "pabose", label: "Pabose" },
+]
+
+export const CALIBRES_VIDRIO: readonly { value: CalibreVidrio; label: string }[] = [
+    { value: 4, label: "4 mm" },
+    { value: 5, label: "5 mm" },
+    { value: 6, label: "6 mm" },
+]
+
+// Float glass colors commonly stocked by Colombian glass distributors for residential windows.
+export const COLORES_VIDRIO: readonly { value: ColorVidrio; label: string }[] = [
+    { value: "incoloro", label: "Incoloro" },
+    { value: "bronce", label: "Bronce" },
+    { value: "gris", label: "Gris (humo)" },
+    { value: "azul", label: "Azul" },
+    { value: "verde", label: "Verde" },
+    { value: "reflectivo_plata", label: "Reflectivo plata" },
+    { value: "reflectivo_bronce", label: "Reflectivo bronce" },
+    { value: "reflectivo_azul", label: "Reflectivo azul" },
+    { value: "reflectivo_verde", label: "Reflectivo verde" },
+]
+
+// Windows saved before glass specs existed are costed as the most common glass.
+export const VIDRIO_POR_DEFECTO: { colorVidrio: ColorVidrio; calibreVidrio: CalibreVidrio } = {
+    colorVidrio: "incoloro",
+    calibreVidrio: 4,
+}
+
+export type ClaveVidrio = `${ColorVidrio}-${CalibreVidrio}`
+
+export const claveVidrio = (color: ColorVidrio, calibre: CalibreVidrio): ClaveVidrio => `${color}-${calibre}`
+
+const labelDe = <T,>(opciones: readonly { value: T; label: string }[], value: T): string =>
+    opciones.find((item) => item.value === value)?.label ?? String(value)
+
+export const getColorAluminioLabel = (value: ColorAluminio): string => labelDe(COLORES_ALUMINIO, value)
+export const getCerraduraLabel = (value: TipoCerradura): string => labelDe(CERRADURAS, value)
+export const getRodachinaLabel = (value: TipoRodachina): string => labelDe(RODACHINAS, value)
+export const getCalibreVidrioLabel = (value: CalibreVidrio): string => labelDe(CALIBRES_VIDRIO, value)
+export const getColorVidrioLabel = (value: ColorVidrio): string => labelDe(COLORES_VIDRIO, value)
+
 export const SISTEMAS_VENTANA: readonly SistemaVentana[] = ["5020", "744", "8025", "7038"]
 
 // Which systems are offered to new windows now lives in lib/calculo/registro.ts (SISTEMAS_HABILITADOS,
@@ -75,6 +163,13 @@ export interface Ventana {
     alto: number // mm
     tipoVentana: TipoVentana
     sistema?: SistemaVentana
+    // Optional: windows saved before these fields existed must keep loading.
+    colorAluminio?: ColorAluminio
+    cerradura?: TipoCerradura
+    rodachina?: TipoRodachina
+    calibreVidrio?: CalibreVidrio
+    colorVidrio?: ColorVidrio
+    sandblasting?: boolean
 }
 
 export interface Corte {
@@ -123,7 +218,10 @@ export interface ConfiguracionPrecios {
     precioTornillo8mm: number
     precioTornillo10mm: number
     precioEmpaque: number
-    precioVidrioLamina: number
+    precioVidrioLamina: number // respaldo cuando un color/calibre no tiene precio propio en preciosVidrio
+    preciosVidrio: Partial<Record<ClaveVidrio, number>> // precio por lámina según color y calibre
+    precioSandblasting: number // por m² de vidrio con acabado sandblasting
+    recargosColorAluminio: Partial<Record<ColorAluminio, number>> // % sobre el precio base de cada perfil según el color
     tamanoLamina: TamanoLamina
     kerfVidrio: number // mm que consume cada corte de vidrio (F3.3); 0 por defecto (vidrio rayado y partido)
     minRestoVidrio: number // mm de lado menor a partir del cual un sobrante de lámina es "resto" reutilizable y no desperdicio
@@ -158,6 +256,7 @@ export interface VidrioCorte {
     ancho: number // mm
     alto: number // mm
     area: number // m²
+    grupo?: string // tipo de vidrio (p. ej. "Bronce 5 mm") cuando el proyecto se agrupa por vidrio
 }
 
 export interface RestoLamina {
@@ -179,6 +278,7 @@ export interface LaminaVidrio {
         rotado: boolean
     }>
     restos: RestoLamina[]
+    grupo?: string // tipo de vidrio de todas las piezas de esta lámina
     areaUsada: number
     areaSobrante: number
 }

@@ -123,7 +123,10 @@ export function OptimizacionTab({ optimizacion, laminasVidrio, errorLaminas, tam
                                 return (
                                     <div key={lamina.numero} className="border rounded-lg p-4">
                                         <div className="flex justify-between items-center mb-3">
-                                            <h3 className="font-semibold">Lámina {lamina.numero}</h3>
+                                            <h3 className="font-semibold">
+                                                Lámina {lamina.numero}
+                                                {lamina.grupo && <span className="ml-2 font-normal text-muted-foreground">· {lamina.grupo}</span>}
+                                            </h3>
                                             <div className="text-sm text-muted-foreground">
                                                 {lamina.vidrios.length} vidrios • {lamina.areaUsada.toFixed(2)} m² usados • {lamina.areaSobrante.toFixed(2)} m² sobrante
                                             </div>

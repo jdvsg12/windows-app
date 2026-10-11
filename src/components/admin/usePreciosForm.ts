@@ -1,7 +1,7 @@
 import { useEffect, useState } from "react"
 
 import { obtenerPrecios, guardarPrecios } from "@/lib/storage"
-import type { ConfiguracionPrecios, TamanoLamina } from "@/lib/types"
+import type { ClaveVidrio, ColorAluminio, ConfiguracionPrecios, TamanoLamina } from "@/lib/types"
 import { useSaveFeedback } from "./useSaveFeedback"
 
 export interface PreciosFormData {
@@ -19,6 +19,9 @@ export interface PreciosFormData {
     precioTornillo10mm: number
     precioEmpaque: number
     precioVidrioLamina: number
+    preciosVidrio: ConfiguracionPrecios["preciosVidrio"]
+    precioSandblasting: number
+    recargosColorAluminio: ConfiguracionPrecios["recargosColorAluminio"]
     tamanoLamina: TamanoLamina
     kerfVidrio: number
     minRestoVidrio: number
@@ -42,6 +45,9 @@ const PRECIOS_DEFAULT: PreciosFormData = {
     precioTornillo10mm: 600,
     precioEmpaque: 3000,
     precioVidrioLamina: 180000,
+    preciosVidrio: {},
+    precioSandblasting: 0,
+    recargosColorAluminio: {},
     tamanoLamina: "2500x3600",
     kerfVidrio: 0,
     minRestoVidrio: 200,
@@ -65,6 +71,9 @@ const toFormData = (precios: ConfiguracionPrecios): PreciosFormData => ({
     precioTornillo10mm: precios.precioTornillo10mm,
     precioEmpaque: precios.precioEmpaque,
     precioVidrioLamina: precios.precioVidrioLamina,
+    preciosVidrio: precios.preciosVidrio ?? {},
+    precioSandblasting: precios.precioSandblasting ?? 0,
+    recargosColorAluminio: precios.recargosColorAluminio ?? {},
     tamanoLamina: precios.tamanoLamina || PRECIOS_DEFAULT.tamanoLamina,
     kerfVidrio: precios.kerfVidrio,
     minRestoVidrio: precios.minRestoVidrio,
@@ -87,6 +96,19 @@ export function usePreciosForm() {
         setFormData((prev) => ({ ...prev, [field]: value }))
     }
 
+    const handlePrecioVidrioChange = (clave: ClaveVidrio, value: number | undefined) => {
+        setFormData((prev) => {
+            const preciosVidrio = { ...prev.preciosVidrio }
+            if (value === undefined) delete preciosVidrio[clave]
+            else preciosVidrio[clave] = value
+            return { ...prev, preciosVidrio }
+        })
+    }
+
+    const handleRecargoColorChange = (color: ColorAluminio, value: number) => {
+        setFormData((prev) => ({ ...prev, recargosColorAluminio: { ...prev.recargosColorAluminio, [color]: value } }))
+    }
+
     // Merge over the stored prices so fields this form doesn't edit
     // (e.g. costosAdicionales, managed in the cotizador) are preserved.
     const handleSave = () => {
@@ -96,5 +118,5 @@ export function usePreciosForm() {
 
     const handleReset = () => setFormData(PRECIOS_DEFAULT)
 
-    return { formData, loading, saved, handleChange, handleSave, handleReset }
+    return { formData, loading, saved, handleChange, handlePrecioVidrioChange, handleRecargoColorChange, handleSave, handleReset }
 }
