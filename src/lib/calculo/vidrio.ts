@@ -4,6 +4,18 @@
 //
 // Pure: no storage, no module-level cache. Kerf and minResto are injected by the caller.
 //
+// Why written in-house instead of a packing library: glass is scored and snapped, so every cut
+// must run edge to edge (guillotine). The common JS packers either place pieces with MaxRects
+// or skyline layouts, which are not guillotine, or pack a single unbounded box instead of
+// several fixed sheets. None of them also take a configurable kerf or classify leftovers as
+// reusable resto vs desperdicio, and the engine must stay dependency-free so it runs offline
+// and on the server alike. A small guillotine packer covers all of that.
+//
+// Known gap: for the Heliconias job this packer gives 8 sheets while the optimum is 7 (proof and
+// a reference 7-sheet plan in src/lib/__tests__/fixtures/heliconias.ts). Reaching 7 took an
+// exhaustive search of ~84 s; if the gap matters in practice, that search fits an explicit
+// "optimizar a fondo" action run in a Web Worker, not the per-keystroke recalculation.
+//
 // Free-space bookkeeping: each sheet keeps a list of free rectangles that exactly tile its
 // unused area (a classic "shelf" guillotine split — placing a piece replaces its chosen free
 // rect with a right-of-piece strip spanning the piece's height and a top-of-piece strip
