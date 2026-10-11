@@ -7,6 +7,25 @@ export const VentanaSchema = z.object({
     alto: z.number().positive(),
     tipoVentana: z.enum(["2hojas", "2hojas_mixto", "3hojas", "4hojas", "5hojas", "6hojas"]),
     sistema: z.enum(["5020", "744", "8025", "7038"]).optional(),
+    // .optional(): ventanas guardadas antes de agregar estas especificaciones no las tienen.
+    colorAluminio: z.enum(["natural", "blanco", "negro", "bronce", "champana", "madera"]).optional(),
+    cerradura: z.enum(["impacto", "dummy", "manija"]).optional(),
+    rodachina: z.enum(["plastica", "metalica", "pabose"]).optional(),
+    calibreVidrio: z.union([z.literal(4), z.literal(5), z.literal(6)]).optional(),
+    colorVidrio: z
+        .enum([
+            "incoloro",
+            "bronce",
+            "gris",
+            "azul",
+            "verde",
+            "reflectivo_plata",
+            "reflectivo_bronce",
+            "reflectivo_azul",
+            "reflectivo_verde",
+        ])
+        .optional(),
+    sandblasting: z.boolean().optional(),
 })
 
 export const ProyectoSchema = z.object({
@@ -16,6 +35,11 @@ export const ProyectoSchema = z.object({
     direccion: z.string().optional(),
     fechaCreacion: z.string(),
     ventanas: z.array(VentanaSchema),
+    // .default() en vez de required: los proyectos guardados antes de F3.2 no tienen
+    // estos campos, y deben seguir cargando (con estos valores neutros) en vez de
+    // fallar la validación y perderse.
+    duracionMeses: z.number().positive().default(1),
+    transporte: z.number().min(0).default(0),
 })
 
 export const ConfiguracionEmpresaSchema = z.object({
@@ -53,13 +77,31 @@ export const ConfiguracionPreciosSchema = z.object({
     precioTornillo10mm: z.number(),
     precioEmpaque: z.number(),
     precioVidrioLamina: z.number(),
+    // .default(): precios guardados antes de tener precio por color/calibre de vidrio.
+    preciosVidrio: z.record(z.string(), z.number().min(0)).default({}),
+    precioSandblasting: z.number().min(0).default(0),
+    recargosColorAluminio: z.record(z.string(), z.number()).default({}),
     tamanoLamina: z.enum(["2440x3660", "2500x3600", "2440x3050", "2140x3300"]),
+    // .default(): precios guardados antes de F3.3 no tienen estos campos (modelo D8/F3.3).
+    kerfVidrio: z.number().min(0).default(0),
+    minRestoVidrio: z.number().min(0).default(200),
     manoDeObra: z.number(),
-    transporte: z.number(),
+    // .default(0): precios guardados antes de F3.2 no tienen "imprevistos" (era un
+    // campo nuevo del modelo D8) y deben seguir cargando en vez de perder todos los
+    // demás precios ya configurados por caer al fallback completo.
+    imprevistos: z.number().default(0),
     utilidad: z.number(),
-    otros: z.number(),
-    costosIndirectos: z.number(),
     costosAdicionales: z.array(CostoAdicionalSchema),
+})
+
+export const ConfiguracionOverheadSchema = z.object({
+    servicioLuz: z.number(),
+    servicioAgua: z.number(),
+    servicioInternet: z.number(),
+    servicioGas: z.number(),
+    arriendo: z.number(),
+    herramienta: z.number(),
+    admin: z.number(),
 })
 
 const dimensionSchema = (label: string) =>
@@ -74,9 +116,23 @@ export const VentanaFormSchema = z.object({
     alto: dimensionSchema("alto"),
     tipoVentana: VentanaSchema.shape.tipoVentana,
     sistema: VentanaSchema.shape.sistema.unwrap(),
+    ambasMoviles: z.boolean(),
+    colorAluminio: VentanaSchema.shape.colorAluminio.unwrap(),
+    cerradura: VentanaSchema.shape.cerradura.unwrap(),
+    rodachina: VentanaSchema.shape.rodachina.unwrap(),
+    // Native <select> values are strings; VentanasTab converts it to the stored number.
+    calibreVidrio: z.enum(["4", "5", "6"]),
+    colorVidrio: VentanaSchema.shape.colorVidrio.unwrap(),
+    sandblasting: z.boolean(),
 })
 
 export type VentanaFormValues = z.infer<typeof VentanaFormSchema>
+
+export const CreateProjectSchema = z.object({
+    nombre: z.string().trim().min(1, "Ingresa un nombre"),
+})
+
+export type CreateProjectInput = z.infer<typeof CreateProjectSchema>
 
 export const AdminLoginSchema = z.object({
     password: z.string().min(1, "Ingrese la contraseña"),
@@ -86,3 +142,4 @@ export type AdminLoginInput = z.infer<typeof AdminLoginSchema>
 export type ProyectoInput = z.infer<typeof ProyectoSchema>
 export type ConfiguracionEmpresaInput = z.infer<typeof ConfiguracionEmpresaSchema>
 export type ConfiguracionPreciosInput = z.infer<typeof ConfiguracionPreciosSchema>
+export type ConfiguracionOverheadInput = z.infer<typeof ConfiguracionOverheadSchema>

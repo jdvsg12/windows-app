@@ -1,24 +1,31 @@
 "use client"
 
-import { Suspense, useState, useCallback } from "react"
+import { Suspense, useCallback } from "react"
 import { useRouter, useSearchParams } from "next/navigation"
 import { Button } from "@/components/ui/button"
-import { Input } from "@/components/ui/input"
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card"
-import { Label } from "@/components/ui/label"
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs"
 import { Badge } from "@/components/ui/badge"
-import { ArrowLeft, Plus, FileSpreadsheet, Ruler, Package, Grid3X3, DollarSign } from "lucide-react"
+import { PageHeader } from "@/components/common/PageHeader"
+import { CreateProjectForm } from "@/components/common/CreateProjectForm"
+import { PageSkeleton } from "@/components/common/PageSkeleton"
+import { FileSpreadsheet, Ruler, Package, Grid3X3, DollarSign } from "lucide-react"
 import * as XLSX from "xlsx"
-import { crearProyecto } from "@/lib/storage"
-import { optimizarCortes } from "@/lib/calculos"
 import { useVentanas } from "@/hooks/useVentanas"
 import { VentanasTab, MaterialesTab, OptimizacionTab, DeleteProjectDialog } from "@/components/calculators"
-import type { TamanoLamina } from "@/lib/types"
+import {
+    getCalibreVidrioLabel,
+    getCerraduraLabel,
+    getColorAluminioLabel,
+    getColorVidrioLabel,
+    getRodachinaLabel,
+    getTipoVentanaLabel,
+    type Proyecto,
+} from "@/lib/types"
 
 export default function CalculadorPageWrapper() {
     return (
-        <Suspense fallback={<div>Cargando...</div>}>
+        <Suspense fallback={<PageSkeleton />}>
             <CalculadorPage />
         </Suspense>
     )
@@ -29,7 +36,6 @@ function CalculadorPage() {
     const searchParams = useSearchParams()
     const proyectoId = searchParams.get("id")
 
-    const [tamanoLamina, setTamanoLamina] = useState<TamanoLamina>("2500x3600")
     const {
         proyecto,
         ventanas,
@@ -37,30 +43,35 @@ function CalculadorPage() {
         accesorios,
         vidrios,
         laminasVidrio,
+        errorLaminas,
+        tamanoLamina,
         agregarVentana,
         eliminarVentana,
         eliminarProyectoActual,
-    } = useVentanas(proyectoId, tamanoLamina)
+        actualizarDatosProyecto,
+        actualizarTamanoLamina,
+    } = useVentanas(proyectoId)
 
-    const [nombreNuevo, setNombreNuevo] = useState("")
-
-    const crearNuevoProyecto = useCallback(() => {
-        if (!nombreNuevo.trim()) return
-        const nuevo = crearProyecto(nombreNuevo.trim())
-        setNombreNuevo("")
-        router.push(`/calculators?id=${nuevo.id}`)
-    }, [nombreNuevo, router])
+    const handleProjectCreated = useCallback(
+        (nuevo: Proyecto) => router.push(`/calculators?id=${nuevo.id}`),
+        [router]
+    )
 
     const exportarExcel = useCallback(() => {
         if (!ventanas.length || !proyecto) return
         const wb = XLSX.utils.book_new()
         const ws1 = XLSX.utils.json_to_sheet(ventanas.map((v) => ({
             Nombre: v.nombre, "Ancho (mm)": v.ancho, "Alto (mm)": v.alto,
-            Tipo: v.tipoVentana === "2hojas" ? "2 Hojas" : v.tipoVentana,
+            Tipo: getTipoVentanaLabel(v.tipoVentana),
+            "Color aluminio": v.colorAluminio ? getColorAluminioLabel(v.colorAluminio) : "",
+            Cerradura: v.cerradura ? getCerraduraLabel(v.cerradura) : "",
+            Rodachina: v.rodachina ? getRodachinaLabel(v.rodachina) : "",
+            "Calibre vidrio": v.calibreVidrio ? getCalibreVidrioLabel(v.calibreVidrio) : "",
+            "Color vidrio": v.colorVidrio ? getColorVidrioLabel(v.colorVidrio) : "",
+            Sandblasting: v.sandblasting ? "Sí" : "No",
         })))
         XLSX.utils.book_append_sheet(wb, ws1, "Ventanas")
-        const opt = optimizarCortes(ventanas)
-        const ws2 = XLSX.utils.json_to_sheet(Object.entries(opt).map(([tipo, o]) => ({
+        const ws2 = XLSX.utils.json_to_sheet(Object.entries(optimizacion).map(([tipo, o]) => ({
             Perfil: tipo, "Barras de 6m": o.barras.length, "Metros Usados": o.metrosUsados.toFixed(3),
         })))
         XLSX.utils.book_append_sheet(wb, ws2, "Resumen Perfiles")
@@ -72,7 +83,7 @@ function CalculadorPage() {
         link.download = `${proyecto.nombre}_calculo.xlsx`
         link.click()
         URL.revokeObjectURL(url)
-    }, [ventanas, proyecto])
+    }, [ventanas, proyecto, optimizacion])
 
     if (!proyecto) {
         return (
@@ -82,22 +93,7 @@ function CalculadorPage() {
                         <CardTitle>Crear Nuevo Proyecto</CardTitle>
                     </CardHeader>
                     <CardContent className="space-y-4">
-                        <div className="space-y-2">
-                            <Label htmlFor="nombre">Nombre del Proyecto</Label>
-                            <Input
-                                id="nombre"
-                                value={nombreNuevo}
-                                onChange={(e) => setNombreNuevo(e.target.value)}
-                                placeholder="Ej: Casa López"
-                                onKeyDown={(e) => {
-                                    if (e.key === "Enter") crearNuevoProyecto()
-                                }}
-                            />
-                        </div>
-                        <Button onClick={crearNuevoProyecto} className="w-full">
-                            <Plus className="h-4 w-4 mr-2" />
-                            Crear y Continuar
-                        </Button>
+                        <CreateProjectForm onCreated={handleProjectCreated} submitLabel="Crear y Continuar" />
                         <Button variant="outline" onClick={() => router.push("/")} className="w-full">
                             Volver al Dashboard
                         </Button>
@@ -109,41 +105,38 @@ function CalculadorPage() {
 
     return (
         <div>
-            {/* Header */}
-            <div className="flex flex-col md:flex-row md:items-center md:justify-between gap-4 mb-6">
-                <div className="flex items-center gap-4">
-                    <Button variant="ghost" size="icon" aria-label="Volver al dashboard" onClick={() => router.push("/")}>
-                        <ArrowLeft className="h-5 w-5" />
-                    </Button>
-                    <div>
-                        <h1 className="text-title font-bold tracking-tight">{proyecto.nombre}</h1>
-                        <p className="text-sm text-muted-foreground">
-                            {proyecto.cliente ? `Cliente: ${proyecto.cliente}` : "Sin cliente"}
-                        </p>
-                    </div>
-                </div>
-                <div className="flex flex-wrap items-center gap-2">
-                    <Badge variant="secondary" className="text-sm">
-                        {ventanas.length} ventanas
-                    </Badge>
-                    {ventanas.length > 0 && (
-                        <Button variant="outline" onClick={exportarExcel}>
-                            <FileSpreadsheet className="h-4 w-4 mr-2" />
-                            Exportar
-                        </Button>
-                    )}
-                    {ventanas.length > 0 && (
-                        <Button onClick={() => router.push(`/cotizador?id=${proyectoId}`)}>
-                            <DollarSign className="h-4 w-4 mr-2" />
-                            Cotizar
-                        </Button>
-                    )}
-                    <DeleteProjectDialog
-                        projectName={proyecto.nombre}
-                        onConfirm={eliminarProyectoActual}
-                    />
-                </div>
-            </div>
+            <PageHeader
+                title={proyecto.nombre}
+                description={proyecto.cliente ? `Cliente: ${proyecto.cliente}` : "Sin cliente"}
+                onBack={() => router.push("/")}
+                backLabel="Volver al dashboard"
+                actions={
+                    <>
+                        <Badge variant="secondary" className="text-sm">
+                            {ventanas.length} ventanas
+                        </Badge>
+                        {ventanas.length > 0 && (
+                            <Button variant="outline" onClick={exportarExcel}>
+                                <FileSpreadsheet className="h-4 w-4 mr-2" />
+                                Exportar
+                            </Button>
+                        )}
+                        {ventanas.length > 0 && (
+                            <Button onClick={() => router.push(`/cotizador?id=${proyectoId}`)}>
+                                <DollarSign className="h-4 w-4 mr-2" />
+                                Cotizar
+                            </Button>
+                        )}
+                        {/* ml-auto keeps it pinned to the right edge instead of stranded alone when the row wraps on mobile */}
+                        <div className="ml-auto sm:ml-0">
+                            <DeleteProjectDialog
+                                projectName={proyecto.nombre}
+                                onConfirm={eliminarProyectoActual}
+                            />
+                        </div>
+                    </>
+                }
+            />
 
             {/* Tabs */}
             <Tabs defaultValue="ventanas" className="space-y-4">
@@ -164,9 +157,11 @@ function CalculadorPage() {
 
                 <TabsContent value="ventanas">
                     <VentanasTab
+                        proyecto={proyecto}
                         ventanas={ventanas}
                         onAgregar={agregarVentana}
                         onEliminar={eliminarVentana}
+                        onActualizarDatosProyecto={actualizarDatosProyecto}
                     />
                 </TabsContent>
 
@@ -181,8 +176,9 @@ function CalculadorPage() {
                     <OptimizacionTab
                         optimizacion={optimizacion}
                         laminasVidrio={laminasVidrio}
+                        errorLaminas={errorLaminas}
                         tamanoLamina={tamanoLamina}
-                        onTamanoLaminaChange={setTamanoLamina}
+                        onTamanoLaminaChange={actualizarTamanoLamina}
                     />
                 </TabsContent>
             </Tabs>

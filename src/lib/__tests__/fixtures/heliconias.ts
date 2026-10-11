@@ -4,8 +4,15 @@
 // Glass is scored and snapped, so it loses no material: kerf must be 0.
 // Therefore ONLY the totals that do not depend on kerf are golden: piece count, net area,
 // edging length and edge count. Do NOT assert the sheet count (7), the 16.25 % waste or any
-// per-sheet metric from that PDF; they come from the 2 mm bug. With kerf 0 a legitimate
-// optimizer may use 6 sheets (lower bound 5.67).
+// per-sheet metric from that PDF; they come from the 2 mm bug.
+//
+// The area-only lower bound is 6 sheets (40.063 / 7.062 = 5.67), but that bound ignores the
+// guillotine constraint (every cut must go edge-to-edge). lib/calculo/vidrio.ts was tried with
+// 6 sort orders × 3 split strategies × a global-best-fit-per-sheet variant; none beat 8 sheets
+// for these 29 pieces under a strict guillotine cut — a real, though weaker, algorithm than
+// whatever produced the reference PDF's 7 (itself achieved despite its 2 mm kerf bug, which
+// should only ever cost more sheets, not fewer). Confirmed with the user: ≤8 is the accepted
+// bound here, not ≤7.
 
 export interface PiezaHeliconias {
     n: number

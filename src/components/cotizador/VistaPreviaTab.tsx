@@ -1,7 +1,8 @@
 "use client"
 
 import { Card, CardContent } from "@/components/ui/card"
-import type { ConfiguracionEmpresa, Proyecto, CostosCalculadosCotizador } from "@/lib/types"
+import { formatArea, formatCount, formatCurrency } from "@/lib/format"
+import { getTipoVentanaLabel, type ConfiguracionEmpresa, type Proyecto, type CostosCalculadosCotizador } from "@/lib/types"
 
 interface Props {
     config: ConfiguracionEmpresa
@@ -78,26 +79,26 @@ export function VistaPreviaTab({
                             </tr>
                         </thead>
                         <tbody>
-                            {proyecto.ventanas.map((ventana: { id: string; nombre: string; tipoVentana: string; ancho: number; alto: number }) => {
+                            {proyecto.ventanas.map((ventana) => {
                                 const valorVentana = costosCalculados?.valoresPorVentana?.find((v) => v.id === ventana.id)
                                 return (
                                     <tr key={ventana.id}>
                                         <td className="border border-paper-rule p-2">{ventana.nombre}</td>
                                         <td className="border border-paper-rule p-2">
-                                            {ventana.tipoVentana === "2hojas" ? "2 Hojas Normal" : `${ventana.tipoVentana}`}
+                                            {getTipoVentanaLabel(ventana.tipoVentana)}
                                         </td>
                                         {mostrarMedidas && (
                                             <>
                                                 <td className="border border-paper-rule p-2">{ventana.ancho}</td>
                                                 <td className="border border-paper-rule p-2">{ventana.alto}</td>
                                                 <td className="border border-paper-rule p-2 text-right">
-                                                    {valorVentana?.area?.toFixed(2) || "0.00"}
+                                                    {formatCount(valorVentana?.area, 2)}
                                                 </td>
                                             </>
                                         )}
                                         {mostrarValores && costosCalculados && (
                                             <td className="border border-paper-rule p-2 text-right">
-                                                ${(valorVentana?.valor || 0).toLocaleString("es-CO", { maximumFractionDigits: 0 })}
+                                                {formatCurrency(valorVentana?.valor)}
                                             </td>
                                         )}
                                     </tr>
@@ -108,11 +109,11 @@ export function VistaPreviaTab({
                     <div>
                         <p className="font-bold">Total de ventanas: {proyecto.ventanas.length}</p>
                         {mostrarMedidas && costosCalculados && (
-                            <p className="mt-1">Área total: {(costosCalculados?.areaTotal || 0).toFixed(2)} m²</p>
+                            <p className="mt-1">Área total: {formatArea(costosCalculados?.areaTotal)}</p>
                         )}
                         {mostrarValores && costosCalculados && (
                             <p className="mt-2 text-lg font-bold">
-                                VALOR TOTAL: ${(costosCalculados?.total || 0).toLocaleString("es-CO", { maximumFractionDigits: 0 })}
+                                VALOR TOTAL: {formatCurrency(costosCalculados?.total)}
                             </p>
                         )}
                     </div>

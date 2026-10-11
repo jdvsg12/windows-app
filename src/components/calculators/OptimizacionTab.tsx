@@ -3,51 +3,41 @@
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card"
 import { Label } from "@/components/ui/label"
 import { NativeSelect } from "@/components/common/NativeSelect"
+import { StatCard } from "@/components/common/StatCard"
 import { PiezaBadge } from "./PiezaBadge"
 import { ESTILOS_HOJA, obtenerEstiloPerfil, obtenerTipoHoja } from "@/lib/design/piezas"
 import { cn } from "@/lib/utils"
+import { formatMeters } from "@/lib/format"
+import { Layers, Ruler, SquareStack } from "lucide-react"
 import type { OptimizacionPerfil, LaminaVidrio, TamanoLamina } from "@/lib/types"
 import { TAMANOS_LAMINA } from "@/lib/types"
 
 interface Props {
     optimizacion: Record<string, OptimizacionPerfil>
     laminasVidrio: LaminaVidrio[]
+    errorLaminas: string | null
     tamanoLamina: TamanoLamina
     onTamanoLaminaChange: (tamano: TamanoLamina) => void
 }
 
-export function OptimizacionTab({ optimizacion, laminasVidrio, tamanoLamina, onTamanoLaminaChange }: Props) {
+const ESTILO_RESTO = { codigo: "R", clases: "bg-resto border-resto-border text-resto-fg" }
+const ESTILO_DESPERDICIO = { codigo: "S", clases: "bg-desperdicio border-desperdicio-border text-desperdicio-fg" }
+
+export function OptimizacionTab({ optimizacion, laminasVidrio, errorLaminas, tamanoLamina, onTamanoLaminaChange }: Props) {
     return (
         <div className="space-y-4">
             <div className="grid grid-cols-2 md:grid-cols-3 gap-4">
-                <Card>
-                    <CardHeader className="pb-2">
-                        <CardTitle className="text-sm font-medium text-muted-foreground">Barras 6m</CardTitle>
-                    </CardHeader>
-                    <CardContent>
-                        <p className="text-metric font-bold tabular-nums">
-                            {Object.values(optimizacion).reduce((sum, opt) => sum + opt.barras.length, 0)}
-                        </p>
-                    </CardContent>
-                </Card>
-                <Card>
-                    <CardHeader className="pb-2">
-                        <CardTitle className="text-sm font-medium text-muted-foreground">Metros Totales</CardTitle>
-                    </CardHeader>
-                    <CardContent>
-                        <p className="text-metric font-bold tabular-nums">
-                            {Object.values(optimizacion).reduce((sum, opt) => sum + opt.metrosUsados, 0).toFixed(2)} m
-                        </p>
-                    </CardContent>
-                </Card>
-                <Card>
-                    <CardHeader className="pb-2">
-                        <CardTitle className="text-sm font-medium text-muted-foreground">Láminas Vidrio</CardTitle>
-                    </CardHeader>
-                    <CardContent>
-                        <p className="text-metric font-bold tabular-nums">{laminasVidrio.length}</p>
-                    </CardContent>
-                </Card>
+                <StatCard
+                    label="Barras 6m"
+                    value={Object.values(optimizacion).reduce((sum, opt) => sum + opt.barras.length, 0)}
+                    icon={Ruler}
+                />
+                <StatCard
+                    label="Metros Totales"
+                    value={formatMeters(Object.values(optimizacion).reduce((sum, opt) => sum + opt.metrosUsados, 0))}
+                    icon={Layers}
+                />
+                <StatCard label="Láminas Vidrio" value={laminasVidrio.length} icon={SquareStack} />
             </div>
 
             <Card>
@@ -80,6 +70,14 @@ export function OptimizacionTab({ optimizacion, laminasVidrio, tamanoLamina, onT
                 </CardContent>
             </Card>
 
+            {errorLaminas && (
+                <Card className="border-destructive">
+                    <CardContent className="pt-6 text-sm text-destructive">
+                        {errorLaminas} Cambia el tamaño de lámina en Precios para poder cotizar este vidrio.
+                    </CardContent>
+                </Card>
+            )}
+
             {laminasVidrio.length > 0 && (
                 <Card>
                     <CardHeader>
@@ -108,6 +106,14 @@ export function OptimizacionTab({ optimizacion, laminasVidrio, tamanoLamina, onT
                                     Hoja {ESTILOS_HOJA[tipo].nombre.toLowerCase()}
                                 </span>
                             ))}
+                            <span className="inline-flex items-center gap-2">
+                                <PiezaBadge estilo={ESTILO_RESTO} />
+                                Resto reutilizable
+                            </span>
+                            <span className="inline-flex items-center gap-2">
+                                <PiezaBadge estilo={ESTILO_DESPERDICIO} />
+                                Desperdicio
+                            </span>
                         </div>
                         <div className="space-y-6">
                             {laminasVidrio.map((lamina) => {
@@ -117,7 +123,10 @@ export function OptimizacionTab({ optimizacion, laminasVidrio, tamanoLamina, onT
                                 return (
                                     <div key={lamina.numero} className="border rounded-lg p-4">
                                         <div className="flex justify-between items-center mb-3">
-                                            <h3 className="font-semibold">Lámina {lamina.numero}</h3>
+                                            <h3 className="font-semibold">
+                                                Lámina {lamina.numero}
+                                                {lamina.grupo && <span className="ml-2 font-normal text-muted-foreground">· {lamina.grupo}</span>}
+                                            </h3>
                                             <div className="text-sm text-muted-foreground">
                                                 {lamina.vidrios.length} vidrios • {lamina.areaUsada.toFixed(2)} m² usados • {lamina.areaSobrante.toFixed(2)} m² sobrante
                                             </div>
@@ -151,6 +160,29 @@ export function OptimizacionTab({ optimizacion, laminasVidrio, tamanoLamina, onT
                                                             {item.vidrio.ancho.toFixed(0)}×{item.vidrio.alto.toFixed(0)}
                                                             {item.rotado && <span className="ml-0.5">↻</span>}
                                                         </span>
+                                                    </div>
+                                                )
+                                            })}
+                                            {lamina.restos.map((resto, i) => {
+                                                const estilo = resto.tipo === "resto" ? ESTILO_RESTO : ESTILO_DESPERDICIO
+                                                const left = (resto.x / lamina.anchoLamina) * 100
+                                                const top = (resto.y / lamina.altoLamina) * 100
+                                                const w = (resto.ancho / lamina.anchoLamina) * 100
+                                                const h = (resto.alto / lamina.altoLamina) * 100
+                                                return (
+                                                    <div
+                                                        key={`resto-${i}`}
+                                                        className={cn("absolute border flex items-center justify-center overflow-hidden", estilo.clases)}
+                                                        style={{
+                                                            left: `${left}%`,
+                                                            top: `${top}%`,
+                                                            width: `${w}%`,
+                                                            height: `${h}%`,
+                                                            fontSize: Math.min(w, h) > 8 ? "10px" : "0",
+                                                        }}
+                                                        title={`${resto.tipo === "resto" ? "Resto" : "Desperdicio"}: ${resto.ancho.toFixed(0)}×${resto.alto.toFixed(0)} mm`}
+                                                    >
+                                                        {estilo.codigo}
                                                     </div>
                                                 )
                                             })}

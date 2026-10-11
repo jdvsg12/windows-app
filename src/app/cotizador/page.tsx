@@ -1,7 +1,7 @@
 "use client"
 
 import type React from "react"
-import { useState, Suspense } from "react"
+import { useState, useCallback, Suspense } from "react"
 import { useRouter, useSearchParams } from "next/navigation"
 import { format } from "date-fns"
 import { es } from "date-fns/locale"
@@ -11,6 +11,7 @@ import { ArrowLeft, Download } from "lucide-react"
 import { useProyecto } from "@/hooks/useProyecto"
 import { useCotizador } from "@/hooks/useCotizador"
 import { generarPDF } from "@/lib/pdf-generatos"
+import { processLogoFile } from "@/lib/logo"
 import { ConfiguracionTab } from "@/components/cotizador/ConfiguracionTab"
 import { ContenidoTab } from "@/components/cotizador/ContenidoTab"
 import { PreciosTab } from "@/components/cotizador/PreciosTab"
@@ -23,29 +24,28 @@ function CotizadorContent() {
     const proyectoId = searchParams.get("id")
 
     const { proyecto } = useProyecto(proyectoId)
-    const { config, precios, costosCalculados, updateConfig, updatePrecios, updateCliente } = useCotizador(proyecto)
+    const { config, precios, costosCalculados, errorCosteo, updateConfig, updatePrecios, updateCliente } = useCotizador(proyecto)
 
     const [fecha, setFecha] = useState<Date>(new Date())
     const [clienteLocal, setClienteLocal] = useState(proyecto?.cliente || "")
     const [descripcion, setDescripcion] = useState("")
     const [mostrarMedidas, setMostrarMedidas] = useState(true)
     const [mostrarValores, setMostrarValores] = useState(true)
+    const [logoError, setLogoError] = useState<string | null>(null)
 
-    const handleLogoUpload = (e: React.ChangeEvent<HTMLInputElement>) => {
+    const handleLogoUpload = useCallback(async (e: React.ChangeEvent<HTMLInputElement>) => {
         const file = e.target.files?.[0]
-        if (file) {
-            const reader = new FileReader()
-            reader.onloadend = () => {
-                const logoUrl = reader.result as string
-                updateConfig({ logo: logoUrl })
-            }
-            reader.readAsDataURL(file)
-        }
-    }
+        e.target.value = ""
+        if (!file) return
 
-    const handleConfigChange = (field: string, value: string) => {
-        updateConfig({ [field]: value })
-    }
+        const result = await processLogoFile(file)
+        if ("error" in result) {
+            setLogoError(result.error)
+            return
+        }
+        setLogoError(null)
+        updateConfig({ logo: result.dataUrl })
+    }, [updateConfig])
 
     const handleClienteChange = (cliente: string) => {
         setClienteLocal(cliente)
@@ -97,8 +97,9 @@ function CotizadorContent() {
                     <ConfiguracionTab
                         config={config}
                         logo={config.logo || ""}
-                        onConfigChange={handleConfigChange}
+                        onSave={updateConfig}
                         onLogoUpload={handleLogoUpload}
+                        logoError={logoError}
                     />
                 </TabsContent>
 
@@ -121,6 +122,7 @@ function CotizadorContent() {
                     <PreciosTab
                         precios={precios}
                         costosCalculados={costosCalculados}
+                        errorCosteo={errorCosteo}
                         onUpdatePrecios={updatePrecios}
                     />
                 </TabsContent>

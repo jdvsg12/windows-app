@@ -3,6 +3,8 @@
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card"
 import { Label } from "@/components/ui/label"
 import { NativeSelect } from "@/components/common/NativeSelect"
+import { SectionTitle } from "@/components/common/SectionTitle"
+import { formatArea } from "@/lib/format"
 import { TAMANOS_LAMINA, type ConfiguracionPrecios, type CostosCalculadosCotizador } from "@/lib/types"
 import { PrecioField } from "./PrecioField"
 import { CostosAdicionalesEditor } from "./CostosAdicionalesEditor"
@@ -11,6 +13,7 @@ import { ResumenCostos } from "./ResumenCostos"
 interface PreciosTabProps {
     precios: ConfiguracionPrecios
     costosCalculados: CostosCalculadosCotizador | null
+    errorCosteo: string | null
     onUpdatePrecios: (precios: ConfiguracionPrecios) => void
 }
 
@@ -41,7 +44,7 @@ const ACCESORIOS_FIELDS: readonly PrecioFieldConfig[] = [
     { key: "precioTornillo10mm", label: "Tornillo 10mm" },
 ]
 
-export function PreciosTab({ precios, costosCalculados, onUpdatePrecios }: PreciosTabProps) {
+export function PreciosTab({ precios, costosCalculados, errorCosteo, onUpdatePrecios }: PreciosTabProps) {
     const update = (field: keyof ConfiguracionPrecios, value: number | string) => {
         onUpdatePrecios({ ...precios, [field]: value })
     }
@@ -65,14 +68,14 @@ export function PreciosTab({ precios, costosCalculados, onUpdatePrecios }: Preci
             <CardContent className="space-y-6">
                 <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
                     <div className="space-y-4">
-                        <h3 className="font-semibold text-lg border-b pb-2">Perfiles (Barra 6m)</h3>
+                        <SectionTitle>Perfiles (Barra 6m)</SectionTitle>
                         <div className="grid grid-cols-2 gap-4">{renderFields(PERFILES_FIELDS)}</div>
 
-                        <h3 className="font-semibold text-lg border-b pb-2 mt-6">Vidrio y Empaque</h3>
+                        <SectionTitle className="mt-6">Vidrio y Empaque</SectionTitle>
                         <div className="grid grid-cols-2 gap-4">
                             <PrecioField
                                 id="precioVidrioLamina"
-                                label="Precio Vidrio (por lámina)"
+                                label="Precio general vidrio (por lámina)"
                                 value={precios.precioVidrioLamina}
                                 onChange={(value) => update("precioVidrioLamina", value)}
                             />
@@ -96,29 +99,42 @@ export function PreciosTab({ precios, costosCalculados, onUpdatePrecios }: Preci
                                 value={precios.precioEmpaque}
                                 onChange={(value) => update("precioEmpaque", value)}
                             />
+                            <PrecioField
+                                id="kerfVidrio"
+                                label="Kerf de corte (mm)"
+                                value={precios.kerfVidrio}
+                                onChange={(value) => update("kerfVidrio", value)}
+                            />
+                            <PrecioField
+                                id="minRestoVidrio"
+                                label="Mínimo resto (mm)"
+                                value={precios.minRestoVidrio}
+                                onChange={(value) => update("minRestoVidrio", value)}
+                            />
                         </div>
                     </div>
 
                     <div className="space-y-4">
-                        <h3 className="font-semibold text-lg border-b pb-2">Accesorios</h3>
+                        <SectionTitle>Accesorios</SectionTitle>
                         <div className="grid grid-cols-2 gap-4">{renderFields(ACCESORIOS_FIELDS)}</div>
                     </div>
 
                     <div className="border-t pt-6 md:col-span-2">
-                        <h3 className="font-semibold text-lg border-b pb-2 mb-4">Costos Globales del Proyecto</h3>
+                        <SectionTitle className="mb-4">Costos Globales del Proyecto</SectionTitle>
                         <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
                             <PrecioField
                                 id="manoDeObra"
                                 label="Mano de Obra ($/m²)"
                                 value={precios.manoDeObra}
                                 onChange={(value) => update("manoDeObra", value)}
-                                hint={`Se multiplicará por el área total (${costosCalculados?.areaTotal?.toFixed(2) || 0} m²)`}
+                                hint={`Se multiplicará por el área total (${formatArea(costosCalculados?.areaTotal)})`}
                             />
                             <PrecioField
-                                id="costosIndirectos"
-                                label="Costos Indirectos (Global)"
-                                value={precios.costosIndirectos}
-                                onChange={(value) => update("costosIndirectos", value)}
+                                id="imprevistos"
+                                label="Imprevistos (%)"
+                                value={precios.imprevistos}
+                                onChange={(value) => update("imprevistos", value)}
+                                hint="Se aplica sobre el costo de producción (materiales + M.O. + transporte + overhead)"
                             />
                             <PrecioField
                                 id="utilidad"
@@ -133,6 +149,12 @@ export function PreciosTab({ precios, costosCalculados, onUpdatePrecios }: Preci
                         costos={precios.costosAdicionales || []}
                         onChange={(costosAdicionales) => onUpdatePrecios({ ...precios, costosAdicionales })}
                     />
+
+                    {errorCosteo && (
+                        <div className="mt-8 p-4 bg-destructive/10 border border-destructive rounded-lg text-sm text-destructive md:col-span-2">
+                            {errorCosteo} Cambia el tamaño de lámina arriba para poder cotizar este vidrio.
+                        </div>
+                    )}
 
                     {costosCalculados && (
                         <ResumenCostos costos={costosCalculados} utilidadPorcentaje={precios.utilidad} />

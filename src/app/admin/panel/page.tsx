@@ -8,6 +8,7 @@ import { ArrowLeft, LogOut } from "lucide-react"
 import Link from "next/link"
 import { PreciosPanel } from "@/components/admin/PreciosPanel"
 import { DescuentosPanel } from "@/components/admin/DescuentosPanel"
+import { OverheadPanel } from "@/components/admin/OverheadPanel"
 import { isAdminAuthenticated, setAdminAuthenticated } from "@/lib/storage"
 
 export default function AdminPanelPage() {
@@ -52,15 +53,19 @@ export default function AdminPanelPage() {
             </div>
 
             <Tabs defaultValue="precios" className="w-full">
-                <TabsList className="grid w-full max-w-md grid-cols-2">
+                <TabsList className="grid w-full max-w-lg grid-cols-3">
                     <TabsTrigger value="precios">Precios Materiales</TabsTrigger>
                     <TabsTrigger value="descuentos">Descuentos por Sistema</TabsTrigger>
+                    <TabsTrigger value="overhead">Overhead</TabsTrigger>
                 </TabsList>
                 <TabsContent value="precios" className="mt-6">
                     <PreciosPanel />
                 </TabsContent>
                 <TabsContent value="descuentos" className="mt-6">
                     <DescuentosPanel />
+                </TabsContent>
+                <TabsContent value="overhead" className="mt-6">
+                    <OverheadPanel />
                 </TabsContent>
             </Tabs>
         </div>

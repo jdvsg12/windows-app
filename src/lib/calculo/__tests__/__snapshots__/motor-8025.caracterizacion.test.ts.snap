@@ -5476,7 +5476,3 @@ exports[`motor 80-25 · proyecto completo > vidrios totales 1`] = `
   },
 ]
 `;
-
-exports[`optimizarLaminasVidrio · lámina 2500 x 3600 > baseline: numero de láminas usadas 1`] = `7`;
-
-exports[`optimizarLaminasVidrio · lámina 3300 x 2140 > baseline: numero de láminas usadas 1`] = `9`;

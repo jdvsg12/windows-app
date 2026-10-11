@@ -3,6 +3,7 @@
 import { Button } from "@/components/ui/button"
 import { Input } from "@/components/ui/input"
 import { NativeSelect } from "@/components/common/NativeSelect"
+import { SectionTitle } from "@/components/common/SectionTitle"
 import { Plus, X } from "lucide-react"
 import type { CostoAdicional } from "@/lib/types"
 
@@ -27,7 +28,7 @@ export function CostosAdicionalesEditor({ costos, onChange }: CostosAdicionalesE
     return (
         <div className="border-t pt-6 md:col-span-2">
             <div className="flex justify-between items-center mb-4">
-                <h3 className="font-semibold text-lg border-b pb-2">Costos Adicionales</h3>
+                <SectionTitle>Costos Adicionales</SectionTitle>
                 <Button size="sm" variant="outline" onClick={handleAdd}>
                     <Plus className="h-4 w-4 mr-2" />
                     Agregar Costo

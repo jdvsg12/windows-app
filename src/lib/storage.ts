@@ -1,5 +1,5 @@
-import type { Proyecto, ConfiguracionPrecios, DescuentosPorSistema } from "./types"
-import { ProyectoSchema, ConfiguracionEmpresaSchema, ConfiguracionPreciosSchema } from "./schemas"
+import type { Proyecto, ConfiguracionPrecios, ConfiguracionOverhead, DescuentosPorSistema } from "./types"
+import { ProyectoSchema, ConfiguracionEmpresaSchema, ConfiguracionPreciosSchema, ConfiguracionOverheadSchema } from "./schemas"
 import { DESCUNTOS_DEFAULT } from "./types"
 
 const STORAGE_KEYS = {
@@ -10,30 +10,27 @@ const STORAGE_KEYS = {
     CONFIGURACION: "ventanas_configuracion",
     PRECIOS: "ventanas_precios",
     DESCUNTOS: "ventanas_descuentos",
+    OVERHEAD: "ventanas_overhead",
     ADMIN_AUTH: "admin_auth",
 }
 
+// Real company/banking data lives in Vercel env vars (NEXT_PUBLIC_COMPANY_*), not in
+// source: it used to be hardcoded here and shipped in the git history and the bundle
+// for anyone to read. NEXT_PUBLIC_ vars are still inlined into the client bundle (this
+// data has to be readable in the browser to prefill the form), so this only keeps it
+// out of the repo and lets it differ per Vercel environment — it does not by itself
+// hide it from someone with access to the deployed app. See .env.example.
 const CONFIGURACION_DEFAULT = {
-    nombre: "ALUVE",
-    nit: "79717122-6",
-    direccion: "CARRERA 5 47B 91",
-    ciudad: "GIRARDOT CUNDINAMARCA",
-    telefonos: "3112877130 / 3168297417",
-    email: "ALUVE_03@hotmail.com",
-    representante: "Oscar Velandia Malagón",
-    cedula: "79'717.122 de Bta.",
+    nombre: process.env.NEXT_PUBLIC_COMPANY_NOMBRE ?? "",
+    nit: process.env.NEXT_PUBLIC_COMPANY_NIT ?? "",
+    direccion: process.env.NEXT_PUBLIC_COMPANY_DIRECCION ?? "",
+    ciudad: process.env.NEXT_PUBLIC_COMPANY_CIUDAD ?? "",
+    telefonos: process.env.NEXT_PUBLIC_COMPANY_TELEFONOS ?? "",
+    email: process.env.NEXT_PUBLIC_COMPANY_EMAIL ?? "",
+    representante: process.env.NEXT_PUBLIC_COMPANY_REPRESENTANTE ?? "",
+    cedula: process.env.NEXT_PUBLIC_COMPANY_CEDULA ?? "",
     logo: "",
-    datosBancarios: `PARA CONSIGNACIÓN EN EFECTIVO:
-Número de cuenta: En Girardot 24076716113 Cuenta de Ahorros Banco Caja Social
-En Bogotá 24085462744 Cuenta de Ahorros Banco Caja Social
-Titular: Oscar Velandia
-
-BANCOLOMBIA, TITULAR: DIANA MARCELA GUARIN CC. 1070590109 
-CUENTA DE AHORROS 65969220461 DE GIRARDOT.
-
-Nequi y daviplata 3168297417
-
-Nota: En caso de consignación, se debe enviar fotografía al WhatsApp 3168297417`,
+    datosBancarios: process.env.NEXT_PUBLIC_COMPANY_DATOS_BANCARIOS ?? "",
 }
 
 const PRECIOS_DEFAULT: ConfiguracionPrecios = {
@@ -51,13 +48,28 @@ const PRECIOS_DEFAULT: ConfiguracionPrecios = {
     precioTornillo10mm: 600,
     precioEmpaque: 3000,
     precioVidrioLamina: 180000,
+    preciosVidrio: {},
+    precioSandblasting: 0,
+    recargosColorAluminio: {},
     tamanoLamina: "2500x3600",
+    kerfVidrio: 0,
+    minRestoVidrio: 200,
     manoDeObra: 30,
-    transporte: 50000,
+    imprevistos: 0,
     utilidad: 20,
-    otros: 0,
-    costosIndirectos: 0,
     costosAdicionales: [],
+}
+
+// Servicios conocidos hoy; arriendo/herramienta/admin quedan listos en 0 hasta que se
+// definan (modelo de costeo D8, tarea F3.2).
+const OVERHEAD_DEFAULT: ConfiguracionOverhead = {
+    servicioLuz: 300000,
+    servicioAgua: 180000,
+    servicioInternet: 80000,
+    servicioGas: 40000,
+    arriendo: 0,
+    herramienta: 0,
+    admin: 0,
 }
 
 function safeGet<T>(key: string, fallback: T, validator?: (data: unknown) => T): T {
@@ -72,12 +84,14 @@ function safeGet<T>(key: string, fallback: T, validator?: (data: unknown) => T):
     }
 }
 
-function safeSet(key: string, value: unknown): void {
-    if (typeof window === "undefined") return
+function safeSet(key: string, value: unknown): boolean {
+    if (typeof window === "undefined") return false
     try {
         localStorage.setItem(key, JSON.stringify(value))
+        return true
     } catch (error) {
         console.error("Error saving to localStorage:", error)
+        return false
     }
 }
 
@@ -94,6 +108,11 @@ function validateConfiguracion(data: unknown) {
 function validatePrecios(data: unknown): ConfiguracionPrecios {
     const result = ConfiguracionPreciosSchema.safeParse(data)
     return result.success ? result.data : PRECIOS_DEFAULT
+}
+
+function validateOverhead(data: unknown): ConfiguracionOverhead {
+    const result = ConfiguracionOverheadSchema.safeParse(data)
+    return result.success ? result.data : OVERHEAD_DEFAULT
 }
 
 import { z } from "zod"
@@ -143,6 +162,8 @@ export const crearProyecto = (nombre: string, cliente?: string, direccion?: stri
         direccion: direccion || "",
         fechaCreacion: new Date().toISOString(),
         ventanas: [],
+        duracionMeses: 1,
+        transporte: 0,
     }
     proyectos.push(nuevoProyecto)
     guardarProyectos(proyectos)
@@ -186,8 +207,14 @@ export const obtenerPrecios = (): ConfiguracionPrecios =>
 export const guardarPrecios = (precios: ConfiguracionPrecios) => 
     safeSet(STORAGE_KEYS.PRECIOS, precios)
 
-export const obtenerDescuentos = (): DescuentosPorSistema => 
+export const obtenerDescuentos = (): DescuentosPorSistema =>
     safeGet(STORAGE_KEYS.DESCUNTOS, DESCUNTOS_DEFAULT)
 
-export const guardarDescuentos = (descuentos: DescuentosPorSistema) => 
+export const guardarDescuentos = (descuentos: DescuentosPorSistema) =>
     safeSet(STORAGE_KEYS.DESCUNTOS, descuentos)
+
+export const obtenerOverhead = (): ConfiguracionOverhead =>
+    safeGet(STORAGE_KEYS.OVERHEAD, OVERHEAD_DEFAULT, validateOverhead)
+
+export const guardarOverhead = (overhead: ConfiguracionOverhead) =>
+    safeSet(STORAGE_KEYS.OVERHEAD, overhead)

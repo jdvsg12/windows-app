@@ -1,5 +1,6 @@
 // lib/pdf-generatos.ts - Generador de PDF sin dependencias de oklch
-import type { Proyecto, ConfiguracionEmpresa, CostosCalculadosCotizador } from "./types"
+import { formatArea, formatCount, formatCurrency } from "./format"
+import { getTipoVentanaLabel, type Proyecto, type ConfiguracionEmpresa, type CostosCalculadosCotizador } from "./types"
 import { PAPER } from "./design/tokens"
 
 export interface PDFOptions {
@@ -131,17 +132,17 @@ function generarHTMLParaPDF(
                             const valorVentana = costos?.valoresPorVentana.find((v) => v.id === ventana.id)
                             return `<tr>
                                 <td style="border: 1px solid ${PAPER.regla}; padding: 8px; color: ${PAPER.tinta};">${ventana.nombre}</td>
-                                <td style="border: 1px solid ${PAPER.regla}; padding: 8px; color: ${PAPER.tinta};">${ventana.tipoVentana === "2hojas" ? "2 Hojas Normal" : ventana.tipoVentana === "2hojas_mixto" ? "1 Móvil + 1 Fija" : ventana.tipoVentana}</td>
-                                ${mostrarMedidas ? `<td style="border: 1px solid ${PAPER.regla}; padding: 8px; color: ${PAPER.tinta};">${ventana.ancho}</td><td style="border: 1px solid ${PAPER.regla}; padding: 8px; color: ${PAPER.tinta};">${ventana.alto}</td><td style="border: 1px solid ${PAPER.regla}; padding: 8px; text-align: right; color: ${PAPER.tinta};">${valorVentana?.area.toFixed(2) || "0.00"}</td>` : ""}
-                                ${mostrarValores && costos ? `<td style="border: 1px solid ${PAPER.regla}; padding: 8px; text-align: right; color: ${PAPER.tinta};">$${(valorVentana?.valor || 0).toLocaleString("es-CO", { maximumFractionDigits: 0 })}</td>` : ""}
+                                <td style="border: 1px solid ${PAPER.regla}; padding: 8px; color: ${PAPER.tinta};">${getTipoVentanaLabel(ventana.tipoVentana)}</td>
+                                ${mostrarMedidas ? `<td style="border: 1px solid ${PAPER.regla}; padding: 8px; color: ${PAPER.tinta};">${ventana.ancho}</td><td style="border: 1px solid ${PAPER.regla}; padding: 8px; color: ${PAPER.tinta};">${ventana.alto}</td><td style="border: 1px solid ${PAPER.regla}; padding: 8px; text-align: right; color: ${PAPER.tinta};">${formatCount(valorVentana?.area, 2)}</td>` : ""}
+                                ${mostrarValores && costos ? `<td style="border: 1px solid ${PAPER.regla}; padding: 8px; text-align: right; color: ${PAPER.tinta};">${formatCurrency(valorVentana?.valor)}</td>` : ""}
                             </tr>`
                         }).join("")}
                     </tbody>
                 </table>
                 <div style="margin-top: 16px; color: ${PAPER.tinta};">
                     <p style="font-weight: bold; color: ${PAPER.tinta}; margin: 0 0 4px 0;">Total de ventanas: ${proyecto.ventanas.length}</p>
-                    ${mostrarMedidas && costos ? `<p style="margin-top: 4px; color: ${PAPER.tinta}; margin: 4px 0 0 0;">Área total: ${costos.areaTotal.toFixed(2)} m²</p>` : ""}
-                    ${mostrarValores && costos ? `<p style="margin-top: 8px; font-size: 18px; font-weight: bold; color: ${PAPER.tinta}; margin: 8px 0 0 0;">VALOR TOTAL: $${costos.total.toLocaleString("es-CO", { maximumFractionDigits: 0 })}</p>` : ""}
+                    ${mostrarMedidas && costos ? `<p style="margin-top: 4px; color: ${PAPER.tinta}; margin: 4px 0 0 0;">Área total: ${formatArea(costos.areaTotal)}</p>` : ""}
+                    ${mostrarValores && costos ? `<p style="margin-top: 8px; font-size: 18px; font-weight: bold; color: ${PAPER.tinta}; margin: 8px 0 0 0;">VALOR TOTAL: ${formatCurrency(costos.total)}</p>` : ""}
                 </div>
             </div>
             <div style="margin-bottom: 24px; color: ${PAPER.tinta};">

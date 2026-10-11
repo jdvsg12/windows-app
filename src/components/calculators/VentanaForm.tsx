@@ -6,12 +6,15 @@ import { zodResolver } from "@hookform/resolvers/zod"
 import { Plus, Save, X } from "lucide-react"
 
 import { Button } from "@/components/ui/button"
+import { Checkbox } from "@/components/ui/checkbox"
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card"
 import { Form, FormControl, FormField, FormItem, FormLabel, FormMessage } from "@/components/ui/form"
 import { Input } from "@/components/ui/input"
 import { NativeSelect } from "@/components/common/NativeSelect"
 import { VentanaFormSchema, type VentanaFormValues } from "@/lib/schemas"
-import { opcionesSistema, opcionesTipo, sistemaParaVentanaNueva, type Ventana } from "@/lib/types"
+import { opcionesSistema, sistemaParaVentanaNueva } from "@/lib/calculo/registro"
+import { opcionesTipo, tipoParaFormulario, type Ventana } from "@/lib/types"
+import { VentanaEspecificacionesFields } from "./VentanaEspecificacionesFields"
 
 interface VentanaFormProps {
     editingVentana: Ventana | null
@@ -25,14 +28,40 @@ const EMPTY_VALUES: VentanaFormValues = {
     alto: "",
     tipoVentana: "2hojas",
     sistema: "8025",
+    // Two leaves default to 1 movable + 1 fixed; "both movable" is an opt-in.
+    ambasMoviles: false,
+    colorAluminio: "natural",
+    cerradura: "impacto",
+    rodachina: "plastica",
+    calibreVidrio: "4",
+    colorVidrio: "incoloro",
+    sandblasting: false,
 }
 
 const toFormValues = (ventana: Ventana): VentanaFormValues => ({
     nombre: ventana.nombre,
     ancho: ventana.ancho.toString(),
     alto: ventana.alto.toString(),
-    tipoVentana: ventana.tipoVentana,
+    ...tipoParaFormulario(ventana.tipoVentana),
     sistema: ventana.sistema ?? EMPTY_VALUES.sistema,
+    colorAluminio: ventana.colorAluminio ?? EMPTY_VALUES.colorAluminio,
+    cerradura: ventana.cerradura ?? EMPTY_VALUES.cerradura,
+    rodachina: ventana.rodachina ?? EMPTY_VALUES.rodachina,
+    calibreVidrio: ventana.calibreVidrio ? String(ventana.calibreVidrio) as VentanaFormValues["calibreVidrio"] : EMPTY_VALUES.calibreVidrio,
+    colorVidrio: ventana.colorVidrio ?? EMPTY_VALUES.colorVidrio,
+    sandblasting: ventana.sandblasting ?? EMPTY_VALUES.sandblasting,
+})
+
+// Keep system and specs: users usually enter several windows with the same system and finishes in a row.
+const valoresParaSiguiente = (actual: VentanaFormValues): VentanaFormValues => ({
+    ...EMPTY_VALUES,
+    sistema: sistemaParaVentanaNueva(actual.sistema),
+    colorAluminio: actual.colorAluminio,
+    cerradura: actual.cerradura,
+    rodachina: actual.rodachina,
+    calibreVidrio: actual.calibreVidrio,
+    colorVidrio: actual.colorVidrio,
+    sandblasting: actual.sandblasting,
 })
 
 export function VentanaForm({ editingVentana, onSubmit, onCancelEdit }: VentanaFormProps) {
@@ -41,7 +70,9 @@ export function VentanaForm({ editingVentana, onSubmit, onCancelEdit }: VentanaF
         resolver: zodResolver(VentanaFormSchema),
         defaultValues: EMPTY_VALUES,
     })
-    const { reset, setFocus, getValues } = form
+    const { reset, setFocus, getValues, watch } = form
+    const esDosHojas = watch("tipoVentana") === "2hojas"
+    const tipoEditando = editingVentana ? tipoParaFormulario(editingVentana.tipoVentana).tipoVentana : undefined
 
     // Editing starts from a card that may be far below the form: bring the form into view and focus it.
     useEffect(() => {
@@ -53,13 +84,12 @@ export function VentanaForm({ editingVentana, onSubmit, onCancelEdit }: VentanaF
 
     const handleValidSubmit = (values: VentanaFormValues) => {
         onSubmit(values)
-        // Keep the chosen system: users usually enter several windows of the same system in a row.
-        reset({ ...EMPTY_VALUES, sistema: sistemaParaVentanaNueva(getValues("sistema")) })
+        reset(valoresParaSiguiente(values))
         setFocus("nombre")
     }
 
     const handleCancel = () => {
-        reset({ ...EMPTY_VALUES, sistema: sistemaParaVentanaNueva(getValues("sistema")) })
+        reset(valoresParaSiguiente(getValues()))
         onCancelEdit()
     }
 
@@ -111,25 +141,44 @@ export function VentanaForm({ editingVentana, onSubmit, onCancelEdit }: VentanaF
                                     </FormItem>
                                 )}
                             />
-                            <FormField
-                                control={form.control}
-                                name="tipoVentana"
-                                render={({ field }) => (
-                                    <FormItem>
-                                        <FormLabel>Tipo</FormLabel>
-                                        <FormControl>
-                                            <NativeSelect {...field}>
-                                                {opcionesTipo(editingVentana?.tipoVentana).map(({ value, label, disabled }) => (
-                                                    <option key={value} value={value} disabled={disabled}>
-                                                        {label}
-                                                    </option>
-                                                ))}
-                                            </NativeSelect>
-                                        </FormControl>
-                                        <FormMessage />
-                                    </FormItem>
+                            <div className="space-y-2">
+                                <FormField
+                                    control={form.control}
+                                    name="tipoVentana"
+                                    render={({ field }) => (
+                                        <FormItem>
+                                            <FormLabel>Tipo</FormLabel>
+                                            <FormControl>
+                                                <NativeSelect {...field}>
+                                                    {opcionesTipo(tipoEditando).map(({ value, label, disabled }) => (
+                                                        <option key={value} value={value} disabled={disabled}>
+                                                            {label}
+                                                        </option>
+                                                    ))}
+                                                </NativeSelect>
+                                            </FormControl>
+                                            <FormMessage />
+                                        </FormItem>
+                                    )}
+                                />
+                                {esDosHojas && (
+                                    <FormField
+                                        control={form.control}
+                                        name="ambasMoviles"
+                                        render={({ field }) => (
+                                            <FormItem className="flex flex-row items-center gap-2">
+                                                <FormControl>
+                                                    <Checkbox
+                                                        checked={field.value}
+                                                        onCheckedChange={(checked) => field.onChange(checked === true)}
+                                                    />
+                                                </FormControl>
+                                                <FormLabel className="font-normal">Ambas hojas móviles</FormLabel>
+                                            </FormItem>
+                                        )}
+                                    />
                                 )}
-                            />
+                            </div>
                             <FormField
                                 control={form.control}
                                 name="sistema"
@@ -149,6 +198,10 @@ export function VentanaForm({ editingVentana, onSubmit, onCancelEdit }: VentanaF
                                     </FormItem>
                                 )}
                             />
+                        </div>
+                        <div className="space-y-2">
+                            <h4 className="text-sm font-medium text-muted-foreground">Especificaciones</h4>
+                            <VentanaEspecificacionesFields control={form.control} />
                         </div>
                         <div className="flex flex-col-reverse sm:flex-row sm:justify-end gap-2">
                             {editingVentana && (
