@@ -20,3 +20,18 @@ test("Optimización muestra las métricas del vidrio: piezas, área, bordeado, c
     await expect(metricas.getByText("—")).toBeVisible()
     await expect(metricas.getByText("sin la última lámina de cada tipo")).toBeVisible()
 })
+
+test("las piezas de vidrio llevan su código V#-F#/M# y la ventana muestra su número", async ({ page }) => {
+    await crearProyecto(page, "Obra códigos")
+    await page.getByLabel("Nombre").fill("Sala")
+    await page.getByLabel("Ancho (mm)").fill("2400")
+    await page.getByLabel("Alto (mm)").fill("1500")
+    await page.getByLabel("Tipo").selectOption({ label: "3 Hojas" })
+    await page.getByRole("button", { name: "Agregar ventana" }).click()
+    await expect(page.getByRole("heading", { name: "V1 Sala" })).toBeVisible()
+
+    await page.getByRole("tab", { name: "Optimización" }).click()
+    for (const codigo of ["V1-F1", "V1-M1", "V1-M2"]) {
+        await expect(page.getByText(codigo, { exact: true }).first()).toBeVisible()
+    }
+})

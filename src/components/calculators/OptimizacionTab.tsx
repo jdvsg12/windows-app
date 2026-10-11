@@ -6,7 +6,7 @@ import { NativeSelect } from "@/components/common/NativeSelect"
 import { StatCard } from "@/components/common/StatCard"
 import { PiezaBadge } from "./PiezaBadge"
 import { MetricasVidrioResumen } from "./MetricasVidrioResumen"
-import { ESTILOS_HOJA, obtenerEstiloPerfil, obtenerTipoHoja } from "@/lib/design/piezas"
+import { ESTILOS_HOJA, etiquetaPieza, obtenerEstiloPerfil, obtenerTipoHoja } from "@/lib/design/piezas"
 import { cn } from "@/lib/utils"
 import { formatMeters } from "@/lib/format"
 import { Layers, Ruler, SquareStack } from "lucide-react"
@@ -140,7 +140,7 @@ export function OptimizacionTab({ optimizacion, laminasVidrio, metricasVidrio, e
                                             style={{ width: `${width}px`, height: `${height}px` }}
                                         >
                                             {lamina.vidrios.map((item, i) => {
-                                                const hoja = ESTILOS_HOJA[obtenerTipoHoja(item.vidrio.tipo)]
+                                                const hoja = ESTILOS_HOJA[obtenerTipoHoja(item.vidrio)]
                                                 const left = (item.x / lamina.anchoLamina) * 100
                                                 const top = (item.y / lamina.altoLamina) * 100
                                                 const w = (item.vidrio.ancho / lamina.anchoLamina) * 100
@@ -157,9 +157,9 @@ export function OptimizacionTab({ optimizacion, laminasVidrio, metricasVidrio, e
                                                             fontSize: Math.min(w, h) > 8 ? "10px" : "0",
                                                             lineHeight: 1.2,
                                                         }}
-                                                        title={`${item.vidrio.ventana} - ${item.vidrio.tipo}\n${item.vidrio.ancho.toFixed(0)}×${item.vidrio.alto.toFixed(0)} mm${item.rotado ? " (rotado)" : ""}`}
+                                                        title={`${item.vidrio.codigo ? `${item.vidrio.codigo} · ` : ""}${item.vidrio.ventana} - ${item.vidrio.tipo}\n${item.vidrio.ancho.toFixed(0)}×${item.vidrio.alto.toFixed(0)} mm${item.rotado ? " (rotado)" : ""}`}
                                                     >
-                                                        <span className="truncate w-full leading-tight font-semibold">#{i + 1} {item.vidrio.ventana}</span>
+                                                        <span className="truncate w-full leading-tight font-semibold">{etiquetaPieza(item.vidrio)}</span>
                                                         <span className="truncate w-full leading-tight">
                                                             {item.vidrio.ancho.toFixed(0)}×{item.vidrio.alto.toFixed(0)}
                                                             {item.rotado && <span className="ml-0.5">↻</span>}
@@ -193,12 +193,13 @@ export function OptimizacionTab({ optimizacion, laminasVidrio, metricasVidrio, e
                                         </div>
                                         <div className="space-y-1">
                                             {lamina.vidrios.map((item, i) => {
-                                                const hoja = ESTILOS_HOJA[obtenerTipoHoja(item.vidrio.tipo)]
+                                                const hoja = ESTILOS_HOJA[obtenerTipoHoja(item.vidrio)]
                                                 return (
                                                     <div key={i} className="flex flex-wrap items-center justify-between gap-x-4 gap-y-1 rounded border bg-card p-2 text-sm">
                                                         <div className="flex min-w-0 items-center gap-2">
                                                             <span className="w-7 shrink-0 text-right font-mono text-caption text-muted-foreground">#{i + 1}</span>
                                                             <PiezaBadge estilo={hoja} />
+                                                            {item.vidrio.codigo && <span className="shrink-0 font-mono font-semibold">{item.vidrio.codigo}</span>}
                                                             <span className="truncate">{item.vidrio.ventana} - {item.vidrio.tipo}</span>
                                                         </div>
                                                         <span className="text-muted-foreground">

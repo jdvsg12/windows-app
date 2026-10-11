@@ -7,6 +7,7 @@ import {
     fusionarLaminasPorTipo,
     fusionarPerfilesPorColor,
 } from "../grupos"
+import { asignarCodigos } from "../codigos"
 import { calcularAccesorios, calcularVidrios, optimizarCortes } from "../motor-8025"
 import { calcularPlanCorte, type EntradaPlanCorte } from "../plan"
 import { calcularMetricasVidrio, optimizarLaminasVidrio } from "../vidrio"
@@ -22,7 +23,8 @@ const mezcla: Ventana[] = [
 
 const precios: EntradaPlanCorte["precios"] = { tamanoLamina: "2440x3660", kerfVidrio: 0, minRestoVidrio: 200 }
 
-// Lo que useVentanas calculaba con sus useMemo antes de AWA-20, copiado tal cual.
+// Lo que useVentanas calculaba con sus useMemo antes de AWA-20, copiado tal cual
+// (más los códigos de pieza que agregó AWA-23).
 function planComoAntes(ventanas: Ventana[]) {
     const descuentos = DESCUNTOS_DEFAULT
     const optimizacion = fusionarPerfilesPorColor(
@@ -34,7 +36,7 @@ function planComoAntes(ventanas: Ventana[]) {
     const accesorios = calcularAccesorios(ventanas, descuentos)
     const vidriosPorTipo = agruparPorTipoVidrio(ventanas).map(({ etiqueta, ventanas: grupo }) => ({
         etiqueta,
-        vidrios: etiquetarVidrios(calcularVidrios(grupo, descuentos), etiqueta),
+        vidrios: etiquetarVidrios(asignarCodigos(calcularVidrios(grupo, descuentos), ventanas), etiqueta),
     }))
     const vidrios = vidriosPorTipo.flatMap((grupo) => grupo.vidrios)
     const { ancho: laminaAncho, alto: laminaAlto } = TAMANOS_LAMINA[precios.tamanoLamina]

@@ -201,8 +201,19 @@ export type ConfiguracionOverhead = z.infer<typeof ConfiguracionOverheadSchema>
 
 export type CostoAdicional = z.infer<typeof CostoAdicionalSchema>
 
+// Hoja de la ventana a la que va una pieza de vidrio. numero cuenta por posición física
+// desde la hoja fija (F1, M1, M2…); la cerradura va en la última móvil.
+export interface HojaVidrio {
+    tipo: "fija" | "movil"
+    numero: number
+    cerradura: boolean
+}
+
 export interface VidrioCorte {
     ventana: string
+    ventanaId?: string
+    hoja?: HojaVidrio
+    codigo?: string // "V3-M1": ventana 3 del proyecto, hoja móvil 1
     tipo: string
     ancho: number // mm
     alto: number // mm

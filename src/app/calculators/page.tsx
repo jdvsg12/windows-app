@@ -61,8 +61,8 @@ function CalculadorPage() {
     const exportarExcel = useCallback(() => {
         if (!ventanas.length || !proyecto) return
         const wb = XLSX.utils.book_new()
-        const ws1 = XLSX.utils.json_to_sheet(ventanas.map((v) => ({
-            Nombre: v.nombre, "Ancho (mm)": v.ancho, "Alto (mm)": v.alto,
+        const ws1 = XLSX.utils.json_to_sheet(ventanas.map((v, i) => ({
+            Código: `V${i + 1}`, Nombre: v.nombre, "Ancho (mm)": v.ancho, "Alto (mm)": v.alto,
             Tipo: getTipoVentanaLabel(v.tipoVentana),
             "Color aluminio": v.colorAluminio ? getColorAluminioLabel(v.colorAluminio) : "",
             Cerradura: v.cerradura ? getCerraduraLabel(v.cerradura) : "",
