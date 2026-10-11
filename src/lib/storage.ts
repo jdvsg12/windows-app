@@ -1,5 +1,5 @@
 import type { Proyecto, ConfiguracionPrecios, ConfiguracionOverhead, DescuentosPorSistema } from "./types"
-import { ProyectoSchema, ConfiguracionEmpresaSchema, ConfiguracionPreciosSchema, ConfiguracionOverheadSchema } from "./schemas"
+import { ProyectoSchema, ContenidoCotizacionSchema, ConfiguracionEmpresaSchema, ConfiguracionPreciosSchema, ConfiguracionOverheadSchema } from "./schemas"
 import { DESCUNTOS_DEFAULT } from "./types"
 
 const STORAGE_KEYS = {
@@ -164,6 +164,7 @@ export const crearProyecto = (nombre: string, cliente?: string, direccion?: stri
         ventanas: [],
         duracionMeses: 1,
         transporte: 0,
+        contenidoCotizacion: ContenidoCotizacionSchema.parse({}),
     }
     proyectos.push(nuevoProyecto)
     guardarProyectos(proyectos)

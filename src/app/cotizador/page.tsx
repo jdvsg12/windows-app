@@ -10,8 +10,10 @@ import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs"
 import { ArrowLeft, Download } from "lucide-react"
 import { useProyecto } from "@/hooks/useProyecto"
 import { useCotizador } from "@/hooks/useCotizador"
+import { useContenidoCotizacion } from "@/hooks/useContenidoCotizacion"
 import { generarPDF } from "@/lib/pdf-generatos"
 import { processLogoFile } from "@/lib/logo"
+import { textoAFecha } from "@/lib/contenido-cotizacion"
 import { ConfiguracionTab } from "@/components/cotizador/ConfiguracionTab"
 import { ContenidoTab } from "@/components/cotizador/ContenidoTab"
 import { PreciosTab } from "@/components/cotizador/PreciosTab"
@@ -23,14 +25,11 @@ function CotizadorContent() {
     const searchParams = useSearchParams()
     const proyectoId = searchParams.get("id")
 
-    const { proyecto } = useProyecto(proyectoId)
-    const { config, precios, costosCalculados, errorCosteo, updateConfig, updatePrecios, updateCliente } = useCotizador(proyecto)
+    const { proyecto, update } = useProyecto(proyectoId)
+    const { config, precios, costosCalculados, errorCosteo, updateConfig, updatePrecios } = useCotizador(proyecto)
+    const { form: contenidoForm, valores: contenido, status: contenidoStatus } = useContenidoCotizacion(proyecto, update)
+    const fechaFormateada = contenido.fecha ? format(textoAFecha(contenido.fecha), "PPP", { locale: es }) : ""
 
-    const [fecha, setFecha] = useState<Date>(new Date())
-    const [clienteLocal, setClienteLocal] = useState(proyecto?.cliente || "")
-    const [descripcion, setDescripcion] = useState("")
-    const [mostrarMedidas, setMostrarMedidas] = useState(true)
-    const [mostrarValores, setMostrarValores] = useState(true)
     const [logoError, setLogoError] = useState<string | null>(null)
 
     const handleLogoUpload = useCallback(async (e: React.ChangeEvent<HTMLInputElement>) => {
@@ -47,18 +46,12 @@ function CotizadorContent() {
         updateConfig({ logo: result.dataUrl })
     }, [updateConfig])
 
-    const handleClienteChange = (cliente: string) => {
-        setClienteLocal(cliente)
-        updateCliente(cliente)
-    }
-
     const handleGenerarPDF = async () => {
         if (!proyecto || !config) return
-        const fechaFormateada = format(fecha, "PPP", { locale: es })
-        await generarPDF(proyecto, config, costosCalculados, {
-            mostrarMedidas,
-            mostrarValores,
-            descripcion,
+        await generarPDF({ ...proyecto, cliente: contenido.cliente }, config, costosCalculados, {
+            mostrarMedidas: contenido.mostrarMedidas,
+            mostrarValores: contenido.mostrarValores,
+            descripcion: contenido.descripcion,
             fecha: fechaFormateada,
         })
     }
@@ -104,18 +97,7 @@ function CotizadorContent() {
                 </TabsContent>
 
                 <TabsContent value="contenido">
-                    <ContenidoTab
-                        fecha={fecha}
-                        cliente={clienteLocal}
-                        descripcion={descripcion}
-                        mostrarMedidas={mostrarMedidas}
-                        mostrarValores={mostrarValores}
-                        onFechaChange={setFecha}
-                        onClienteChange={handleClienteChange}
-                        onDescripcionChange={setDescripcion}
-                        onMostrarMedidasChange={setMostrarMedidas}
-                        onMostrarValoresChange={setMostrarValores}
-                    />
+                    <ContenidoTab form={contenidoForm} status={contenidoStatus} />
                 </TabsContent>
 
                 <TabsContent value="precios">
@@ -131,11 +113,11 @@ function CotizadorContent() {
                     <VistaPreviaTab
                         config={config}
                         logo={config.logo || ""}
-                        proyecto={proyecto}
-                        fecha={format(fecha, "PPP", { locale: es })}
-                        descripcion={descripcion}
-                        mostrarMedidas={mostrarMedidas}
-                        mostrarValores={mostrarValores}
+                        proyecto={{ ...proyecto, cliente: contenido.cliente }}
+                        fecha={fechaFormateada}
+                        descripcion={contenido.descripcion}
+                        mostrarMedidas={contenido.mostrarMedidas}
+                        mostrarValores={contenido.mostrarValores}
                         costosCalculados={costosCalculados}
                     />
                 </TabsContent>

@@ -34,6 +34,16 @@ export const VentanaSchema = z.object({
     sandblasting: z.boolean().optional(),
 })
 
+// Lo que el usuario escribe en la pestaña Contenido del cotizador. Todo con .default():
+// los proyectos guardados antes de AWA-16 no tienen este bloque.
+export const ContenidoCotizacionSchema = z.object({
+    // "yyyy-MM-dd"; sin fecha guardada la cotización sale con la fecha del día.
+    fecha: z.string().optional(),
+    descripcion: z.string().default(""),
+    mostrarMedidas: z.boolean().default(true),
+    mostrarValores: z.boolean().default(true),
+})
+
 export const ProyectoSchema = z.object({
     id: z.string(),
     nombre: z.string(),
@@ -46,7 +56,18 @@ export const ProyectoSchema = z.object({
     // fallar la validación y perderse.
     duracionMeses: z.number().positive().default(1),
     transporte: z.number().min(0).default(0),
+    contenidoCotizacion: ContenidoCotizacionSchema.default({}),
 })
+
+export const ContenidoCotizacionFormSchema = z.object({
+    cliente: z.string(),
+    fecha: z.string().regex(/^\d{4}-\d{2}-\d{2}$/),
+    descripcion: z.string(),
+    mostrarMedidas: z.boolean(),
+    mostrarValores: z.boolean(),
+})
+
+export type ContenidoCotizacionFormValues = z.infer<typeof ContenidoCotizacionFormSchema>
 
 export const ConfiguracionEmpresaSchema = z.object({
     nombre: z.string(),
