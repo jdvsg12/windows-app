@@ -11,8 +11,6 @@ import { CreateProjectForm } from "@/components/common/CreateProjectForm"
 import { PageSkeleton } from "@/components/common/PageSkeleton"
 import { FileSpreadsheet, Ruler, Package, Grid3X3, DollarSign } from "lucide-react"
 import * as XLSX from "xlsx"
-import { optimizarCortes } from "@/lib/calculo/motor-8025"
-import { obtenerDescuentos } from "@/lib/storage"
 import { useVentanas } from "@/hooks/useVentanas"
 import { VentanasTab, MaterialesTab, OptimizacionTab, DeleteProjectDialog } from "@/components/calculators"
 import {
@@ -73,8 +71,7 @@ function CalculadorPage() {
             Sandblasting: v.sandblasting ? "Sí" : "No",
         })))
         XLSX.utils.book_append_sheet(wb, ws1, "Ventanas")
-        const opt = optimizarCortes(ventanas, obtenerDescuentos())
-        const ws2 = XLSX.utils.json_to_sheet(Object.entries(opt).map(([tipo, o]) => ({
+        const ws2 = XLSX.utils.json_to_sheet(Object.entries(optimizacion).map(([tipo, o]) => ({
             Perfil: tipo, "Barras de 6m": o.barras.length, "Metros Usados": o.metrosUsados.toFixed(3),
         })))
         XLSX.utils.book_append_sheet(wb, ws2, "Resumen Perfiles")
@@ -86,7 +83,7 @@ function CalculadorPage() {
         link.download = `${proyecto.nombre}_calculo.xlsx`
         link.click()
         URL.revokeObjectURL(url)
-    }, [ventanas, proyecto])
+    }, [ventanas, proyecto, optimizacion])
 
     if (!proyecto) {
         return (

@@ -17,18 +17,18 @@
 // transporte) se inyecta. El overhead siempre asume 1 obra a la vez (ver memoria del
 // proyecto): no hay forma de predecir obras simultáneas, y una es el supuesto
 // conservador.
+import { agruparPorColorAluminio, agruparPorTipoVidrio } from "./grupos"
 import { obtenerMotor, type EntradaCalculo, type MotorReferencia, type SalidaCalculo } from "./registro"
 import { ORDEN_PERFILES } from "./motor-8025"
 import type {
     ClaveVidrio,
-    ColorAluminio,
     Ventana,
     ConfiguracionPrecios,
     ConfiguracionOverhead,
     DescuentosPorSistema,
     CostosCalculadosCotizador,
 } from "@/lib/types"
-import { COLOR_ALUMINIO_POR_DEFECTO, TAMANOS_LAMINA, claveVidrioDeVentana } from "@/lib/types"
+import { TAMANOS_LAMINA } from "@/lib/types"
 
 export interface EntradaCosteo {
     ventanas: readonly Ventana[]
@@ -54,25 +54,16 @@ const PRECIO_POR_PERFIL: Record<(typeof ORDEN_PERFILES)[number], PrecioNumericKe
     "Horizontal Inferior": "precioHorizontalInferior",
 }
 
-function agruparPor<K>(ventanas: readonly Ventana[], clave: (ventana: Ventana) => K): Map<K, Ventana[]> {
-    const grupos = new Map<K, Ventana[]>()
-    for (const ventana of ventanas) {
-        const k = clave(ventana)
-        grupos.set(k, [...(grupos.get(k) ?? []), ventana])
-    }
-    return grupos
-}
-
 // Each group is calculated on its own; with a single group the full output is reused as-is.
-function salidaPorGrupo<K>(
+function salidaPorGrupo<G extends { ventanas: Ventana[] }>(
     motor: MotorReferencia,
     entradaMotor: EntradaCalculo,
     salidaCompleta: SalidaCalculo,
-    grupos: Map<K, Ventana[]>
-): Array<[K, SalidaCalculo]> {
-    return [...grupos].map(([k, ventanasGrupo]) => [
-        k,
-        grupos.size === 1 ? salidaCompleta : motor.calcular({ ...entradaMotor, ventanas: ventanasGrupo }),
+    grupos: G[]
+): Array<[G, SalidaCalculo]> {
+    return grupos.map((grupo) => [
+        grupo,
+        grupos.length === 1 ? salidaCompleta : motor.calcular({ ...entradaMotor, ventanas: grupo.ventanas }),
     ])
 }
 
@@ -92,8 +83,8 @@ function calcularCostoPerfiles(
     salidaCompleta: SalidaCalculo,
     precios: ConfiguracionPrecios
 ): number {
-    const grupos = agruparPor<ColorAluminio>(entradaMotor.ventanas, (v) => v.colorAluminio ?? COLOR_ALUMINIO_POR_DEFECTO)
-    return salidaPorGrupo(motor, entradaMotor, salidaCompleta, grupos).reduce((total, [color, salida]) => {
+    const grupos = agruparPorColorAluminio(entradaMotor.ventanas)
+    return salidaPorGrupo(motor, entradaMotor, salidaCompleta, grupos).reduce((total, [{ color }, salida]) => {
         const recargo = precios.recargosColorAluminio?.[color] ?? 0
         return total + costoBarras(salida, precios) * (1 + recargo / 100)
     }, 0)
@@ -115,9 +106,9 @@ function calcularCostoVidrio(
     salidaCompleta: SalidaCalculo,
     precios: ConfiguracionPrecios
 ): number {
-    const grupos = agruparPor<ClaveVidrio>(entradaMotor.ventanas, claveVidrioDeVentana)
+    const grupos = agruparPorTipoVidrio(entradaMotor.ventanas)
     const costoLaminas = salidaPorGrupo(motor, entradaMotor, salidaCompleta, grupos).reduce(
-        (total, [clave, salida]) => total + salida.laminasVidrio.length * precioLaminaVidrio(precios, clave),
+        (total, [{ clave }, salida]) => total + salida.laminasVidrio.length * precioLaminaVidrio(precios, clave),
         0
     )
 
