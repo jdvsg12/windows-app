@@ -54,8 +54,10 @@ export const ProyectoSchema = z.object({
     // .default() en vez de required: los proyectos guardados antes de F3.2 no tienen
     // estos campos, y deben seguir cargando (con estos valores neutros) en vez de
     // fallar la validación y perderse.
-    duracionMeses: z.number().positive().default(1),
-    transporte: z.number().min(0).default(0),
+    // .catch(): un valor inválido ya guardado (null por un NaN del formulario) no puede
+    // invalidar el arreglo entero de proyectos y hacerlos desaparecer todos.
+    duracionMeses: z.number().positive().default(1).catch(1),
+    transporte: z.number().min(0).default(0).catch(0),
     contenidoCotizacion: ContenidoCotizacionSchema.default({}),
 })
 
