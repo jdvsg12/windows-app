@@ -1,8 +1,8 @@
 "use client"
 
-import { Input } from "@/components/ui/input"
 import { Label } from "@/components/ui/label"
 import { DollarSign } from "lucide-react"
+import { NumberInput } from "@/components/common/NumberInput"
 
 interface PrecioFieldProps {
     id: string
@@ -18,13 +18,7 @@ export function PrecioField({ id, label, value, onChange, hint }: PrecioFieldPro
             <Label htmlFor={id}>{label}</Label>
             <div className="relative">
                 <DollarSign className="absolute left-2 top-2.5 h-4 w-4 text-muted-foreground" />
-                <Input
-                    id={id}
-                    type="number"
-                    className="pl-8"
-                    value={value ?? 0}
-                    onChange={(e) => onChange(Number(e.target.value))}
-                />
+                <NumberInput id={id} className="pl-8" value={value ?? 0} onValueChange={onChange} />
             </div>
             {hint && <p className="text-xs text-muted-foreground">{hint}</p>}
         </div>

@@ -1,6 +1,6 @@
 "use client"
 
-import { Input } from "@/components/ui/input"
+import { NumberInput } from "@/components/common/NumberInput"
 import { Label } from "@/components/ui/label"
 
 interface NumberFieldProps {
@@ -16,13 +16,7 @@ export function NumberField({ id, label, value, onChange, step, hint }: NumberFi
     return (
         <div className="space-y-2">
             <Label htmlFor={id}>{label}</Label>
-            <Input
-                id={id}
-                type="number"
-                step={step}
-                value={value}
-                onChange={(e) => onChange(Number(e.target.value))}
-            />
+            <NumberInput id={id} step={step} value={value} onValueChange={onChange} />
             {hint && <p className="text-xs text-muted-foreground">{hint}</p>}
         </div>
     )
