@@ -115,12 +115,6 @@ export type ClaveVidrio = `${ColorVidrio}-${CalibreVidrio}`
 
 export const claveVidrio = (color: ColorVidrio, calibre: CalibreVidrio): ClaveVidrio => `${color}-${calibre}`
 
-export const claveVidrioDeVentana = (ventana: Ventana): ClaveVidrio =>
-    claveVidrio(
-        ventana.colorVidrio ?? VIDRIO_POR_DEFECTO.colorVidrio,
-        ventana.calibreVidrio ?? VIDRIO_POR_DEFECTO.calibreVidrio
-    )
-
 const labelDe = <T,>(opciones: readonly { value: T; label: string }[], value: T): string =>
     opciones.find((item) => item.value === value)?.label ?? String(value)
 
@@ -262,6 +256,7 @@ export interface VidrioCorte {
     ancho: number // mm
     alto: number // mm
     area: number // m²
+    grupo?: string // tipo de vidrio (p. ej. "Bronce 5 mm") cuando el proyecto se agrupa por vidrio
 }
 
 export interface RestoLamina {
@@ -283,6 +278,7 @@ export interface LaminaVidrio {
         rotado: boolean
     }>
     restos: RestoLamina[]
+    grupo?: string // tipo de vidrio de todas las piezas de esta lámina
     areaUsada: number
     areaSobrante: number
 }

@@ -37,6 +37,7 @@ export function MaterialesTab({ accesorios, vidrios }: Props) {
                                     <p className="font-medium">{v.ventana} - {v.tipo}</p>
                                     <p className="text-sm text-muted-foreground">
                                         {v.ancho.toFixed(0)} × {v.alto.toFixed(0)} mm
+                                        {v.grupo && ` · ${v.grupo}`}
                                     </p>
                                 </div>
                                 <div className="text-right">
