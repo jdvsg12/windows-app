@@ -18,11 +18,7 @@ import { VentanaForm } from "./VentanaForm"
 import { z } from "zod"
 import type { VentanaFormValues } from "@/lib/schemas"
 import {
-    getCalibreVidrioLabel,
-    getCerraduraLabel,
-    getColorAluminioLabel,
-    getColorVidrioLabel,
-    getRodachinaLabel,
+    especificacionesVentana,
     getTipoVentanaLabel,
     tipoDesdeFormulario,
     type CalibreVidrio,
@@ -44,16 +40,6 @@ const ventanaDesdeFormulario = ({ ambasMoviles, ancho, alto, tipoVentana, calibr
     tipoVentana: tipoDesdeFormulario(tipoVentana, ambasMoviles),
     calibreVidrio: Number(calibreVidrio) as CalibreVidrio,
 })
-
-const especificacionesDe = (ventana: Ventana): string[] =>
-    [
-        ventana.colorAluminio && `Aluminio ${getColorAluminioLabel(ventana.colorAluminio)}`,
-        ventana.cerradura && `Cerradura ${getCerraduraLabel(ventana.cerradura)}`,
-        ventana.rodachina && `Rodachina ${getRodachinaLabel(ventana.rodachina)}`,
-        ventana.calibreVidrio && `Vidrio ${getCalibreVidrioLabel(ventana.calibreVidrio)}`,
-        ventana.colorVidrio && getColorVidrioLabel(ventana.colorVidrio),
-        ventana.sandblasting && "Sandblasting",
-    ].filter((item): item is string => Boolean(item))
 
 interface VentanasTabProps {
     proyecto: Proyecto
@@ -185,7 +171,7 @@ export function VentanasTab({ proyecto, ventanas, onAgregar, onEliminar, onActua
                                     Sistema: {ventana.sistema || "5020"}
                                 </p>
                                 <p className="text-sm text-muted-foreground mb-3">
-                                    {especificacionesDe(ventana).join(" · ") || "Sin especificaciones"}
+                                    {especificacionesVentana(ventana).join(" · ") || "Sin especificaciones"}
                                 </p>
                                 <div className="flex gap-2">
                                     <Button

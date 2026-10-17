@@ -134,6 +134,17 @@ export const getRodachinaLabel = (value: TipoRodachina): string => labelDe(RODAC
 export const getCalibreVidrioLabel = (value: CalibreVidrio): string => labelDe(CALIBRES_VIDRIO, value)
 export const getColorVidrioLabel = (value: ColorVidrio): string => labelDe(COLORES_VIDRIO, value)
 
+// Ventanas guardadas antes de las especificaciones no tienen estos campos: se omiten, no se rellenan.
+export const especificacionesVentana = (ventana: Ventana): string[] =>
+    [
+        ventana.colorAluminio && `Aluminio ${getColorAluminioLabel(ventana.colorAluminio)}`,
+        ventana.cerradura && `Cerradura ${getCerraduraLabel(ventana.cerradura)}`,
+        ventana.rodachina && `Rodachina ${getRodachinaLabel(ventana.rodachina)}`,
+        ventana.calibreVidrio && `Vidrio ${getCalibreVidrioLabel(ventana.calibreVidrio)}`,
+        ventana.colorVidrio && getColorVidrioLabel(ventana.colorVidrio),
+        ventana.sandblasting && "Sandblasting",
+    ].filter((item): item is string => Boolean(item))
+
 export const SISTEMAS_VENTANA: readonly SistemaVentana[] = ["5020", "744", "8025", "7038"]
 
 // Which systems are offered to new windows now lives in lib/calculo/registro.ts (SISTEMAS_HABILITADOS,
