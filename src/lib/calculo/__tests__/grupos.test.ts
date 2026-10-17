@@ -68,7 +68,7 @@ describe("la pestaña y la cotización cuentan el mismo material", () => {
         precioCabezal: 1, precioSillar: 1, precioJamba: 1, precioEnganche: 1, precioTraslape: 1,
         precioHorizontalSuperior: 1, precioHorizontalInferior: 1, precioGuia: 0, precioRodachina: 0,
         precioCerradura: 0, precioTornillo8mm: 0, precioTornillo10mm: 0, precioEmpaque: 0,
-        precioVidrioLamina: 1, preciosVidrio: {}, precioSandblasting: 0, recargosColorAluminio: {},
+        precioVidrioLamina: 1, preciosVidrio: {}, precioSandblasting: 0, recargosColorAluminio: {}, preciosCerradura: {}, preciosRodachina: {},
         tamanoLamina: "2500x3600", kerfVidrio: 0, minRestoVidrio: 200, manoDeObra: 0, imprevistos: 0,
         utilidad: 0, costosAdicionales: [],
     } satisfies ConfiguracionPrecios

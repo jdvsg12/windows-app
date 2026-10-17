@@ -70,4 +70,32 @@ test.describe("Cotizador", () => {
         await manoDeObra.blur()
         await expect(manoDeObra).toHaveValue(anterior)
     })
+
+    test("Precios por tipo: la cerradura de la ventana se cobra al precio de su tipo y se guarda", async ({ page }) => {
+        await page.getByRole("tab", { name: "Precios" }).click()
+        // La ventana se creó con la cerradura por defecto (impacto): 1 cerradura.
+        const materiales = page.getByText("Materiales (Perfiles + Accesorios + Vidrio + Empaque):").locator("xpath=following-sibling::span[1]")
+        const aNumero = (texto: string) => Number(texto.replace(/[^0-9]/g, ""))
+        const textoAntes = await materiales.innerText()
+        const antes = aNumero(textoAntes)
+
+        const general = aNumero(await page.getByLabel("Cerradura (general)").inputValue())
+        await expect(page.getByRole("group", { name: "Cerradura por tipo" })).toBeVisible()
+        await page.getByLabel("Impacto").fill(String(general + 10000))
+        await expect(materiales).not.toHaveText(textoAntes)
+        expect(aNumero(await materiales.innerText()) - antes).toBe(10000)
+
+        await page.reload()
+        await page.getByRole("tab", { name: "Precios" }).click()
+        await expect(page.getByLabel("Impacto")).toHaveValue(String(general + 10000))
+    })
+
+    test("Precios muestra lo que depende de cada ventana: color de aluminio, vidrio por tipo y sandblasting", async ({ page }) => {
+        await page.getByRole("tab", { name: "Precios" }).click()
+        await expect(page.getByText("Precios según lo elegido en cada ventana")).toBeVisible()
+        await expect(page.getByLabel("Negro (%)")).toBeVisible()
+        await expect(page.getByLabel("Sandblasting (por m²)")).toBeVisible()
+        await expect(page.getByLabel("Precio lámina Bronce 5 mm")).toBeVisible()
+        await expect(page.getByRole("group", { name: "Rodachina por tipo" })).toBeVisible()
+    })
 })

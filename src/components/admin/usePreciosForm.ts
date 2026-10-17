@@ -1,7 +1,15 @@
 import { useEffect, useState } from "react"
 
 import { obtenerPrecios, guardarPrecios } from "@/lib/storage"
-import type { ClaveVidrio, ColorAluminio, ConfiguracionPrecios, TamanoLamina } from "@/lib/types"
+import { conPrecioOpcional } from "@/lib/precios"
+import type {
+    ClaveVidrio,
+    ColorAluminio,
+    ConfiguracionPrecios,
+    TamanoLamina,
+    TipoCerradura,
+    TipoRodachina,
+} from "@/lib/types"
 import { useSaveFeedback } from "./useSaveFeedback"
 
 export interface PreciosFormData {
@@ -22,6 +30,8 @@ export interface PreciosFormData {
     preciosVidrio: ConfiguracionPrecios["preciosVidrio"]
     precioSandblasting: number
     recargosColorAluminio: ConfiguracionPrecios["recargosColorAluminio"]
+    preciosCerradura: ConfiguracionPrecios["preciosCerradura"]
+    preciosRodachina: ConfiguracionPrecios["preciosRodachina"]
     tamanoLamina: TamanoLamina
     kerfVidrio: number
     minRestoVidrio: number
@@ -48,6 +58,8 @@ const PRECIOS_DEFAULT: PreciosFormData = {
     preciosVidrio: {},
     precioSandblasting: 0,
     recargosColorAluminio: {},
+    preciosCerradura: {},
+    preciosRodachina: {},
     tamanoLamina: "2500x3600",
     kerfVidrio: 0,
     minRestoVidrio: 200,
@@ -74,6 +86,8 @@ const toFormData = (precios: ConfiguracionPrecios): PreciosFormData => ({
     preciosVidrio: precios.preciosVidrio ?? {},
     precioSandblasting: precios.precioSandblasting ?? 0,
     recargosColorAluminio: precios.recargosColorAluminio ?? {},
+    preciosCerradura: precios.preciosCerradura ?? {},
+    preciosRodachina: precios.preciosRodachina ?? {},
     tamanoLamina: precios.tamanoLamina || PRECIOS_DEFAULT.tamanoLamina,
     kerfVidrio: precios.kerfVidrio,
     minRestoVidrio: precios.minRestoVidrio,
@@ -97,12 +111,15 @@ export function usePreciosForm() {
     }
 
     const handlePrecioVidrioChange = (clave: ClaveVidrio, value: number | undefined) => {
-        setFormData((prev) => {
-            const preciosVidrio = { ...prev.preciosVidrio }
-            if (value === undefined) delete preciosVidrio[clave]
-            else preciosVidrio[clave] = value
-            return { ...prev, preciosVidrio }
-        })
+        setFormData((prev) => ({ ...prev, preciosVidrio: conPrecioOpcional(prev.preciosVidrio, clave, value) }))
+    }
+
+    const handlePrecioCerraduraChange = (tipo: TipoCerradura, value: number | undefined) => {
+        setFormData((prev) => ({ ...prev, preciosCerradura: conPrecioOpcional(prev.preciosCerradura, tipo, value) }))
+    }
+
+    const handlePrecioRodachinaChange = (tipo: TipoRodachina, value: number | undefined) => {
+        setFormData((prev) => ({ ...prev, preciosRodachina: conPrecioOpcional(prev.preciosRodachina, tipo, value) }))
     }
 
     const handleRecargoColorChange = (color: ColorAluminio, value: number) => {
@@ -118,5 +135,16 @@ export function usePreciosForm() {
 
     const handleReset = () => setFormData(PRECIOS_DEFAULT)
 
-    return { formData, loading, saved, handleChange, handlePrecioVidrioChange, handleRecargoColorChange, handleSave, handleReset }
+    return {
+        formData,
+        loading,
+        saved,
+        handleChange,
+        handlePrecioVidrioChange,
+        handlePrecioCerraduraChange,
+        handlePrecioRodachinaChange,
+        handleRecargoColorChange,
+        handleSave,
+        handleReset,
+    }
 }

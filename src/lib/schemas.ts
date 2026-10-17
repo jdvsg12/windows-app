@@ -113,6 +113,10 @@ export const ConfiguracionPreciosSchema = z.object({
     preciosVidrio: z.record(z.string(), z.number().min(0)).default({}), // por lámina, clave "<color>-<calibre>"
     precioSandblasting: z.number().min(0).default(0), // por m² de vidrio con acabado sandblasting
     recargosColorAluminio: z.record(z.string(), z.number()).default({}), // % sobre el precio base de cada perfil
+    // Precio por tipo de cerradura y de rodachina. Un tipo sin precio propio usa precioCerradura /
+    // precioRodachina, así los precios guardados antes de AWA-28 siguen igual.
+    preciosCerradura: z.record(z.string(), z.number().min(0)).default({}),
+    preciosRodachina: z.record(z.string(), z.number().min(0)).default({}),
     tamanoLamina: z.enum(["2440x3660", "2500x3600", "2440x3050", "2140x3300"]),
     // .default(): precios guardados antes de F3.3 no tienen estos campos (modelo D8/F3.3).
     kerfVidrio: z.number().min(0).default(0), // mm por corte; 0 = vidrio rayado y partido

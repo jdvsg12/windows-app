@@ -2,7 +2,7 @@
 
 import { Card, CardContent } from "@/components/ui/card"
 import { formatArea, formatCount, formatCurrency } from "@/lib/format"
-import { getTipoVentanaLabel, type ConfiguracionEmpresa, type Proyecto, type CostosCalculadosCotizador } from "@/lib/types"
+import { especificacionesVentana, getTipoVentanaLabel, type ConfiguracionEmpresa, type Proyecto, type CostosCalculadosCotizador } from "@/lib/types"
 
 interface Props {
     config: ConfiguracionEmpresa
@@ -81,11 +81,13 @@ export function VistaPreviaTab({
                         <tbody>
                             {proyecto.ventanas.map((ventana) => {
                                 const valorVentana = costosCalculados?.valoresPorVentana?.find((v) => v.id === ventana.id)
+                                const especificaciones = especificacionesVentana(ventana).join(" · ")
                                 return (
                                     <tr key={ventana.id}>
                                         <td className="border border-paper-rule p-2">{ventana.nombre}</td>
                                         <td className="border border-paper-rule p-2">
                                             {getTipoVentanaLabel(ventana.tipoVentana)}
+                                            {especificaciones && <p className="text-xs mt-1">{especificaciones}</p>}
                                         </td>
                                         {mostrarMedidas && (
                                             <>

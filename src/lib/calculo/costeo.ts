@@ -90,6 +90,15 @@ function calcularCostoPerfiles(
     }, 0)
 }
 
+// Precio propio del tipo si lo tiene; si no (o la ventana no tiene tipo), el precio general.
+export function precioPorTipo<T extends string>(
+    precios: Partial<Record<T, number>>,
+    tipo: T | undefined,
+    precioGeneral: number
+): number {
+    return (tipo !== undefined ? precios[tipo] : undefined) ?? precioGeneral
+}
+
 export function precioLaminaVidrio(precios: ConfiguracionPrecios, clave: ClaveVidrio): number {
     const precio = precios.preciosVidrio?.[clave]
     return precio && precio > 0 ? precio : precios.precioVidrioLamina || 0
@@ -146,14 +155,24 @@ export function calcularCosteo(entrada: EntradaCosteo): CostosCalculadosCotizado
     // igual que en lib/design/piezas.ts.
     const costoPerfiles = calcularCostoPerfiles(motor, entradaMotor, salida, precios)
 
+    // Cerraduras y rodachinas al precio del tipo de cada ventana (sin tipo o sin precio propio:
+    // el precio general).
+    const costoCerradurasRodachinas = ventanas.reduce((total, ventana, i) => {
+        const { cerraduras, rodachinas } = salida.accesoriosPorVentana[i]
+        return (
+            total +
+            cerraduras * precioPorTipo(precios.preciosCerradura, ventana.cerradura, precios.precioCerradura) +
+            rodachinas * precioPorTipo(precios.preciosRodachina, ventana.rodachina, precios.precioRodachina)
+        )
+    }, 0)
+
     const costoAccesorios =
-        salida.accesorios.rodachinas * precios.precioRodachina +
+        costoCerradurasRodachinas +
         salida.accesorios.guiasSuperior * precios.precioGuia +
         salida.accesorios.guiasInferior * precios.precioGuia +
         salida.accesorios.tornillosHojas * precios.precioTornillo8mm +
         salida.accesorios.tornillosMarco * precios.precioTornillo8mm +
-        salida.accesorios.tornillosInstalacion * precios.precioTornillo10mm +
-        salida.accesorios.cerraduras * precios.precioCerradura
+        salida.accesorios.tornillosInstalacion * precios.precioTornillo10mm
 
     // El vidrio se compra por lámina entera consumida, no por m² neto (una lámina
     // parcialmente usada igual se compró completa), con el precio de su color y calibre.

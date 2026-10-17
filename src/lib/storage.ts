@@ -51,6 +51,8 @@ const PRECIOS_DEFAULT: ConfiguracionPrecios = {
     preciosVidrio: {},
     precioSandblasting: 0,
     recargosColorAluminio: {},
+    preciosCerradura: {},
+    preciosRodachina: {},
     tamanoLamina: "2500x3600",
     kerfVidrio: 0,
     minRestoVidrio: 200,

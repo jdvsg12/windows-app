@@ -1,6 +1,6 @@
 // lib/pdf-generatos.ts - Generador de PDF sin dependencias de oklch
 import { formatArea, formatCount, formatCurrency } from "./format"
-import { getTipoVentanaLabel, type Proyecto, type ConfiguracionEmpresa, type CostosCalculadosCotizador } from "./types"
+import { especificacionesVentana, getTipoVentanaLabel, type Proyecto, type ConfiguracionEmpresa, type CostosCalculadosCotizador } from "./types"
 import { PAPER } from "./design/tokens"
 
 export interface PDFOptions {
@@ -130,9 +130,10 @@ function generarHTMLParaPDF(
                     <tbody>
                         ${proyecto.ventanas.map((ventana) => {
                             const valorVentana = costos?.valoresPorVentana.find((v) => v.id === ventana.id)
+                            const especificaciones = especificacionesVentana(ventana).join(" · ")
                             return `<tr>
                                 <td style="border: 1px solid ${PAPER.regla}; padding: 8px; color: ${PAPER.tinta};">${ventana.nombre}</td>
-                                <td style="border: 1px solid ${PAPER.regla}; padding: 8px; color: ${PAPER.tinta};">${getTipoVentanaLabel(ventana.tipoVentana)}</td>
+                                <td style="border: 1px solid ${PAPER.regla}; padding: 8px; color: ${PAPER.tinta};">${getTipoVentanaLabel(ventana.tipoVentana)}${especificaciones ? `<p style="font-size: 12px; margin: 4px 0 0 0; color: ${PAPER.tinta};">${especificaciones}</p>` : ""}</td>
                                 ${mostrarMedidas ? `<td style="border: 1px solid ${PAPER.regla}; padding: 8px; color: ${PAPER.tinta};">${ventana.ancho}</td><td style="border: 1px solid ${PAPER.regla}; padding: 8px; color: ${PAPER.tinta};">${ventana.alto}</td><td style="border: 1px solid ${PAPER.regla}; padding: 8px; text-align: right; color: ${PAPER.tinta};">${formatCount(valorVentana?.area, 2)}</td>` : ""}
                                 ${mostrarValores && costos ? `<td style="border: 1px solid ${PAPER.regla}; padding: 8px; text-align: right; color: ${PAPER.tinta};">${formatCurrency(valorVentana?.valor)}</td>` : ""}
                             </tr>`

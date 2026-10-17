@@ -7,6 +7,7 @@ import { SectionTitle } from "@/components/common/SectionTitle"
 import { formatArea } from "@/lib/format"
 import { TAMANOS_LAMINA, type ConfiguracionPrecios, type CostosCalculadosCotizador } from "@/lib/types"
 import { PrecioField } from "./PrecioField"
+import { PreciosPorMaterial } from "./PreciosPorMaterial"
 import { CostosAdicionalesEditor } from "./CostosAdicionalesEditor"
 import { ResumenCostos } from "./ResumenCostos"
 
@@ -37,9 +38,9 @@ const PERFILES_FIELDS: readonly PrecioFieldConfig[] = [
 ]
 
 const ACCESORIOS_FIELDS: readonly PrecioFieldConfig[] = [
-    { key: "precioRodachina", label: "Rodachina" },
+    { key: "precioRodachina", label: "Rodachina (general)" },
     { key: "precioGuia", label: "Guía" },
-    { key: "precioCerradura", label: "Cerradura" },
+    { key: "precioCerradura", label: "Cerradura (general)" },
     { key: "precioTornillo8mm", label: "Tornillo 8mm" },
     { key: "precioTornillo10mm", label: "Tornillo 10mm" },
 ]
@@ -118,6 +119,8 @@ export function PreciosTab({ precios, costosCalculados, errorCosteo, onUpdatePre
                         <SectionTitle>Accesorios</SectionTitle>
                         <div className="grid grid-cols-2 gap-4">{renderFields(ACCESORIOS_FIELDS)}</div>
                     </div>
+
+                    <PreciosPorMaterial precios={precios} onUpdatePrecios={onUpdatePrecios} />
 
                     <div className="border-t pt-6 md:col-span-2">
                         <SectionTitle className="mb-4">Costos Globales del Proyecto</SectionTitle>
