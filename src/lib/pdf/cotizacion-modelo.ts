@@ -1,4 +1,4 @@
-import { format } from "date-fns"
+import { format, isValid } from "date-fns"
 import { es } from "date-fns/locale"
 
 import { textoAFecha } from "../contenido-cotizacion"
@@ -27,10 +27,12 @@ export function armarDocumentoCotizacion({
     contenido,
 }: EntradaDocumentoCotizacion): DocumentoCotizacion {
     const valores = new Map(costos?.valoresPorVentana.map((valor) => [valor.id, valor]))
+    const fecha = textoAFecha(contenido.fecha)
 
     return {
         empresa,
-        fecha: format(textoAFecha(contenido.fecha), "PPP", { locale: es }),
+        // Una fecha inválida no puede tumbar la vista previa: sale vacía.
+        fecha: isValid(fecha) ? format(fecha, "PPP", { locale: es }) : "",
         cliente: contenido.cliente,
         proyecto: proyecto.nombre,
         descripcion: contenido.descripcion,
