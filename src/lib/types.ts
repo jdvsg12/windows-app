@@ -11,6 +11,8 @@ import type {
     ConfiguracionOverheadSchema,
     ConfiguracionPreciosSchema,
     CostoAdicionalSchema,
+    DocumentoCotizacionSchema,
+    FilaCotizacionSchema,
     ProyectoSchema,
     SistemaVentanaSchema,
     TipoCerraduraSchema,
@@ -195,6 +197,9 @@ export type Proyecto = z.infer<typeof ProyectoSchema>
 export type ContenidoCotizacion = z.infer<typeof ContenidoCotizacionSchema>
 
 export type ConfiguracionEmpresa = z.infer<typeof ConfiguracionEmpresaSchema>
+
+export type FilaCotizacion = z.infer<typeof FilaCotizacionSchema>
+export type DocumentoCotizacion = z.infer<typeof DocumentoCotizacionSchema>
 
 // El esquema acepta cualquier clave en estos mapas (ver ConfiguracionPreciosSchema);
 // en el código se restringen a las claves válidas.

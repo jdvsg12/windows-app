@@ -84,6 +84,33 @@ export const ConfiguracionEmpresaSchema = z.object({
     datosBancarios: z.string(),
 })
 
+// Lo que se imprime en una cotización (vista previa y PDF), ya resuelto: etiquetas en texto y
+// opciones aplicadas. Es lo que se guarda en cada versión del PDF y en el snapshot al emitir.
+export const FilaCotizacionSchema = z.object({
+    id: z.string(),
+    nombre: z.string(),
+    tipo: z.string(),
+    especificaciones: z.array(z.string()),
+    ancho: z.number(),
+    alto: z.number(),
+    // null: sin costeo (por ejemplo, un vidrio que no cabe en la lámina).
+    area: z.number().nullable(),
+    valor: z.number().nullable(),
+})
+
+export const DocumentoCotizacionSchema = z.object({
+    empresa: ConfiguracionEmpresaSchema,
+    fecha: z.string(),
+    cliente: z.string(),
+    proyecto: z.string(),
+    descripcion: z.string(),
+    mostrarMedidas: z.boolean(),
+    mostrarValores: z.boolean(),
+    filas: z.array(FilaCotizacionSchema),
+    areaTotal: z.number().nullable(),
+    total: z.number().nullable(),
+})
+
 export const CostoAdicionalSchema = z.object({
     id: z.string(),
     nombre: z.string(),
