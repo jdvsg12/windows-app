@@ -1,6 +1,13 @@
 import { describe, expect, it } from "vitest"
 
-import { TIPOS_HABILITADOS, opcionesTipo, tipoDesdeFormulario, tipoParaFormulario } from "@/lib/types"
+import {
+    TIPOS_HABILITADOS,
+    especificacionesVentana,
+    opcionesTipo,
+    tipoDesdeFormulario,
+    tipoParaFormulario,
+    type Ventana,
+} from "@/lib/types"
 
 describe("tipos de ventana habilitados en el formulario", () => {
     it("ofrece de 2 a 6 hojas y no '1 móvil + 1 fija'", () => {
@@ -44,5 +51,37 @@ describe("2 hojas en el formulario: checkbox 'ambas móviles'", () => {
     it("una ventana 1 móvil + 1 fija se edita como 2 hojas sin ambas móviles", () => {
         expect(tipoParaFormulario("2hojas_mixto")).toEqual({ tipoVentana: "2hojas", ambasMoviles: false })
         expect(tipoParaFormulario("2hojas")).toEqual({ tipoVentana: "2hojas", ambasMoviles: true })
+    })
+})
+
+describe("especificaciones de una ventana", () => {
+    const base: Ventana = { id: "v1", nombre: "V1", ancho: 1200, alto: 1000, tipoVentana: "2hojas" }
+
+    it("lista todas las especificaciones con sus etiquetas", () => {
+        const ventana: Ventana = {
+            ...base,
+            colorAluminio: "natural",
+            cerradura: "impacto",
+            rodachina: "plastica",
+            calibreVidrio: 5,
+            colorVidrio: "bronce",
+            sandblasting: true,
+        }
+        expect(especificacionesVentana(ventana)).toEqual([
+            "Aluminio Natural (anodizado mate)",
+            "Cerradura Impacto",
+            "Rodachina Plástica",
+            "Vidrio 5 mm",
+            "Bronce",
+            "Sandblasting",
+        ])
+    })
+
+    it("sin sandblasting no lo nombra", () => {
+        expect(especificacionesVentana({ ...base, colorVidrio: "incoloro", sandblasting: false })).toEqual(["Incoloro"])
+    })
+
+    it("ventana guardada antes de las especificaciones: lista vacía", () => {
+        expect(especificacionesVentana(base)).toEqual([])
     })
 })
