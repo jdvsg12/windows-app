@@ -11,7 +11,7 @@ import { ArrowLeft, Download } from "lucide-react"
 import { useProyecto } from "@/hooks/useProyecto"
 import { useCotizador } from "@/hooks/useCotizador"
 import { useContenidoCotizacion } from "@/hooks/useContenidoCotizacion"
-import { generarPDF } from "@/lib/pdf-generatos"
+import { useDescargaCotizacion } from "@/hooks/useDescargaCotizacion"
 import { processLogoFile } from "@/lib/logo"
 import { textoAFecha } from "@/lib/contenido-cotizacion"
 import { ConfiguracionTab } from "@/components/cotizador/ConfiguracionTab"
@@ -46,14 +46,11 @@ function CotizadorContent() {
         updateConfig({ logo: result.dataUrl })
     }, [updateConfig])
 
-    const handleGenerarPDF = async () => {
+    const { descargar: descargarPdf, generando: generandoPdf, error: errorPdf } = useDescargaCotizacion()
+
+    const handleGenerarPDF = () => {
         if (!proyecto || !config) return
-        await generarPDF({ ...proyecto, cliente: contenido.cliente }, config, costosCalculados, {
-            mostrarMedidas: contenido.mostrarMedidas,
-            mostrarValores: contenido.mostrarValores,
-            descripcion: contenido.descripcion,
-            fecha: fechaFormateada,
-        })
+        descargarPdf({ proyecto, empresa: config, costos: costosCalculados, contenido })
     }
 
     if (!proyecto || !config || !precios) {
@@ -72,10 +69,13 @@ function CotizadorContent() {
                         <p className="text-sm text-muted-foreground">Proyecto: {proyecto.nombre}</p>
                     </div>
                 </div>
-                <Button onClick={handleGenerarPDF}>
-                    <Download className="h-4 w-4 mr-2" />
-                    Descargar PDF
-                </Button>
+                <div className="flex flex-col items-end gap-1">
+                    <Button onClick={handleGenerarPDF} disabled={generandoPdf}>
+                        <Download className="h-4 w-4 mr-2" />
+                        {generandoPdf ? "Generando PDF…" : "Descargar PDF"}
+                    </Button>
+                    {errorPdf && <p role="alert" className="text-sm text-destructive">{errorPdf}</p>}
+                </div>
             </div>
 
             <Tabs defaultValue="configuracion" className="space-y-4">

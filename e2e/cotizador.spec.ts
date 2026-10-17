@@ -1,3 +1,5 @@
+import { readFile } from "node:fs/promises"
+
 import { expect, test, type Page } from "@playwright/test"
 
 import { crearProyecto, esperarGuardado } from "./helpers"
@@ -97,5 +99,18 @@ test.describe("Cotizador", () => {
         await expect(page.getByLabel("Sandblasting (por m²)")).toBeVisible()
         await expect(page.getByLabel("Precio lámina Bronce 5 mm")).toBeVisible()
         await expect(page.getByRole("group", { name: "Rodachina por tipo" })).toBeVisible()
+    })
+
+    test("Descargar PDF: genera un PDF de la cotización con el nombre del proyecto", async ({ page }) => {
+        const descarga = page.waitForEvent("download")
+        await page.getByRole("button", { name: "Descargar PDF" }).click()
+        const archivo = await descarga
+
+        expect(archivo.suggestedFilename()).toBe("Cotizacion_Obra_cotizada.pdf")
+        const contenido = await readFile((await archivo.path()) ?? "")
+        expect(contenido.subarray(0, 5).toString()).toBe("%PDF-")
+        // Texto vectorial con la fuente embebida, no una imagen como con jspdf + html2canvas.
+        expect(contenido.toString("latin1")).toContain("Geist-Regular")
+        await expect(page.getByRole("button", { name: "Descargar PDF" })).toBeEnabled()
     })
 })
