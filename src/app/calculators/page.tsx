@@ -10,7 +10,6 @@ import { PageHeader } from "@/components/common/PageHeader"
 import { CreateProjectForm } from "@/components/common/CreateProjectForm"
 import { PageSkeleton } from "@/components/common/PageSkeleton"
 import { FileSpreadsheet, Ruler, Package, Grid3X3, DollarSign } from "lucide-react"
-import * as XLSX from "xlsx"
 import { useVentanas } from "@/hooks/useVentanas"
 import { VentanasTab, MaterialesTab, OptimizacionTab, DeleteProjectDialog } from "@/components/calculators"
 import {
@@ -58,8 +57,10 @@ function CalculadorPage() {
         [router]
     )
 
-    const exportarExcel = useCallback(() => {
+    const exportarExcel = useCallback(async () => {
         if (!ventanas.length || !proyecto) return
+        // SheetJS pesa ~400 KB: se carga solo al exportar, no con la calculadora.
+        const XLSX = await import("xlsx")
         const wb = XLSX.utils.book_new()
         const ws1 = XLSX.utils.json_to_sheet(ventanas.map((v, i) => ({
             Código: `V${i + 1}`, Nombre: v.nombre, "Ancho (mm)": v.ancho, "Alto (mm)": v.alto,
@@ -83,7 +84,7 @@ function CalculadorPage() {
         link.href = url
         link.download = `${proyecto.nombre}_calculo.xlsx`
         link.click()
-        URL.revokeObjectURL(url)
+        setTimeout(() => URL.revokeObjectURL(url), 0)
     }, [ventanas, proyecto, optimizacion])
 
     if (!proyecto) {
