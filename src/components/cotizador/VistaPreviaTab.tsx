@@ -1,7 +1,7 @@
 "use client"
 
 import { Card, CardContent } from "@/components/ui/card"
-import { formatArea, formatCurrency } from "@/lib/format"
+import { formatArea } from "@/lib/format"
 import type { DocumentoCotizacion } from "@/lib/types"
 import { DescripcionPreview } from "./DescripcionPreview"
 import { TablaVentanasPreview } from "./TablaVentanasPreview"
@@ -41,6 +41,7 @@ export function VistaPreviaTab({ documento }: VistaPreviaTabProps) {
                 <div className="mb-6">
                     <p className="mb-1">Señor(a):</p>
                     <p className="font-bold">{documento.cliente}</p>
+                    {documento.direccionObra && <p>{documento.direccionObra}</p>}
                 </div>
 
                 <h2 className="text-2xl font-bold text-center mb-6 underline">COTIZACIÓN</h2>
@@ -52,10 +53,22 @@ export function VistaPreviaTab({ documento }: VistaPreviaTabProps) {
                     <TablaVentanasPreview documento={documento} />
                     <p className="font-bold">Total de ventanas: {documento.filas.length}</p>
                     {mostrarAreaTotal && <p className="mt-1">Área total: {formatArea(documento.areaTotal ?? undefined)}</p>}
-                    {documento.mostrarValores && (
-                        <p className="mt-2 text-lg font-bold">VALOR TOTAL: {formatCurrency(documento.total ?? undefined)}</p>
-                    )}
                 </div>
+
+                {(documento.tiempoEntrega || documento.validez) && (
+                    <div className="mb-6">
+                        {documento.tiempoEntrega && (
+                            <p>
+                                <span className="font-bold">Tiempo de entrega:</span> {documento.tiempoEntrega}
+                            </p>
+                        )}
+                        {documento.validez && (
+                            <p>
+                                <span className="font-bold">Validez de la cotización:</span> {documento.validez}
+                            </p>
+                        )}
+                    </div>
+                )}
 
                 <div className="mb-6">
                     <h3 className="font-bold mb-2">FORMA DE PAGO:</h3>
@@ -69,6 +82,7 @@ export function VistaPreviaTab({ documento }: VistaPreviaTabProps) {
                 </div>
 
                 <div className="mt-12 border-t border-paper-ink pt-4">
+                    {empresa.firma && <img src={empresa.firma} alt={`Firma de ${empresa.representante}`} className="h-16 w-auto object-contain" />}
                     <p>___________________________</p>
                     <p className="font-bold">{empresa.representante}</p>
                     <p>C.C. {empresa.cedula}</p>

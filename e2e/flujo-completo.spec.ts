@@ -136,7 +136,7 @@ test("flujo completo: un proyecto con 3 ventanas llena cada pestaña, la cotizac
         await expect(fila).toContainText("$")
     }
     await expect(vista.getByText("Total de ventanas: 3")).toBeVisible()
-    await expect(vista.getByText(/VALOR TOTAL: \$[\d.]+/)).toBeVisible()
+    await expect(vista.locator("tfoot tr")).toContainText(/TOTAL\s*\$[\d.]+/)
 
     const descargaCotizacion = page.waitForEvent("download")
     await page.getByRole("button", { name: "Descargar PDF" }).click()

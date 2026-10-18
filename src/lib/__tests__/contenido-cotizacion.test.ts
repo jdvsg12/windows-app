@@ -23,6 +23,8 @@ describe("contenido de la cotización guardado en el proyecto", () => {
             descripcion: "",
             mostrarMedidas: true,
             mostrarValores: true,
+            tiempoEntrega: "25 días hábiles",
+            validez: "15 días hábiles",
         })
     })
 
@@ -30,10 +32,13 @@ describe("contenido de la cotización guardado en el proyecto", () => {
         const proyecto = ProyectoSchema.parse(proyectoGuardadoAntes)
         expect(valoresContenido(proyecto, HOY)).toEqual({
             cliente: "Ana López",
+            direccion: "",
             fecha: "2026-10-13",
             descripcion: "",
             mostrarMedidas: true,
             mostrarValores: true,
+            tiempoEntrega: "25 días hábiles",
+            validez: "15 días hábiles",
         })
     })
 
@@ -53,10 +58,13 @@ describe("contenido de la cotización guardado en el proyecto", () => {
     it("lo guardado desde el formulario vuelve a cargar igual (ida y vuelta)", () => {
         const valores = {
             cliente: "Pedro Gómez",
+            direccion: "Casa 12, Conjunto Las Palmas",
             fecha: "2026-11-02",
             descripcion: "<b>Obra</b>",
             mostrarMedidas: false,
             mostrarValores: true,
+            tiempoEntrega: "20 días hábiles",
+            validez: "30 días",
         }
         const proyecto = ProyectoSchema.parse({ ...proyectoGuardadoAntes, ...cambiosContenido(valores) })
         expect(valoresContenido(proyecto, HOY)).toEqual(valores)

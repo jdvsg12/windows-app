@@ -1,6 +1,6 @@
 import { Document, Image, Page, Text, View } from "@react-pdf/renderer"
 
-import { formatArea, formatCurrency } from "@/lib/format"
+import { formatArea } from "@/lib/format"
 import { PAPER } from "@/lib/design/tokens"
 import { estilosBase } from "@/lib/pdf/estilos"
 import type { DocumentoCotizacion } from "@/lib/types"
@@ -11,7 +11,8 @@ interface CotizacionPdfProps {
     documento: DocumentoCotizacion
 }
 
-const separacion = { marginBottom: 16 }
+// Ajustado para que una cotización corta, con firma, quepa en una página.
+const separacion = { marginBottom: 12 }
 
 const encabezado = {
     flexDirection: "row",
@@ -31,7 +32,7 @@ export function CotizacionPdf({ documento }: CotizacionPdfProps) {
         <Document title={`Cotización ${documento.proyecto}`} author={empresa.nombre} language="es">
             <Page size="A4" style={estilosBase.pagina}>
                 <View style={encabezado}>
-                    {empresa.logo ? <Image src={empresa.logo} style={{ width: 90, height: 90, objectFit: "contain" }} /> : <View />}
+                    {empresa.logo ? <Image src={empresa.logo} style={{ width: 72, height: 72, objectFit: "contain" }} /> : <View />}
                     <View style={{ alignItems: "flex-end" }}>
                         <Text style={estilosBase.negrita}>{empresa.nombre}</Text>
                         <Text>NIT: {empresa.nit}</Text>
@@ -47,6 +48,7 @@ export function CotizacionPdf({ documento }: CotizacionPdfProps) {
                 <View style={separacion}>
                     <Text>Señor(a):</Text>
                     <Text style={estilosBase.negrita}>{documento.cliente}</Text>
+                    {documento.direccionObra && <Text>{documento.direccionObra}</Text>}
                 </View>
 
                 <Text style={estilosBase.titulo}>COTIZACIÓN</Text>
@@ -59,12 +61,14 @@ export function CotizacionPdf({ documento }: CotizacionPdfProps) {
                 <View style={{ marginTop: 8, ...separacion }} wrap={false}>
                     <Text style={estilosBase.negrita}>Total de ventanas: {documento.filas.length}</Text>
                     {mostrarAreaTotal && <Text>Área total: {formatArea(documento.areaTotal ?? undefined)}</Text>}
-                    {documento.mostrarValores && (
-                        <Text style={{ fontSize: 13, fontWeight: 700, marginTop: 4 }}>
-                            VALOR TOTAL: {formatCurrency(documento.total ?? undefined)}
-                        </Text>
-                    )}
                 </View>
+
+                {(documento.tiempoEntrega || documento.validez) && (
+                    <View style={separacion} wrap={false}>
+                        {documento.tiempoEntrega && <Text><Text style={estilosBase.negrita}>Tiempo de entrega:</Text> {documento.tiempoEntrega}</Text>}
+                        {documento.validez && <Text><Text style={estilosBase.negrita}>Validez de la cotización:</Text> {documento.validez}</Text>}
+                    </View>
+                )}
 
                 <View style={separacion} wrap={false}>
                     <Text style={estilosBase.subtitulo}>FORMA DE PAGO:</Text>
@@ -77,7 +81,8 @@ export function CotizacionPdf({ documento }: CotizacionPdfProps) {
                     <Text>{empresa.datosBancarios}</Text>
                 </View>
 
-                <View style={{ marginTop: 32, borderTopWidth: 1, borderColor: PAPER.tinta, paddingTop: 12 }} wrap={false}>
+                <View style={{ marginTop: 16, borderTopWidth: 1, borderColor: PAPER.tinta, paddingTop: 8 }} wrap={false}>
+                    {empresa.firma && <Image src={empresa.firma} style={{ width: 132, height: 44, objectFit: "contain", objectPosition: "left" }} />}
                     <Text>___________________________</Text>
                     <Text style={estilosBase.negrita}>{empresa.representante}</Text>
                     <Text>C.C. {empresa.cedula}</Text>

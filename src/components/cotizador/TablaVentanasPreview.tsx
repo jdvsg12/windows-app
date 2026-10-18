@@ -46,6 +46,16 @@ export function TablaVentanasPreview({ documento }: TablaVentanasPreviewProps) {
                     </tr>
                 ))}
             </tbody>
+            {mostrarValores && (
+                <tfoot>
+                    <tr className="bg-paper-shade font-bold">
+                        <td className={`${celda} text-right`} colSpan={mostrarMedidas ? 5 : 2}>
+                            TOTAL
+                        </td>
+                        <td className={`${celda} text-right`}>{formatCurrency(documento.total ?? undefined)}</td>
+                    </tr>
+                </tfoot>
+            )}
         </table>
     )
 }

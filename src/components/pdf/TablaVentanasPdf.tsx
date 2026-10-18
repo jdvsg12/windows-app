@@ -66,6 +66,12 @@ export function TablaVentanasPdf({ documento }: TablaVentanasPdfProps) {
             {documento.filas.map((fila) => (
                 <FilaVentanaPdf key={fila.id} fila={fila} mostrarMedidas={mostrarMedidas} mostrarValores={mostrarValores} />
             ))}
+            {mostrarValores && (
+                <View style={[estilosBase.filaTabla, estilosBase.encabezadoTabla]} wrap={false}>
+                    <Text style={[estilosBase.celda, { flex: 1, textAlign: "right" }]}>TOTAL</Text>
+                    <Text style={[estilosBase.celda, COLUMNAS.valor]}>{formatCurrency(documento.total ?? undefined)}</Text>
+                </View>
+            )}
         </View>
     )
 }

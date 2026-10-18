@@ -18,6 +18,34 @@ interface ContenidoTabProps {
     status: AutosaveStatus
 }
 
+type CampoTexto = "cliente" | "direccion" | "tiempoEntrega" | "validez"
+
+interface CampoTextoContenidoProps {
+    form: UseFormReturn<ContenidoCotizacionFormValues>
+    name: CampoTexto
+    label: string
+    placeholder: string
+    className?: string
+}
+
+function CampoTextoContenido({ form, name, label, placeholder, className }: CampoTextoContenidoProps) {
+    return (
+        <FormField
+            control={form.control}
+            name={name}
+            render={({ field }) => (
+                <FormItem className={className}>
+                    <FormLabel>{label}</FormLabel>
+                    <FormControl>
+                        <Input placeholder={placeholder} autoComplete="off" {...field} />
+                    </FormControl>
+                    <FormMessage />
+                </FormItem>
+            )}
+        />
+    )
+}
+
 export function ContenidoTab({ form, status }: ContenidoTabProps) {
     return (
         <Card>
@@ -43,18 +71,13 @@ export function ContenidoTab({ form, status }: ContenidoTabProps) {
                                     </FormItem>
                                 )}
                             />
-                            <FormField
-                                control={form.control}
-                                name="cliente"
-                                render={({ field }) => (
-                                    <FormItem>
-                                        <FormLabel>Cliente</FormLabel>
-                                        <FormControl>
-                                            <Input placeholder="Nombre del cliente" autoComplete="off" {...field} />
-                                        </FormControl>
-                                        <FormMessage />
-                                    </FormItem>
-                                )}
+                            <CampoTextoContenido form={form} name="cliente" label="Cliente" placeholder="Nombre del cliente" />
+                            <CampoTextoContenido
+                                form={form}
+                                name="direccion"
+                                label="Dirección de la obra"
+                                placeholder="Ej: Casa 106, Condominio El Peñón"
+                                className="md:col-span-2"
                             />
                         </div>
 
@@ -74,6 +97,11 @@ export function ContenidoTab({ form, status }: ContenidoTabProps) {
                                 </FormItem>
                             )}
                         />
+
+                        <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+                            <CampoTextoContenido form={form} name="tiempoEntrega" label="Tiempo de entrega" placeholder="Ej: 25 días hábiles" />
+                            <CampoTextoContenido form={form} name="validez" label="Validez de la cotización" placeholder="Ej: 15 días hábiles" />
+                        </div>
 
                         <div className="flex flex-wrap items-center gap-x-8 gap-y-3 py-4">
                             <FormField

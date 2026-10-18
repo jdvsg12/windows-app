@@ -1,14 +1,16 @@
-// Logo upload: validate it is an image, then downscale it to fit within
+// Logo and signature uploads: validate it is an image, then downscale it to fit within
 // MAX_DIMENSION so a typical phone photo doesn't bloat localStorage (which has no
-// abstraction-layer size limit today and fails silently past its quota).
+// abstraction-layer size limit today and fails silently past its quota). The result is
+// always PNG or JPEG, the two formats the PDF can embed.
 const MAX_DIMENSION = 400
 const MAX_DATA_URL_BYTES = 512 * 1024
 
 export type LogoResult = { dataUrl: string } | { error: string }
 
-export async function processLogoFile(file: File): Promise<LogoResult> {
+// nombre goes into the error messages: "El logo", "La firma".
+export async function processLogoFile(file: File, nombre = "El logo"): Promise<LogoResult> {
     if (!file.type.startsWith("image/")) {
-        return { error: "El logo debe ser una imagen (PNG, JPG, SVG, etc.)" }
+        return { error: `${nombre} debe ser una imagen (PNG, JPG, SVG, etc.)` }
     }
 
     let originalDataUrl: string
@@ -42,7 +44,7 @@ export async function processLogoFile(file: File): Promise<LogoResult> {
     const dataUrl = canvas.toDataURL(mimeType, 0.9)
 
     if (dataUrl.length > MAX_DATA_URL_BYTES * 1.4) {
-        return { error: "El logo sigue siendo muy pesado incluso reducido. Usa una imagen más simple." }
+        return { error: `${nombre}: la imagen sigue siendo muy pesada incluso reducida. Usa una imagen más simple.` }
     }
 
     return { dataUrl }

@@ -11,19 +11,23 @@ export const fechaATexto = (fecha: Date): string => format(fecha, FORMATO_FECHA)
 export const textoAFecha = (texto: string): Date => parseISO(texto)
 
 export function valoresContenido(proyecto: Proyecto, hoy: Date): ContenidoCotizacionFormValues {
-    const { fecha, descripcion, mostrarMedidas, mostrarValores } = proyecto.contenidoCotizacion
+    const { fecha, descripcion, mostrarMedidas, mostrarValores, tiempoEntrega, validez } = proyecto.contenidoCotizacion
     return {
         cliente: proyecto.cliente,
+        direccion: proyecto.direccion ?? "",
         fecha: fecha ?? fechaATexto(hoy),
         descripcion,
         mostrarMedidas,
         mostrarValores,
+        tiempoEntrega,
+        validez,
     }
 }
 
 export function cambiosContenido({
     cliente,
+    direccion,
     ...contenidoCotizacion
-}: ContenidoCotizacionFormValues): Pick<Proyecto, "cliente" | "contenidoCotizacion"> {
-    return { cliente, contenidoCotizacion }
+}: ContenidoCotizacionFormValues): Pick<Proyecto, "cliente" | "direccion" | "contenidoCotizacion"> {
+    return { cliente, direccion, contenidoCotizacion }
 }
