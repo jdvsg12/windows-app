@@ -23,11 +23,17 @@ export function useContenidoCotizacion(
         values: valoresGuardados,
     })
 
-    const valores = form.watch()
+    const enVivo = form.watch()
+    // watch() devuelve {} hasta que el formulario recibe sus valores (un render después de cargar
+    // el proyecto): lo escrito va encima de lo guardado para que nunca falte un campo.
+    const escritos = Object.fromEntries(
+        Object.entries(enVivo).filter(([, valor]) => valor !== undefined),
+    ) as Partial<ContenidoCotizacionFormValues>
+    const valores: ContenidoCotizacionFormValues | null = valoresGuardados ? { ...valoresGuardados, ...escritos } : null
 
     // isDirty: el formulario cargando lo que ya está guardado no cuenta como un cambio que guardar.
     const status = useAutosave({
-        value: valores,
+        value: enVivo,
         enabled: form.formState.isDirty,
         onSave: (actuales) => onSave(cambiosContenido(actuales)),
     })

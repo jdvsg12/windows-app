@@ -4,18 +4,17 @@ import { FUENTE_PDF } from "./estilos"
 
 const RUTA_FUENTES = "/fonts/geist"
 
-// Geist no tiene cursiva: la cursiva del editor usa el mismo trazo para que el PDF no falle al no encontrarla.
+// Geist 1.7.2 (OFL, paquete npm "geist"): regular, negrita y sus cursivas, las que usa el editor.
 export function registrarFuentes(fuentes: typeof Font, origen: string): void {
-    const regular = new URL(`${RUTA_FUENTES}/Geist-Regular.ttf`, origen).href
-    const negrita = new URL(`${RUTA_FUENTES}/Geist-Bold.ttf`, origen).href
+    const archivo = (nombre: string) => new URL(`${RUTA_FUENTES}/${nombre}.ttf`, origen).href
 
     fuentes.register({
         family: FUENTE_PDF,
         fonts: [
-            { src: regular, fontWeight: 400 },
-            { src: regular, fontWeight: 400, fontStyle: "italic" },
-            { src: negrita, fontWeight: 700 },
-            { src: negrita, fontWeight: 700, fontStyle: "italic" },
+            { src: archivo("Geist-Regular"), fontWeight: 400 },
+            { src: archivo("Geist-Italic"), fontWeight: 400, fontStyle: "italic" },
+            { src: archivo("Geist-Bold"), fontWeight: 700 },
+            { src: archivo("Geist-BoldItalic"), fontWeight: 700, fontStyle: "italic" },
         ],
     })
     // Sin esto react-pdf parte las palabras con reglas del inglés ("ventan-as").

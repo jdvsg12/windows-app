@@ -3,8 +3,8 @@ import { Document, Image, Page, Text, View } from "@react-pdf/renderer"
 import { formatArea, formatCurrency } from "@/lib/format"
 import { PAPER } from "@/lib/design/tokens"
 import { estilosBase } from "@/lib/pdf/estilos"
-import { textoPlanoDesdeHtml } from "@/lib/pdf/texto"
 import type { DocumentoCotizacion } from "@/lib/types"
+import { DescripcionPdf } from "./DescripcionPdf"
 import { TablaVentanasPdf } from "./TablaVentanasPdf"
 
 interface CotizacionPdfProps {
@@ -25,7 +25,6 @@ const encabezado = {
 
 export function CotizacionPdf({ documento }: CotizacionPdfProps) {
     const { empresa } = documento
-    const descripcion = textoPlanoDesdeHtml(documento.descripcion)
     const mostrarAreaTotal = documento.mostrarMedidas && documento.areaTotal !== null
 
     return (
@@ -52,7 +51,7 @@ export function CotizacionPdf({ documento }: CotizacionPdfProps) {
 
                 <Text style={estilosBase.titulo}>COTIZACIÓN</Text>
 
-                {descripcion && <Text style={separacion}>{descripcion}</Text>}
+                <DescripcionPdf html={documento.descripcion} />
 
                 <Text style={estilosBase.subtitulo}>Ventanas del Proyecto: {documento.proyecto}</Text>
                 <TablaVentanasPdf documento={documento} />

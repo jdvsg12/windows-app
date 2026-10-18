@@ -135,6 +135,11 @@ describe("documento de cotización", () => {
         expect(documento.filas.every((fila) => fila.area === null && fila.valor === null)).toBe(true)
     })
 
+    it("sin fecha válida no falla: la fecha sale vacía", () => {
+        const documento = armarDocumentoCotizacion({ ...entrada, contenido: { ...entrada.contenido, fecha: "" } })
+        expect(documento.fecha).toBe("")
+    })
+
     it("cumple su esquema, para poder guardarlo como versión o snapshot", () => {
         const documento = armarDocumentoCotizacion(entrada)
         expect(DocumentoCotizacionSchema.parse(documento)).toEqual(documento)

@@ -111,6 +111,46 @@ export const DocumentoCotizacionSchema = z.object({
     total: z.number().nullable(),
 })
 
+// Plan de corte de vidrio listo para imprimir: una lámina por página. Se guarda igual que la
+// cotización cuando el snapshot al emitir congele también el plan (AWA-45).
+export const PiezaPlanCorteSchema = z.object({
+    etiqueta: z.string(),
+    hoja: z.enum(["fija", "movil"]),
+    descripcion: z.string(),
+    x: z.number(),
+    y: z.number(),
+    ancho: z.number(),
+    alto: z.number(),
+    rotada: z.boolean(),
+})
+
+export const RestoPlanCorteSchema = z.object({
+    tipo: z.enum(["resto", "desperdicio"]),
+    x: z.number(),
+    y: z.number(),
+    ancho: z.number(),
+    alto: z.number(),
+})
+
+export const LaminaPlanCorteSchema = z.object({
+    numero: z.number(),
+    grupo: z.string().nullable(),
+    ancho: z.number(),
+    alto: z.number(),
+    // La lámina es un resto del inventario, no una lámina nueva.
+    deInventario: z.boolean(),
+    piezas: z.array(PiezaPlanCorteSchema),
+    restos: z.array(RestoPlanCorteSchema),
+    areaUsada: z.number(),
+    areaSobrante: z.number(),
+})
+
+export const DocumentoPlanCorteSchema = z.object({
+    proyecto: z.string(),
+    fecha: z.string(),
+    laminas: z.array(LaminaPlanCorteSchema),
+})
+
 export const CostoAdicionalSchema = z.object({
     id: z.string(),
     nombre: z.string(),

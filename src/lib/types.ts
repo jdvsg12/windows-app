@@ -12,6 +12,9 @@ import type {
     ConfiguracionPreciosSchema,
     CostoAdicionalSchema,
     DocumentoCotizacionSchema,
+    DocumentoPlanCorteSchema,
+    LaminaPlanCorteSchema,
+    PiezaPlanCorteSchema,
     FilaCotizacionSchema,
     ProyectoSchema,
     SistemaVentanaSchema,
@@ -200,6 +203,27 @@ export type ConfiguracionEmpresa = z.infer<typeof ConfiguracionEmpresaSchema>
 
 export type FilaCotizacion = z.infer<typeof FilaCotizacionSchema>
 export type DocumentoCotizacion = z.infer<typeof DocumentoCotizacionSchema>
+export type DocumentoPlanCorte = z.infer<typeof DocumentoPlanCorteSchema>
+export type LaminaPlanCorte = z.infer<typeof LaminaPlanCorteSchema>
+export type PiezaPlanCorte = z.infer<typeof PiezaPlanCorteSchema>
+
+// Descripción del editor de texto enriquecido, ya interpretada para el PDF.
+export interface TramoTexto {
+    texto: string
+    negrita: boolean
+    cursiva: boolean
+}
+
+export type AlineacionTexto = "left" | "center" | "right"
+
+export interface ItemLista {
+    tramos: TramoTexto[]
+    nivel: number
+}
+
+export type BloqueTexto =
+    | { tipo: "parrafo"; alineacion: AlineacionTexto; tramos: TramoTexto[] }
+    | { tipo: "lista"; ordenada: boolean; items: ItemLista[] }
 
 // El esquema acepta cualquier clave en estos mapas (ver ConfiguracionPreciosSchema);
 // en el código se restringen a las claves válidas.

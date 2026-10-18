@@ -175,6 +175,7 @@ function CalculadorPage() {
 
                 <TabsContent value="cortes">
                     <OptimizacionTab
+                        proyecto={proyecto.nombre}
                         optimizacion={optimizacion}
                         laminasVidrio={laminasVidrio}
                         metricasVidrio={metricasVidrio}
