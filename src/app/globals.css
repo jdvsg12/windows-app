@@ -1,4 +1,4 @@
-/* app/globals.css - ALUVE design tokens. HSL triplets stay compatible with html2canvas (current PDF). */
+/* app/globals.css - ALUVE design tokens. lib/design/tokens.ts mirrors them as hex for the PDF. */
 @import "tailwindcss";
 @import "tw-animate-css";
 

@@ -3,8 +3,6 @@
 import type React from "react"
 import { useState, useCallback, Suspense } from "react"
 import { useRouter, useSearchParams } from "next/navigation"
-import { format } from "date-fns"
-import { es } from "date-fns/locale"
 import { Button } from "@/components/ui/button"
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs"
 import { ArrowLeft, Download } from "lucide-react"
@@ -13,7 +11,7 @@ import { useCotizador } from "@/hooks/useCotizador"
 import { useContenidoCotizacion } from "@/hooks/useContenidoCotizacion"
 import { useDescargaCotizacion } from "@/hooks/useDescargaCotizacion"
 import { processLogoFile } from "@/lib/logo"
-import { textoAFecha } from "@/lib/contenido-cotizacion"
+import { armarDocumentoCotizacion } from "@/lib/pdf/cotizacion-modelo"
 import { ConfiguracionTab } from "@/components/cotizador/ConfiguracionTab"
 import { ContenidoTab } from "@/components/cotizador/ContenidoTab"
 import { PreciosTab } from "@/components/cotizador/PreciosTab"
@@ -28,7 +26,6 @@ function CotizadorContent() {
     const { proyecto, update } = useProyecto(proyectoId)
     const { config, precios, costosCalculados, errorCosteo, updateConfig, updatePrecios } = useCotizador(proyecto)
     const { form: contenidoForm, valores: contenido, status: contenidoStatus } = useContenidoCotizacion(proyecto, update)
-    const fechaFormateada = contenido.fecha ? format(textoAFecha(contenido.fecha), "PPP", { locale: es }) : ""
 
     const [logoError, setLogoError] = useState<string | null>(null)
 
@@ -48,14 +45,13 @@ function CotizadorContent() {
 
     const { descargar: descargarPdf, generando: generandoPdf, error: errorPdf } = useDescargaCotizacion()
 
-    const handleGenerarPDF = () => {
-        if (!proyecto || !config) return
-        descargarPdf({ proyecto, empresa: config, costos: costosCalculados, contenido })
-    }
-
-    if (!proyecto || !config || !precios) {
+    if (!proyecto || !config || !precios || !contenido) {
         return <Loading />
     }
+
+    // Lo mismo alimenta la vista previa y el PDF.
+    const documento = armarDocumentoCotizacion({ proyecto, empresa: config, costos: costosCalculados, contenido })
+    const handleGenerarPDF = () => descargarPdf(documento)
 
     return (
         <div className="space-y-6">
@@ -110,16 +106,7 @@ function CotizadorContent() {
                 </TabsContent>
 
                 <TabsContent value="vista-previa">
-                    <VistaPreviaTab
-                        config={config}
-                        logo={config.logo || ""}
-                        proyecto={{ ...proyecto, cliente: contenido.cliente }}
-                        fecha={fechaFormateada}
-                        descripcion={contenido.descripcion}
-                        mostrarMedidas={contenido.mostrarMedidas}
-                        mostrarValores={contenido.mostrarValores}
-                        costosCalculados={costosCalculados}
-                    />
+                    <VistaPreviaTab documento={documento} />
                 </TabsContent>
             </Tabs>
         </div>
