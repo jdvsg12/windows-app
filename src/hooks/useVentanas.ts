@@ -19,12 +19,11 @@ export function useVentanas(proyectoId: string | null) {
     const [precios, setPrecios] = useState(() => obtenerPrecios())
 
     useEffect(() => {
-        if (!proyectoId) return
-        const proj = obtenerProyectoPorId(proyectoId)
-        if (proj) {
-            setProyecto(proj)
-            setVentanas(proj.ventanas)
-        }
+        // Sin id (el enlace "Calculadora") o con un id que no existe, no puede quedar abierto el
+        // proyecto anterior: la página lo mostraría y "Cotizar" iría a /cotizador?id=null.
+        const proj = proyectoId ? obtenerProyectoPorId(proyectoId) : null
+        setProyecto(proj ?? null)
+        setVentanas(proj?.ventanas ?? [])
     }, [proyectoId])
 
     const { optimizacion, accesorios, vidrios, laminasVidrio, metricasVidrio, errorLaminas } = useCalculo(ventanas, precios)

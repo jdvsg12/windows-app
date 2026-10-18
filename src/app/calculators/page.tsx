@@ -123,7 +123,7 @@ function CalculadorPage() {
                             </Button>
                         )}
                         {ventanas.length > 0 && (
-                            <Button onClick={() => router.push(`/cotizador?id=${proyectoId}`)}>
+                            <Button onClick={() => router.push(`/cotizador?id=${proyecto.id}`)}>
                                 <DollarSign className="h-4 w-4 mr-2" />
                                 Cotizar
                             </Button>
