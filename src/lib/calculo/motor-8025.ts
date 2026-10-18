@@ -13,6 +13,7 @@ import {
     type DescuentosSistema,
     type SistemaVentana,
 } from "@/lib/types"
+import { LONGITUD_BARRA } from "./comun"
 
 function resolverDescuentos(descuentos: DescuentosPorSistema, sistema?: SistemaVentana): DescuentosSistema {
     const sistemaKey = (sistema ?? "5020") as keyof DescuentosPorSistema
@@ -20,7 +21,6 @@ function resolverDescuentos(descuentos: DescuentosPorSistema, sistema?: SistemaV
 }
 
 // === CONSTANTES ===
-const LONGITUD_BARRA = 6 // metros
 
 // === CÁLCULO DE CORTES ===
 

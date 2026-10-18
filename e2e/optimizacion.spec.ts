@@ -38,7 +38,7 @@ test("las piezas de vidrio llevan su código V#-F#/M# y la ventana muestra su n�
     }
 })
 
-test("Descargar plan de corte: un PDF con una página por lámina", async ({ page }) => {
+test("Descargar plan de corte: una página por lámina, más perfiles y lista maestra", async ({ page }) => {
     await crearProyecto(page, "Obra corte")
     await page.getByLabel("Nombre").fill("Sala")
     await page.getByLabel("Ancho (mm)").fill("2400")
@@ -54,7 +54,7 @@ test("Descargar plan de corte: un PDF con una página por lámina", async ({ pag
     expect(archivo.suggestedFilename()).toBe("Plan_de_corte_Obra_corte.pdf")
     const contenido = (await readFile((await archivo.path()) ?? "")).toString("latin1")
     expect(contenido.startsWith("%PDF-")).toBe(true)
-    // Una ventana de 3 hojas cabe en una lámina: una página.
-    expect(contenido.match(/\/Type \/Page\b/g)).toHaveLength(1)
+    // Una ventana de 3 hojas cabe en una lámina: su página, la de perfiles y la de lista maestra y totales.
+    expect(contenido.match(/\/Type \/Page\b/g)).toHaveLength(3)
 })
 

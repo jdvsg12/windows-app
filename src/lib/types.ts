@@ -14,7 +14,10 @@ import type {
     DocumentoCotizacionSchema,
     DocumentoPlanCorteSchema,
     LaminaPlanCorteSchema,
+    PerfilPlanCorteSchema,
+    PiezaListaMaestraSchema,
     PiezaPlanCorteSchema,
+    TotalesPlanCorteSchema,
     FilaCotizacionSchema,
     ProyectoSchema,
     SistemaVentanaSchema,
@@ -206,6 +209,9 @@ export type DocumentoCotizacion = z.infer<typeof DocumentoCotizacionSchema>
 export type DocumentoPlanCorte = z.infer<typeof DocumentoPlanCorteSchema>
 export type LaminaPlanCorte = z.infer<typeof LaminaPlanCorteSchema>
 export type PiezaPlanCorte = z.infer<typeof PiezaPlanCorteSchema>
+export type PerfilPlanCorte = z.infer<typeof PerfilPlanCorteSchema>
+export type PiezaListaMaestra = z.infer<typeof PiezaListaMaestraSchema>
+export type TotalesPlanCorte = z.infer<typeof TotalesPlanCorteSchema>
 
 // Descripción del editor de texto enriquecido, ya interpretada para el PDF.
 export interface TramoTexto {
