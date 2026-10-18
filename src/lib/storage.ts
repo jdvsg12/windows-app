@@ -167,6 +167,7 @@ export const crearProyecto = (nombre: string, cliente?: string, direccion?: stri
         duracionMeses: 1,
         transporte: 0,
         contenidoCotizacion: ContenidoCotizacionSchema.parse({}),
+        versionesCotizacion: [],
     }
     proyectos.push(nuevoProyecto)
     guardarProyectos(proyectos)

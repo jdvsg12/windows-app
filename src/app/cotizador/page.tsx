@@ -10,13 +10,17 @@ import { useProyecto } from "@/hooks/useProyecto"
 import { useCotizador } from "@/hooks/useCotizador"
 import { useContenidoCotizacion } from "@/hooks/useContenidoCotizacion"
 import { useDescargaPdf } from "@/hooks/useDescargaPdf"
+import { useVersionesCotizacion } from "@/hooks/useVersionesCotizacion"
 import { processLogoFile } from "@/lib/logo"
 import { armarDocumentoCotizacion } from "@/lib/pdf/cotizacion-modelo"
 import { nombreArchivoPdf } from "@/lib/pdf/descargar"
+import { documentoDeVersion } from "@/lib/versiones-cotizacion"
+import type { DocumentoCotizacion, VersionCotizacion } from "@/lib/types"
 import { ConfiguracionTab } from "@/components/cotizador/ConfiguracionTab"
 import { ContenidoTab } from "@/components/cotizador/ContenidoTab"
 import { PreciosTab } from "@/components/cotizador/PreciosTab"
 import { VistaPreviaTab } from "@/components/cotizador/VistaPreviaTab"
+import { VersionesPdf } from "@/components/cotizador/VersionesPdf"
 import { Loading } from "@/components/cotizador/Loading"
 
 function CotizadorContent() {
@@ -45,6 +49,7 @@ function CotizadorContent() {
     }, [updateConfig])
 
     const { descargar: descargarPdf, generando: generandoPdf, error: errorPdf } = useDescargaPdf()
+    const versiones = useVersionesCotizacion(proyecto, update)
 
     if (!proyecto || !config || !precios || !contenido) {
         return <Loading />
@@ -52,11 +57,15 @@ function CotizadorContent() {
 
     // Lo mismo alimenta la vista previa y el PDF.
     const documento = armarDocumentoCotizacion({ proyecto, empresa: config, costos: costosCalculados, contenido })
-    const handleGenerarPDF = () =>
+    const descargarDocumento = (paraDescargar: DocumentoCotizacion) =>
         descargarPdf(
-            async () => (await import("@/components/pdf/CotizacionPdf")).crearCotizacionPdf(documento),
-            nombreArchivoPdf("Cotizacion", documento.proyecto),
+            async () => (await import("@/components/pdf/CotizacionPdf")).crearCotizacionPdf(paraDescargar),
+            nombreArchivoPdf("Cotizacion", paraDescargar.proyecto),
         )
+    const handleGenerarPDF = async () => {
+        if (await descargarDocumento(documento)) versiones.registrar(documento)
+    }
+    const handleDescargarVersion = (version: VersionCotizacion) => descargarDocumento(documentoDeVersion(version, config.logo))
 
     return (
         <div className="space-y-6">
@@ -111,7 +120,16 @@ function CotizadorContent() {
                 </TabsContent>
 
                 <TabsContent value="vista-previa">
-                    <VistaPreviaTab documento={documento} />
+                    <div className="space-y-4">
+                        <VersionesPdf
+                            versiones={versiones.versiones}
+                            generando={generandoPdf}
+                            onDescargar={handleDescargarVersion}
+                            onGuardar={versiones.guardar}
+                            onSoltar={versiones.soltar}
+                        />
+                        <VistaPreviaTab documento={documento} />
+                    </div>
                 </TabsContent>
             </Tabs>
         </div>

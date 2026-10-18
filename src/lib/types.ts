@@ -25,6 +25,7 @@ import type {
     TipoRodachinaSchema,
     TipoVentanaSchema,
     VentanaSchema,
+    VersionCotizacionSchema,
 } from "./schemas"
 
 export type TipoVentana = z.infer<typeof TipoVentanaSchema>
@@ -206,6 +207,7 @@ export type ConfiguracionEmpresa = z.infer<typeof ConfiguracionEmpresaSchema>
 
 export type FilaCotizacion = z.infer<typeof FilaCotizacionSchema>
 export type DocumentoCotizacion = z.infer<typeof DocumentoCotizacionSchema>
+export type VersionCotizacion = z.infer<typeof VersionCotizacionSchema>
 export type DocumentoPlanCorte = z.infer<typeof DocumentoPlanCorteSchema>
 export type LaminaPlanCorte = z.infer<typeof LaminaPlanCorteSchema>
 export type PiezaPlanCorte = z.infer<typeof PiezaPlanCorteSchema>

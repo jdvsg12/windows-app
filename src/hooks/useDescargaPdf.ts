@@ -11,15 +11,17 @@ export function useDescargaPdf() {
     const [error, setError] = useState<string | null>(null)
 
     const descargar = useCallback(
-        async (crearDocumento: () => Promise<ReactElement<DocumentProps>>, nombreArchivo: string) => {
+        async (crearDocumento: () => Promise<ReactElement<DocumentProps>>, nombreArchivo: string): Promise<boolean> => {
             setGenerando(true)
             setError(null)
             try {
                 const blob = await generarBlobPdf(await crearDocumento())
                 descargarBlob(blob, nombreArchivo)
+                return true
             } catch (causa) {
                 console.error("Error generando el PDF:", causa)
                 setError("No se pudo generar el PDF. Intenta de nuevo.")
+                return false
             } finally {
                 setGenerando(false)
             }

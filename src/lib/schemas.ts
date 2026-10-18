@@ -44,23 +44,6 @@ export const ContenidoCotizacionSchema = z.object({
     mostrarValores: z.boolean().default(true),
 })
 
-export const ProyectoSchema = z.object({
-    id: z.string(),
-    nombre: z.string(),
-    cliente: z.string(),
-    direccion: z.string().optional(),
-    fechaCreacion: z.string(),
-    ventanas: z.array(VentanaSchema),
-    // .default() en vez de required: los proyectos guardados antes de F3.2 no tienen
-    // estos campos, y deben seguir cargando (con estos valores neutros) en vez de
-    // fallar la validación y perderse.
-    // .catch(): un valor inválido ya guardado (null por un NaN del formulario) no puede
-    // invalidar el arreglo entero de proyectos y hacerlos desaparecer todos.
-    duracionMeses: z.number().positive().default(1).catch(1),
-    transporte: z.number().min(0).default(0).catch(0),
-    contenidoCotizacion: ContenidoCotizacionSchema.default({}),
-})
-
 export const ContenidoCotizacionFormSchema = z.object({
     cliente: z.string(),
     fecha: z.string().regex(/^\d{4}-\d{2}-\d{2}$/),
@@ -110,6 +93,36 @@ export const DocumentoCotizacionSchema = z.object({
     areaTotal: z.number().nullable(),
     total: z.number().nullable(),
 })
+
+// Cada PDF de cotización generado guarda sus datos (no el archivo) y se vuelve a generar al
+// descargarlo. Se conservan las 3 últimas más una marcada como "guardada" (ver versiones-cotizacion.ts).
+export const VersionCotizacionSchema = z.object({
+    id: z.string(),
+    creada: z.string(),
+    guardada: z.boolean(),
+    // Sin el logo: pesa hasta ~500 KB y repetido en cada versión llenaría el almacenamiento.
+    documento: DocumentoCotizacionSchema,
+})
+
+export const ProyectoSchema = z.object({
+    id: z.string(),
+    nombre: z.string(),
+    cliente: z.string(),
+    direccion: z.string().optional(),
+    fechaCreacion: z.string(),
+    ventanas: z.array(VentanaSchema),
+    // .default() en vez de required: los proyectos guardados antes de F3.2 no tienen
+    // estos campos, y deben seguir cargando (con estos valores neutros) en vez de
+    // fallar la validación y perderse.
+    // .catch(): un valor inválido ya guardado (null por un NaN del formulario) no puede
+    // invalidar el arreglo entero de proyectos y hacerlos desaparecer todos.
+    duracionMeses: z.number().positive().default(1).catch(1),
+    transporte: z.number().min(0).default(0).catch(0),
+    contenidoCotizacion: ContenidoCotizacionSchema.default({}),
+    // .catch([]): una versión dañada no puede tumbar el proyecto; se pierden las versiones, no la obra.
+    versionesCotizacion: z.array(VersionCotizacionSchema).default([]).catch([]),
+})
+
 
 // Plan de corte de vidrio listo para imprimir: una lámina por página. Se guarda igual que la
 // cotización cuando el snapshot al emitir congele también el plan (AWA-45).
