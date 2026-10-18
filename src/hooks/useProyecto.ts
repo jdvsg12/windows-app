@@ -1,4 +1,4 @@
-import { useState, useEffect, useCallback } from "react"
+import { useState, useEffect, useCallback, useRef } from "react"
 import { useRouter } from "next/navigation"
 import {
     obtenerProyectoPorId,
@@ -27,12 +27,20 @@ export function useProyecto(proyectoId: string | null) {
         setIsLoading(false)
     }, [proyectoId, router])
 
+    // Siempre sobre el proyecto más reciente: quien llama después de un await (el PDF tarda) no
+    // puede pisar con una copia vieja lo que guardó mientras tanto el autoguardado.
+    const ultimo = useRef(proyecto)
+    useEffect(() => {
+        ultimo.current = proyecto
+    }, [proyecto])
+
     const update = useCallback((updates: Partial<Proyecto>) => {
-        if (!proyecto) return
-        const updated = { ...proyecto, ...updates }
+        if (!ultimo.current) return
+        const updated = { ...ultimo.current, ...updates }
+        ultimo.current = updated
         actualizarProyecto(updated)
         setProyecto(updated)
-    }, [proyecto])
+    }, [])
 
     const remove = useCallback(() => {
         if (!proyecto) return
