@@ -145,10 +145,41 @@ export const LaminaPlanCorteSchema = z.object({
     areaSobrante: z.number(),
 })
 
+// Medidas de perfil en metros, como las da el optimizador de barras.
+export const PerfilPlanCorteSchema = z.object({
+    // null con un solo color de aluminio en el proyecto.
+    color: z.string().nullable(),
+    perfil: z.string(),
+    barras: z.array(z.object({ cortes: z.array(z.number()), sobrante: z.number() })),
+    metrosUsados: z.number(),
+})
+
+export const PiezaListaMaestraSchema = z.object({
+    etiqueta: z.string(),
+    descripcion: z.string(),
+    ancho: z.number(),
+    alto: z.number(),
+    grupo: z.string().nullable(),
+    lamina: z.number(),
+})
+
+export const TotalesPlanCorteSchema = z.object({
+    laminasPorGrupo: z.array(z.object({ grupo: z.string().nullable(), laminas: z.number(), deInventario: z.number() })),
+    piezas: z.number(),
+    areaNetaM2: z.number(),
+    bordeadoM: z.number(),
+    cantos: z.number(),
+    mermaPct: z.number().nullable(),
+    barrasPorColor: z.array(z.object({ color: z.string().nullable(), barras: z.number(), metros: z.number() })),
+})
+
 export const DocumentoPlanCorteSchema = z.object({
     proyecto: z.string(),
     fecha: z.string(),
     laminas: z.array(LaminaPlanCorteSchema),
+    perfiles: z.array(PerfilPlanCorteSchema),
+    listaMaestra: z.array(PiezaListaMaestraSchema),
+    totales: TotalesPlanCorteSchema,
 })
 
 export const CostoAdicionalSchema = z.object({

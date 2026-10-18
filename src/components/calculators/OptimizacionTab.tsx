@@ -88,7 +88,7 @@ export function OptimizacionTab({ proyecto, optimizacion, laminasVidrio, metrica
                     <CardHeader>
                         <div className="flex flex-wrap items-center justify-between gap-2">
                             <CardTitle>Láminas de Vidrio</CardTitle>
-                            <DescargarPlanCorte proyecto={proyecto} laminas={laminasVidrio} />
+                            <DescargarPlanCorte proyecto={proyecto} laminas={laminasVidrio} perfiles={optimizacion} />
                             <div className="flex items-center gap-2">
                                 <Label htmlFor="lamina-size" className="text-sm text-muted-foreground">Tamaño lámina:</Label>
                                 <NativeSelect
