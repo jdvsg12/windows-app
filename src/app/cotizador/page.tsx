@@ -9,9 +9,10 @@ import { ArrowLeft, Download } from "lucide-react"
 import { useProyecto } from "@/hooks/useProyecto"
 import { useCotizador } from "@/hooks/useCotizador"
 import { useContenidoCotizacion } from "@/hooks/useContenidoCotizacion"
-import { useDescargaCotizacion } from "@/hooks/useDescargaCotizacion"
+import { useDescargaPdf } from "@/hooks/useDescargaPdf"
 import { processLogoFile } from "@/lib/logo"
 import { armarDocumentoCotizacion } from "@/lib/pdf/cotizacion-modelo"
+import { nombreArchivoPdf } from "@/lib/pdf/descargar"
 import { ConfiguracionTab } from "@/components/cotizador/ConfiguracionTab"
 import { ContenidoTab } from "@/components/cotizador/ContenidoTab"
 import { PreciosTab } from "@/components/cotizador/PreciosTab"
@@ -43,7 +44,7 @@ function CotizadorContent() {
         updateConfig({ logo: result.dataUrl })
     }, [updateConfig])
 
-    const { descargar: descargarPdf, generando: generandoPdf, error: errorPdf } = useDescargaCotizacion()
+    const { descargar: descargarPdf, generando: generandoPdf, error: errorPdf } = useDescargaPdf()
 
     if (!proyecto || !config || !precios || !contenido) {
         return <Loading />
@@ -51,7 +52,11 @@ function CotizadorContent() {
 
     // Lo mismo alimenta la vista previa y el PDF.
     const documento = armarDocumentoCotizacion({ proyecto, empresa: config, costos: costosCalculados, contenido })
-    const handleGenerarPDF = () => descargarPdf(documento)
+    const handleGenerarPDF = () =>
+        descargarPdf(
+            async () => (await import("@/components/pdf/CotizacionPdf")).crearCotizacionPdf(documento),
+            nombreArchivoPdf("Cotizacion", documento.proyecto),
+        )
 
     return (
         <div className="space-y-6">
