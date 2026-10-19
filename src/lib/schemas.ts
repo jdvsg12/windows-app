@@ -42,6 +42,79 @@ export const ContenidoCotizacionSchema = z.object({
     descripcion: z.string().default(""),
     mostrarMedidas: z.boolean().default(true),
     mostrarValores: z.boolean().default(true),
+    // Condiciones que lleva toda cotización del taller; texto libre ("25 días hábiles").
+    tiempoEntrega: z.string().default("25 días hábiles"),
+    validez: z.string().default("15 días hábiles"),
+})
+
+export const ContenidoCotizacionFormSchema = z.object({
+    cliente: z.string(),
+    // Dirección de la obra: se guarda en Proyecto.direccion.
+    direccion: z.string(),
+    fecha: z.string().regex(/^\d{4}-\d{2}-\d{2}$/),
+    descripcion: z.string(),
+    mostrarMedidas: z.boolean(),
+    mostrarValores: z.boolean(),
+    tiempoEntrega: z.string(),
+    validez: z.string(),
+})
+
+export type ContenidoCotizacionFormValues = z.infer<typeof ContenidoCotizacionFormSchema>
+
+export const ConfiguracionEmpresaSchema = z.object({
+    nombre: z.string(),
+    nit: z.string(),
+    direccion: z.string(),
+    ciudad: z.string(),
+    telefonos: z.string(),
+    email: z.string(),
+    representante: z.string(),
+    cedula: z.string(),
+    logo: z.string().optional(),
+    // Firma escaneada (data URL PNG/JPEG), opcional; va sobre la línea de firma.
+    firma: z.string().optional(),
+    datosBancarios: z.string(),
+})
+
+// Lo que se imprime en una cotización (vista previa y PDF), ya resuelto: etiquetas en texto y
+// opciones aplicadas. Es lo que se guarda en cada versión del PDF y en el snapshot al emitir.
+export const FilaCotizacionSchema = z.object({
+    id: z.string(),
+    nombre: z.string(),
+    tipo: z.string(),
+    especificaciones: z.array(z.string()),
+    ancho: z.number(),
+    alto: z.number(),
+    // null: sin costeo (por ejemplo, un vidrio que no cabe en la lámina).
+    area: z.number().nullable(),
+    valor: z.number().nullable(),
+})
+
+export const DocumentoCotizacionSchema = z.object({
+    empresa: ConfiguracionEmpresaSchema,
+    fecha: z.string(),
+    cliente: z.string(),
+    // .default(): las versiones guardadas antes de AWA-41 no tienen estos campos.
+    direccionObra: z.string().default(""),
+    proyecto: z.string(),
+    descripcion: z.string(),
+    tiempoEntrega: z.string().default(""),
+    validez: z.string().default(""),
+    mostrarMedidas: z.boolean(),
+    mostrarValores: z.boolean(),
+    filas: z.array(FilaCotizacionSchema),
+    areaTotal: z.number().nullable(),
+    total: z.number().nullable(),
+})
+
+// Cada PDF de cotización generado guarda sus datos (no el archivo) y se vuelve a generar al
+// descargarlo. Se conservan las 3 últimas más una marcada como "guardada" (ver versiones-cotizacion.ts).
+export const VersionCotizacionSchema = z.object({
+    id: z.string(),
+    creada: z.string(),
+    guardada: z.boolean(),
+    // Sin el logo: pesa hasta ~500 KB y repetido en cada versión llenaría el almacenamiento.
+    documento: DocumentoCotizacionSchema,
 })
 
 export const ProyectoSchema = z.object({
@@ -59,29 +132,80 @@ export const ProyectoSchema = z.object({
     duracionMeses: z.number().positive().default(1).catch(1),
     transporte: z.number().min(0).default(0).catch(0),
     contenidoCotizacion: ContenidoCotizacionSchema.default({}),
+    // .catch([]): una versión dañada no puede tumbar el proyecto; se pierden las versiones, no la obra.
+    versionesCotizacion: z.array(VersionCotizacionSchema).default([]).catch([]),
 })
 
-export const ContenidoCotizacionFormSchema = z.object({
-    cliente: z.string(),
-    fecha: z.string().regex(/^\d{4}-\d{2}-\d{2}$/),
+
+// Plan de corte de vidrio listo para imprimir: una lámina por página. Se guarda igual que la
+// cotización cuando el snapshot al emitir congele también el plan (AWA-45).
+export const PiezaPlanCorteSchema = z.object({
+    etiqueta: z.string(),
+    hoja: z.enum(["fija", "movil"]),
     descripcion: z.string(),
-    mostrarMedidas: z.boolean(),
-    mostrarValores: z.boolean(),
+    x: z.number(),
+    y: z.number(),
+    ancho: z.number(),
+    alto: z.number(),
+    rotada: z.boolean(),
 })
 
-export type ContenidoCotizacionFormValues = z.infer<typeof ContenidoCotizacionFormSchema>
+export const RestoPlanCorteSchema = z.object({
+    tipo: z.enum(["resto", "desperdicio"]),
+    x: z.number(),
+    y: z.number(),
+    ancho: z.number(),
+    alto: z.number(),
+})
 
-export const ConfiguracionEmpresaSchema = z.object({
-    nombre: z.string(),
-    nit: z.string(),
-    direccion: z.string(),
-    ciudad: z.string(),
-    telefonos: z.string(),
-    email: z.string(),
-    representante: z.string(),
-    cedula: z.string(),
-    logo: z.string().optional(),
-    datosBancarios: z.string(),
+export const LaminaPlanCorteSchema = z.object({
+    numero: z.number(),
+    grupo: z.string().nullable(),
+    ancho: z.number(),
+    alto: z.number(),
+    // La lámina es un resto del inventario, no una lámina nueva.
+    deInventario: z.boolean(),
+    piezas: z.array(PiezaPlanCorteSchema),
+    restos: z.array(RestoPlanCorteSchema),
+    areaUsada: z.number(),
+    areaSobrante: z.number(),
+})
+
+// Medidas de perfil en metros, como las da el optimizador de barras.
+export const PerfilPlanCorteSchema = z.object({
+    // null con un solo color de aluminio en el proyecto.
+    color: z.string().nullable(),
+    perfil: z.string(),
+    barras: z.array(z.object({ cortes: z.array(z.number()), sobrante: z.number() })),
+    metrosUsados: z.number(),
+})
+
+export const PiezaListaMaestraSchema = z.object({
+    etiqueta: z.string(),
+    descripcion: z.string(),
+    ancho: z.number(),
+    alto: z.number(),
+    grupo: z.string().nullable(),
+    lamina: z.number(),
+})
+
+export const TotalesPlanCorteSchema = z.object({
+    laminasPorGrupo: z.array(z.object({ grupo: z.string().nullable(), laminas: z.number(), deInventario: z.number() })),
+    piezas: z.number(),
+    areaNetaM2: z.number(),
+    bordeadoM: z.number(),
+    cantos: z.number(),
+    mermaPct: z.number().nullable(),
+    barrasPorColor: z.array(z.object({ color: z.string().nullable(), barras: z.number(), metros: z.number() })),
+})
+
+export const DocumentoPlanCorteSchema = z.object({
+    proyecto: z.string(),
+    fecha: z.string(),
+    laminas: z.array(LaminaPlanCorteSchema),
+    perfiles: z.array(PerfilPlanCorteSchema),
+    listaMaestra: z.array(PiezaListaMaestraSchema),
+    totales: TotalesPlanCorteSchema,
 })
 
 export const CostoAdicionalSchema = z.object({

@@ -1,125 +1,74 @@
 "use client"
 
 import { Card, CardContent } from "@/components/ui/card"
-import { formatArea, formatCount, formatCurrency } from "@/lib/format"
-import { especificacionesVentana, getTipoVentanaLabel, type ConfiguracionEmpresa, type Proyecto, type CostosCalculadosCotizador } from "@/lib/types"
+import { formatArea } from "@/lib/format"
+import type { DocumentoCotizacion } from "@/lib/types"
+import { DescripcionPreview } from "./DescripcionPreview"
+import { TablaVentanasPreview } from "./TablaVentanasPreview"
 
-interface Props {
-    config: ConfiguracionEmpresa
-    logo: string
-    proyecto: Proyecto
-    fecha: string
-    descripcion: string
-    mostrarMedidas: boolean
-    mostrarValores: boolean
-    costosCalculados: CostosCalculadosCotizador | null
+interface VistaPreviaTabProps {
+    documento: DocumentoCotizacion
 }
 
-export function VistaPreviaTab({
-    config,
-    logo,
-    proyecto,
-    fecha,
-    descripcion,
-    mostrarMedidas,
-    mostrarValores,
-    costosCalculados,
-}: Props) {
+// Lee el mismo DocumentoCotizacion que el PDF (CotizacionPdf), así la vista previa no se desalinea.
+export function VistaPreviaTab({ documento }: VistaPreviaTabProps) {
+    const { empresa } = documento
+    const mostrarAreaTotal = documento.mostrarMedidas && documento.areaTotal !== null
+
     return (
         <Card>
             <CardContent className="p-8 bg-paper text-paper-ink min-h-[800px]">
                 <div className="flex justify-between items-start mb-8 border-b-2 border-paper-ink pb-4">
-                    {logo && (
+                    {empresa.logo ? (
                         <div className="w-32 h-32">
-                            <img src={logo || "/placeholder.svg"} alt={`${config.nombre} - logo`} className="w-full h-full object-contain" />
+                            <img src={empresa.logo} alt={`${empresa.nombre} - logo`} className="w-full h-full object-contain" />
                         </div>
+                    ) : (
+                        <div />
                     )}
                     <div className="text-right text-sm leading-relaxed">
-                        <p className="font-bold mb-1">{config.nombre}</p>
-                        <p>NIT: {config.nit}</p>
-                        <p>{config.direccion}</p>
-                        <p>CEL: {config.telefonos}</p>
-                        <p>e-mail: {config.email}</p>
-                        <p>{config.ciudad}</p>
+                        <p className="font-bold mb-1">{empresa.nombre}</p>
+                        <p>NIT: {empresa.nit}</p>
+                        <p>{empresa.direccion}</p>
+                        <p>CEL: {empresa.telefonos}</p>
+                        <p>e-mail: {empresa.email}</p>
+                        <p>{empresa.ciudad}</p>
                     </div>
                 </div>
 
-                <div className="mb-6 text-right">
-                    <p>{fecha}</p>
-                </div>
+                <p className="mb-6 text-right">{documento.fecha}</p>
 
                 <div className="mb-6">
                     <p className="mb-1">Señor(a):</p>
-                    <p className="font-bold">{proyecto.cliente}</p>
+                    <p className="font-bold">{documento.cliente}</p>
+                    {documento.direccionObra && <p>{documento.direccionObra}</p>}
                 </div>
 
                 <h2 className="text-2xl font-bold text-center mb-6 underline">COTIZACIÓN</h2>
 
-                {descripcion && (
-                    <div className="mb-6 leading-relaxed" dangerouslySetInnerHTML={{ __html: descripcion }} />
-                )}
+                <DescripcionPreview html={documento.descripcion} />
 
                 <div className="mb-6">
-                    <h3 className="font-bold mb-4">Ventanas del Proyecto: {proyecto.nombre}</h3>
-                    <table className="w-full border-collapse border border-paper-rule mb-4">
-                        <thead>
-                            <tr className="bg-paper-shade">
-                                <th className="border border-paper-rule p-2 text-left">Nombre</th>
-                                <th className="border border-paper-rule p-2 text-left">Tipo</th>
-                                {mostrarMedidas && (
-                                    <>
-                                        <th className="border border-paper-rule p-2 text-left">Ancho (mm)</th>
-                                        <th className="border border-paper-rule p-2 text-left">Alto (mm)</th>
-                                        <th className="border border-paper-rule p-2 text-right">Área (m²)</th>
-                                    </>
-                                )}
-                                {mostrarValores && costosCalculados && (
-                                    <th className="border border-paper-rule p-2 text-right">Valor</th>
-                                )}
-                            </tr>
-                        </thead>
-                        <tbody>
-                            {proyecto.ventanas.map((ventana) => {
-                                const valorVentana = costosCalculados?.valoresPorVentana?.find((v) => v.id === ventana.id)
-                                const especificaciones = especificacionesVentana(ventana).join(" · ")
-                                return (
-                                    <tr key={ventana.id}>
-                                        <td className="border border-paper-rule p-2">{ventana.nombre}</td>
-                                        <td className="border border-paper-rule p-2">
-                                            {getTipoVentanaLabel(ventana.tipoVentana)}
-                                            {especificaciones && <p className="text-xs mt-1">{especificaciones}</p>}
-                                        </td>
-                                        {mostrarMedidas && (
-                                            <>
-                                                <td className="border border-paper-rule p-2">{ventana.ancho}</td>
-                                                <td className="border border-paper-rule p-2">{ventana.alto}</td>
-                                                <td className="border border-paper-rule p-2 text-right">
-                                                    {formatCount(valorVentana?.area, 2)}
-                                                </td>
-                                            </>
-                                        )}
-                                        {mostrarValores && costosCalculados && (
-                                            <td className="border border-paper-rule p-2 text-right">
-                                                {formatCurrency(valorVentana?.valor)}
-                                            </td>
-                                        )}
-                                    </tr>
-                                )
-                            })}
-                        </tbody>
-                    </table>
-                    <div>
-                        <p className="font-bold">Total de ventanas: {proyecto.ventanas.length}</p>
-                        {mostrarMedidas && costosCalculados && (
-                            <p className="mt-1">Área total: {formatArea(costosCalculados?.areaTotal)}</p>
+                    <h3 className="font-bold mb-4">Ventanas del Proyecto: {documento.proyecto}</h3>
+                    <TablaVentanasPreview documento={documento} />
+                    <p className="font-bold">Total de ventanas: {documento.filas.length}</p>
+                    {mostrarAreaTotal && <p className="mt-1">Área total: {formatArea(documento.areaTotal ?? undefined)}</p>}
+                </div>
+
+                {(documento.tiempoEntrega || documento.validez) && (
+                    <div className="mb-6">
+                        {documento.tiempoEntrega && (
+                            <p>
+                                <span className="font-bold">Tiempo de entrega:</span> {documento.tiempoEntrega}
+                            </p>
                         )}
-                        {mostrarValores && costosCalculados && (
-                            <p className="mt-2 text-lg font-bold">
-                                VALOR TOTAL: {formatCurrency(costosCalculados?.total)}
+                        {documento.validez && (
+                            <p>
+                                <span className="font-bold">Validez de la cotización:</span> {documento.validez}
                             </p>
                         )}
                     </div>
-                </div>
+                )}
 
                 <div className="mb-6">
                     <h3 className="font-bold mb-2">FORMA DE PAGO:</h3>
@@ -129,13 +78,14 @@ export function VistaPreviaTab({
 
                 <div className="mb-6">
                     <h3 className="font-bold mb-2">DATOS BANCARIOS:</h3>
-                    <p className="whitespace-pre-wrap text-sm leading-relaxed">{config.datosBancarios}</p>
+                    <p className="whitespace-pre-wrap text-sm leading-relaxed">{empresa.datosBancarios}</p>
                 </div>
 
                 <div className="mt-12 border-t border-paper-ink pt-4">
+                    {empresa.firma && <img src={empresa.firma} alt={`Firma de ${empresa.representante}`} className="h-16 w-auto object-contain" />}
                     <p>___________________________</p>
-                    <p className="font-bold">{config.representante}</p>
-                    <p>C.C. {config.cedula}</p>
+                    <p className="font-bold">{empresa.representante}</p>
+                    <p>C.C. {empresa.cedula}</p>
                 </div>
             </CardContent>
         </Card>

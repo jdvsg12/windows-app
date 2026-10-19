@@ -1,23 +1,24 @@
 "use client"
 
-import type React from "react"
-import { useState, useCallback, Suspense } from "react"
+import { Suspense } from "react"
 import { useRouter, useSearchParams } from "next/navigation"
-import { format } from "date-fns"
-import { es } from "date-fns/locale"
 import { Button } from "@/components/ui/button"
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs"
 import { ArrowLeft, Download } from "lucide-react"
 import { useProyecto } from "@/hooks/useProyecto"
 import { useCotizador } from "@/hooks/useCotizador"
 import { useContenidoCotizacion } from "@/hooks/useContenidoCotizacion"
-import { generarPDF } from "@/lib/pdf-generatos"
-import { processLogoFile } from "@/lib/logo"
-import { textoAFecha } from "@/lib/contenido-cotizacion"
+import { useDescargaPdf } from "@/hooks/useDescargaPdf"
+import { useVersionesCotizacion } from "@/hooks/useVersionesCotizacion"
+import { armarDocumentoCotizacion } from "@/lib/pdf/cotizacion-modelo"
+import { nombreArchivoPdf } from "@/lib/pdf/descargar"
+import { documentoDeVersion } from "@/lib/versiones-cotizacion"
+import type { DocumentoCotizacion, VersionCotizacion } from "@/lib/types"
 import { ConfiguracionTab } from "@/components/cotizador/ConfiguracionTab"
 import { ContenidoTab } from "@/components/cotizador/ContenidoTab"
 import { PreciosTab } from "@/components/cotizador/PreciosTab"
 import { VistaPreviaTab } from "@/components/cotizador/VistaPreviaTab"
+import { VersionesPdf } from "@/components/cotizador/VersionesPdf"
 import { Loading } from "@/components/cotizador/Loading"
 
 function CotizadorContent() {
@@ -28,37 +29,26 @@ function CotizadorContent() {
     const { proyecto, update } = useProyecto(proyectoId)
     const { config, precios, costosCalculados, errorCosteo, updateConfig, updatePrecios } = useCotizador(proyecto)
     const { form: contenidoForm, valores: contenido, status: contenidoStatus } = useContenidoCotizacion(proyecto, update)
-    const fechaFormateada = contenido.fecha ? format(textoAFecha(contenido.fecha), "PPP", { locale: es }) : ""
 
-    const [logoError, setLogoError] = useState<string | null>(null)
 
-    const handleLogoUpload = useCallback(async (e: React.ChangeEvent<HTMLInputElement>) => {
-        const file = e.target.files?.[0]
-        e.target.value = ""
-        if (!file) return
+    const { descargar: descargarPdf, generando: generandoPdf, error: errorPdf } = useDescargaPdf()
+    const versiones = useVersionesCotizacion(proyecto, update)
 
-        const result = await processLogoFile(file)
-        if ("error" in result) {
-            setLogoError(result.error)
-            return
-        }
-        setLogoError(null)
-        updateConfig({ logo: result.dataUrl })
-    }, [updateConfig])
-
-    const handleGenerarPDF = async () => {
-        if (!proyecto || !config) return
-        await generarPDF({ ...proyecto, cliente: contenido.cliente }, config, costosCalculados, {
-            mostrarMedidas: contenido.mostrarMedidas,
-            mostrarValores: contenido.mostrarValores,
-            descripcion: contenido.descripcion,
-            fecha: fechaFormateada,
-        })
-    }
-
-    if (!proyecto || !config || !precios) {
+    if (!proyecto || !config || !precios || !contenido) {
         return <Loading />
     }
+
+    // Lo mismo alimenta la vista previa y el PDF.
+    const documento = armarDocumentoCotizacion({ proyecto, empresa: config, costos: costosCalculados, contenido })
+    const descargarDocumento = (paraDescargar: DocumentoCotizacion) =>
+        descargarPdf(
+            async () => (await import("@/components/pdf/CotizacionPdf")).crearCotizacionPdf(paraDescargar),
+            nombreArchivoPdf("Cotizacion", paraDescargar.proyecto),
+        )
+    const handleGenerarPDF = async () => {
+        if (await descargarDocumento(documento)) versiones.registrar(documento)
+    }
+    const handleDescargarVersion = (version: VersionCotizacion) => descargarDocumento(documentoDeVersion(version, { logo: config.logo, firma: config.firma }))
 
     return (
         <div className="space-y-6">
@@ -72,10 +62,13 @@ function CotizadorContent() {
                         <p className="text-sm text-muted-foreground">Proyecto: {proyecto.nombre}</p>
                     </div>
                 </div>
-                <Button onClick={handleGenerarPDF}>
-                    <Download className="h-4 w-4 mr-2" />
-                    Descargar PDF
-                </Button>
+                <div className="flex flex-col items-end gap-1">
+                    <Button onClick={handleGenerarPDF} disabled={generandoPdf}>
+                        <Download className="h-4 w-4 mr-2" />
+                        {generandoPdf ? "Generando PDF…" : "Descargar PDF"}
+                    </Button>
+                    {errorPdf && <p role="alert" className="text-sm text-destructive">{errorPdf}</p>}
+                </div>
             </div>
 
             <Tabs defaultValue="configuracion" className="space-y-4">
@@ -87,13 +80,7 @@ function CotizadorContent() {
                 </TabsList>
 
                 <TabsContent value="configuracion">
-                    <ConfiguracionTab
-                        config={config}
-                        logo={config.logo || ""}
-                        onSave={updateConfig}
-                        onLogoUpload={handleLogoUpload}
-                        logoError={logoError}
-                    />
+                    <ConfiguracionTab config={config} onSave={updateConfig} />
                 </TabsContent>
 
                 <TabsContent value="contenido">
@@ -110,16 +97,16 @@ function CotizadorContent() {
                 </TabsContent>
 
                 <TabsContent value="vista-previa">
-                    <VistaPreviaTab
-                        config={config}
-                        logo={config.logo || ""}
-                        proyecto={{ ...proyecto, cliente: contenido.cliente }}
-                        fecha={fechaFormateada}
-                        descripcion={contenido.descripcion}
-                        mostrarMedidas={contenido.mostrarMedidas}
-                        mostrarValores={contenido.mostrarValores}
-                        costosCalculados={costosCalculados}
-                    />
+                    <div className="space-y-4">
+                        <VersionesPdf
+                            versiones={versiones.versiones}
+                            generando={generandoPdf}
+                            onDescargar={handleDescargarVersion}
+                            onGuardar={versiones.guardar}
+                            onSoltar={versiones.soltar}
+                        />
+                        <VistaPreviaTab documento={documento} />
+                    </div>
                 </TabsContent>
             </Tabs>
         </div>

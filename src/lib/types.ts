@@ -11,12 +11,21 @@ import type {
     ConfiguracionOverheadSchema,
     ConfiguracionPreciosSchema,
     CostoAdicionalSchema,
+    DocumentoCotizacionSchema,
+    DocumentoPlanCorteSchema,
+    LaminaPlanCorteSchema,
+    PerfilPlanCorteSchema,
+    PiezaListaMaestraSchema,
+    PiezaPlanCorteSchema,
+    TotalesPlanCorteSchema,
+    FilaCotizacionSchema,
     ProyectoSchema,
     SistemaVentanaSchema,
     TipoCerraduraSchema,
     TipoRodachinaSchema,
     TipoVentanaSchema,
     VentanaSchema,
+    VersionCotizacionSchema,
 } from "./schemas"
 
 export type TipoVentana = z.infer<typeof TipoVentanaSchema>
@@ -195,6 +204,34 @@ export type Proyecto = z.infer<typeof ProyectoSchema>
 export type ContenidoCotizacion = z.infer<typeof ContenidoCotizacionSchema>
 
 export type ConfiguracionEmpresa = z.infer<typeof ConfiguracionEmpresaSchema>
+
+export type FilaCotizacion = z.infer<typeof FilaCotizacionSchema>
+export type DocumentoCotizacion = z.infer<typeof DocumentoCotizacionSchema>
+export type VersionCotizacion = z.infer<typeof VersionCotizacionSchema>
+export type DocumentoPlanCorte = z.infer<typeof DocumentoPlanCorteSchema>
+export type LaminaPlanCorte = z.infer<typeof LaminaPlanCorteSchema>
+export type PiezaPlanCorte = z.infer<typeof PiezaPlanCorteSchema>
+export type PerfilPlanCorte = z.infer<typeof PerfilPlanCorteSchema>
+export type PiezaListaMaestra = z.infer<typeof PiezaListaMaestraSchema>
+export type TotalesPlanCorte = z.infer<typeof TotalesPlanCorteSchema>
+
+// Descripción del editor de texto enriquecido, ya interpretada para el PDF.
+export interface TramoTexto {
+    texto: string
+    negrita: boolean
+    cursiva: boolean
+}
+
+export type AlineacionTexto = "left" | "center" | "right"
+
+export interface ItemLista {
+    tramos: TramoTexto[]
+    nivel: number
+}
+
+export type BloqueTexto =
+    | { tipo: "parrafo"; alineacion: AlineacionTexto; tramos: TramoTexto[] }
+    | { tipo: "lista"; ordenada: boolean; items: ItemLista[] }
 
 // El esquema acepta cualquier clave en estos mapas (ver ConfiguracionPreciosSchema);
 // en el código se restringen a las claves válidas.
