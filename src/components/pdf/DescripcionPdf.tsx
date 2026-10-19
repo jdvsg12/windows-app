@@ -60,7 +60,7 @@ export function DescripcionPdf({ html }: DescripcionPdfProps) {
     if (bloques.length === 0) return null
 
     return (
-        <View style={{ marginBottom: 16 }}>
+        <View>
             {bloques.map((bloque, indice) => (
                 <BloquePdf key={indice} bloque={bloque} />
             ))}

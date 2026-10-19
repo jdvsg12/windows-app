@@ -86,7 +86,7 @@ export function VersionesPdf({ versiones, ...acciones }: VersionesPdfProps) {
                 {versiones.length === 0 ? (
                     <p className="text-sm text-muted-foreground">Todavía no has descargado el PDF de esta cotización.</p>
                 ) : (
-                    <ul className="space-y-2">
+                    <ul className="space-y-2" aria-label="Versiones del PDF">
                         {versiones.map((version) => (
                             <FilaVersion key={version.id} version={version} {...acciones} />
                         ))}

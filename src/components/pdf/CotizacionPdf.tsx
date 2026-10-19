@@ -1,9 +1,16 @@
-import { Document, Image, Page, Text, View } from "@react-pdf/renderer"
+import { Document, Page, Text, View } from "@react-pdf/renderer"
 
-import { formatArea } from "@/lib/format"
 import { PAPER } from "@/lib/design/tokens"
+import { resumenPago } from "@/lib/pdf/cotizacion-formato"
 import { estilosBase } from "@/lib/pdf/estilos"
+import { parsearTextoEnriquecido } from "@/lib/pdf/texto-enriquecido"
 import type { DocumentoCotizacion } from "@/lib/types"
+import { ClienteCotizacionPdf } from "./cotizacion/ClienteCotizacionPdf"
+import { CondicionesPdf } from "./cotizacion/CondicionesPdf"
+import { EncabezadoCotizacionPdf } from "./cotizacion/EncabezadoCotizacionPdf"
+import { estilosCotizacion } from "./cotizacion/estilos"
+import { FirmasPdf } from "./cotizacion/FirmasPdf"
+import { ResumenPagoPdf } from "./cotizacion/ResumenPagoPdf"
 import { DescripcionPdf } from "./DescripcionPdf"
 import { TablaVentanasPdf } from "./TablaVentanasPdf"
 
@@ -11,88 +18,50 @@ interface CotizacionPdfProps {
     documento: DocumentoCotizacion
 }
 
-// Ajustado para que una cotización corta, con firma, quepa en una página.
-const separacion = { marginBottom: 12 }
+interface PieCotizacionPdfProps {
+    empresa: string
+}
 
-const encabezado = {
-    flexDirection: "row",
-    justifyContent: "space-between",
-    alignItems: "flex-start",
-    borderBottomWidth: 2,
-    borderColor: PAPER.tinta,
-    paddingBottom: 12,
-    ...separacion,
-} as const
+function PieCotizacionPdf({ empresa }: PieCotizacionPdfProps) {
+    return (
+        <View
+            style={{ position: "absolute", bottom: 22, left: 40, right: 40, flexDirection: "row", justifyContent: "space-between", borderTopWidth: 1, borderColor: PAPER.bordePanel, paddingTop: 4, fontSize: 7, color: PAPER.apagado }}
+            fixed
+        >
+            <Text>Documento generado digitalmente • {empresa}</Text>
+            <Text render={({ pageNumber, totalPages }) => `Página ${pageNumber} de ${totalPages}`} />
+        </View>
+    )
+}
 
+// Diseño de referencia: docs/diseno-cotizacion.html (aprobado por el usuario, 2026-10-19).
 export function CotizacionPdf({ documento }: CotizacionPdfProps) {
     const { empresa } = documento
-    const mostrarAreaTotal = documento.mostrarMedidas && documento.areaTotal !== null
+    const pago = documento.mostrarValores ? resumenPago(documento.total) : null
+    const tieneDescripcion = parsearTextoEnriquecido(documento.descripcion).length > 0
 
     return (
         <Document title={`Cotización ${documento.proyecto}`} author={empresa.nombre} language="es">
-            <Page size="A4" style={estilosBase.pagina}>
-                <View style={encabezado}>
-                    {empresa.logo ? <Image src={empresa.logo} style={{ width: 72, height: 72, objectFit: "contain" }} /> : <View />}
-                    <View style={{ alignItems: "flex-end" }}>
-                        <Text style={estilosBase.negrita}>{empresa.nombre}</Text>
-                        <Text>NIT: {empresa.nit}</Text>
-                        <Text>{empresa.direccion}</Text>
-                        <Text>CEL: {empresa.telefonos}</Text>
-                        <Text>e-mail: {empresa.email}</Text>
-                        <Text>{empresa.ciudad}</Text>
-                    </View>
-                </View>
+            <Page size="A4" style={[estilosBase.pagina, { fontSize: 9 }]}>
+                <EncabezadoCotizacionPdf documento={documento} />
+                <ClienteCotizacionPdf documento={documento} />
 
-                <Text style={{ textAlign: "right", ...separacion }}>{documento.fecha}</Text>
-
-                <View style={separacion}>
-                    <Text>Señor(a):</Text>
-                    <Text style={estilosBase.negrita}>{documento.cliente}</Text>
-                    {documento.direccionObra && <Text>{documento.direccionObra}</Text>}
-                </View>
-
-                <Text style={estilosBase.titulo}>COTIZACIÓN</Text>
-
-                <DescripcionPdf html={documento.descripcion} />
-
-                <Text style={estilosBase.subtitulo}>Ventanas del Proyecto: {documento.proyecto}</Text>
-                <TablaVentanasPdf documento={documento} />
-
-                <View style={{ marginTop: 8, ...separacion }} wrap={false}>
-                    <Text style={estilosBase.negrita}>Total de ventanas: {documento.filas.length}</Text>
-                    {mostrarAreaTotal && <Text>Área total: {formatArea(documento.areaTotal ?? undefined)}</Text>}
-                </View>
-
-                {(documento.tiempoEntrega || documento.validez) && (
-                    <View style={separacion} wrap={false}>
-                        {documento.tiempoEntrega && <Text><Text style={estilosBase.negrita}>Tiempo de entrega:</Text> {documento.tiempoEntrega}</Text>}
-                        {documento.validez && <Text><Text style={estilosBase.negrita}>Validez de la cotización:</Text> {documento.validez}</Text>}
+                {tieneDescripcion && (
+                    <View style={estilosCotizacion.seccion}>
+                        <Text style={estilosCotizacion.tituloSeccion}>Criterios técnicos y especificaciones</Text>
+                        <DescripcionPdf html={documento.descripcion} />
                     </View>
                 )}
 
-                <View style={separacion} wrap={false}>
-                    <Text style={estilosBase.subtitulo}>FORMA DE PAGO:</Text>
-                    <Text>Anticipo 60%</Text>
-                    <Text>Saldo: PAGOS PARCIALES SEGÚN AVANCE DE LA OBRA</Text>
+                <View style={estilosCotizacion.seccion}>
+                    <Text style={[estilosCotizacion.tituloSeccion, { borderBottomWidth: 0 }]}>Ventanas del proyecto</Text>
+                    <TablaVentanasPdf documento={documento} />
                 </View>
 
-                <View style={separacion} wrap={false}>
-                    <Text style={estilosBase.subtitulo}>DATOS BANCARIOS:</Text>
-                    <Text>{empresa.datosBancarios}</Text>
-                </View>
-
-                <View style={{ marginTop: 16, borderTopWidth: 1, borderColor: PAPER.tinta, paddingTop: 8 }} wrap={false}>
-                    {empresa.firma && <Image src={empresa.firma} style={{ width: 132, height: 44, objectFit: "contain", objectPosition: "left" }} />}
-                    <Text>___________________________</Text>
-                    <Text style={estilosBase.negrita}>{empresa.representante}</Text>
-                    <Text>C.C. {empresa.cedula}</Text>
-                </View>
-
-                <Text
-                    style={estilosBase.numeroPagina}
-                    render={({ pageNumber, totalPages }) => `Página ${pageNumber} de ${totalPages}`}
-                    fixed
-                />
+                {pago && documento.total !== null && <ResumenPagoPdf total={documento.total} pago={pago} />}
+                <CondicionesPdf documento={documento} pago={pago} />
+                <FirmasPdf empresa={empresa} />
+                <PieCotizacionPdf empresa={empresa.nombre} />
             </Page>
         </Document>
     )

@@ -1,16 +1,19 @@
 import { Text, View } from "@react-pdf/renderer"
 
+import { PAPER } from "@/lib/design/tokens"
 import { formatCount, formatCurrency } from "@/lib/format"
-import { estilosBase } from "@/lib/pdf/estilos"
+import { metrosDesdeMm, numeroItem } from "@/lib/pdf/cotizacion-formato"
 import type { DocumentoCotizacion, FilaCotizacion } from "@/lib/types"
 
 const COLUMNAS = {
-    nombre: { width: "18%" },
-    tipo: { flex: 1 },
-    medida: { width: "11%" },
-    area: { width: "10%", textAlign: "right" },
-    valor: { width: "16%", textAlign: "right", borderRightWidth: 0 },
+    item: { width: 26, textAlign: "center" },
+    ubicacion: { flex: 1 },
+    medida: { width: 54, textAlign: "center" },
+    area: { width: 48, textAlign: "right" },
+    valor: { width: 84, textAlign: "right" },
 } as const
+
+const celda = { paddingVertical: 5, paddingHorizontal: 5 }
 
 interface TablaVentanasPdfProps {
     documento: DocumentoCotizacion
@@ -18,29 +21,34 @@ interface TablaVentanasPdfProps {
 
 interface FilaVentanaPdfProps {
     fila: FilaCotizacion
+    indice: number
     mostrarMedidas: boolean
     mostrarValores: boolean
 }
 
-function FilaVentanaPdf({ fila, mostrarMedidas, mostrarValores }: FilaVentanaPdfProps) {
+function FilaVentanaPdf({ fila, indice, mostrarMedidas, mostrarValores }: FilaVentanaPdfProps) {
     const especificaciones = fila.especificaciones.join(" · ")
     return (
         // wrap={false}: una ventana nunca queda partida entre dos páginas.
-        <View style={estilosBase.filaTabla} wrap={false}>
-            <Text style={[estilosBase.celda, COLUMNAS.nombre]}>{fila.nombre}</Text>
-            <View style={[estilosBase.celda, COLUMNAS.tipo]}>
-                <Text>{fila.tipo}</Text>
-                {especificaciones && <Text style={{ fontSize: 8, marginTop: 2 }}>{especificaciones}</Text>}
+        <View style={{ flexDirection: "row", borderBottomWidth: 1, borderColor: PAPER.bordePanel }} wrap={false}>
+            <Text style={[celda, COLUMNAS.item, { fontWeight: 700, color: PAPER.apagado }]}>{numeroItem(indice)}</Text>
+            <View style={[celda, COLUMNAS.ubicacion]}>
+                <Text style={{ fontWeight: 700 }}>
+                    {fila.nombre} <Text style={{ fontWeight: 400, color: PAPER.apagado }}>· {fila.tipo}</Text>
+                </Text>
+                {especificaciones && <Text style={{ fontSize: 7.5, color: PAPER.apagado, marginTop: 1 }}>{especificaciones}</Text>}
             </View>
             {mostrarMedidas && (
                 <>
-                    <Text style={[estilosBase.celda, COLUMNAS.medida]}>{fila.ancho}</Text>
-                    <Text style={[estilosBase.celda, COLUMNAS.medida]}>{fila.alto}</Text>
-                    <Text style={[estilosBase.celda, COLUMNAS.area]}>{formatCount(fila.area ?? undefined, 2)}</Text>
+                    <Text style={[celda, COLUMNAS.medida]}>{metrosDesdeMm(fila.ancho)}</Text>
+                    <Text style={[celda, COLUMNAS.medida]}>{metrosDesdeMm(fila.alto)}</Text>
+                    <Text style={[celda, COLUMNAS.area]}>{formatCount(fila.area ?? undefined, 2)}</Text>
                 </>
             )}
             {mostrarValores && (
-                <Text style={[estilosBase.celda, COLUMNAS.valor]}>{formatCurrency(fila.valor ?? undefined)}</Text>
+                <Text style={[celda, COLUMNAS.valor, { fontWeight: 700, color: PAPER.acento, backgroundColor: PAPER.acentoSuave }]}>
+                    {formatCurrency(fila.valor ?? undefined)}
+                </Text>
             )}
         </View>
     )
@@ -48,28 +56,33 @@ function FilaVentanaPdf({ fila, mostrarMedidas, mostrarValores }: FilaVentanaPdf
 
 export function TablaVentanasPdf({ documento }: TablaVentanasPdfProps) {
     const { mostrarMedidas, mostrarValores } = documento
+    const encabezado = [{ fontSize: 7, fontWeight: 700, letterSpacing: 0.5, textTransform: "uppercase" }, celda] as const
+
     return (
-        <View>
+        <View style={{ borderWidth: 1, borderColor: PAPER.banda, fontSize: 8.5 }}>
             {/* fixed: el encabezado se repite en cada página que ocupe la tabla. */}
-            <View style={[estilosBase.filaTabla, estilosBase.encabezadoTabla]} fixed>
-                <Text style={[estilosBase.celda, COLUMNAS.nombre]}>Nombre</Text>
-                <Text style={[estilosBase.celda, COLUMNAS.tipo]}>Tipo</Text>
+            <View style={{ flexDirection: "row", backgroundColor: PAPER.banda, color: PAPER.tintaBanda }} fixed>
+                <Text style={[...encabezado, COLUMNAS.item]}>Ítem</Text>
+                <Text style={[...encabezado, COLUMNAS.ubicacion]}>Ubicación y especificaciones</Text>
                 {mostrarMedidas && (
                     <>
-                        <Text style={[estilosBase.celda, COLUMNAS.medida]}>Ancho (mm)</Text>
-                        <Text style={[estilosBase.celda, COLUMNAS.medida]}>Alto (mm)</Text>
-                        <Text style={[estilosBase.celda, COLUMNAS.area]}>Área (m²)</Text>
+                        <Text style={[...encabezado, COLUMNAS.medida]}>Ancho</Text>
+                        <Text style={[...encabezado, COLUMNAS.medida]}>Alto</Text>
+                        <Text style={[...encabezado, COLUMNAS.area]}>Área m²</Text>
                     </>
                 )}
-                {mostrarValores && <Text style={[estilosBase.celda, COLUMNAS.valor]}>Valor</Text>}
+                {mostrarValores && <Text style={[...encabezado, COLUMNAS.valor]}>Valor</Text>}
             </View>
-            {documento.filas.map((fila) => (
-                <FilaVentanaPdf key={fila.id} fila={fila} mostrarMedidas={mostrarMedidas} mostrarValores={mostrarValores} />
+            {documento.filas.map((fila, indice) => (
+                <FilaVentanaPdf key={fila.id} fila={fila} indice={indice} mostrarMedidas={mostrarMedidas} mostrarValores={mostrarValores} />
             ))}
             {mostrarValores && (
-                <View style={[estilosBase.filaTabla, estilosBase.encabezadoTabla]} wrap={false}>
-                    <Text style={[estilosBase.celda, { flex: 1, textAlign: "right" }]}>TOTAL</Text>
-                    <Text style={[estilosBase.celda, COLUMNAS.valor]}>{formatCurrency(documento.total ?? undefined)}</Text>
+                <View style={{ flexDirection: "row", backgroundColor: PAPER.panel, borderTopWidth: 1.5, borderColor: PAPER.banda }} wrap={false}>
+                    <Text style={[celda, { flex: 1, textAlign: "right", fontWeight: 700, textTransform: "uppercase" }]}>
+                        Total {documento.filas.length} {documento.filas.length === 1 ? "ventana" : "ventanas"}
+                        {mostrarMedidas && documento.areaTotal !== null ? ` · ${formatCount(documento.areaTotal, 2)} m²` : ""}
+                    </Text>
+                    <Text style={[celda, COLUMNAS.valor, { fontWeight: 700, color: PAPER.acento }]}>{formatCurrency(documento.total ?? undefined)}</Text>
                 </View>
             )}
         </View>
