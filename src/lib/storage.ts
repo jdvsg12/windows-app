@@ -1,5 +1,5 @@
-import type { Proyecto, ConfiguracionPrecios, ConfiguracionOverhead, DescuentosPorSistema } from "./types"
-import { ProyectoSchema, ContenidoCotizacionSchema, ConfiguracionEmpresaSchema, ConfiguracionPreciosSchema, ConfiguracionOverheadSchema } from "./schemas"
+import type { Proyecto, ConfiguracionPrecios, ConfiguracionOverhead, DescuentosPorSistema, FotosProductos } from "./types"
+import { ProyectoSchema, ContenidoCotizacionSchema, ConfiguracionEmpresaSchema, ConfiguracionPreciosSchema, ConfiguracionOverheadSchema, FotosProductosSchema } from "./schemas"
 import { DESCUNTOS_DEFAULT } from "./types"
 
 const STORAGE_KEYS = {
@@ -11,6 +11,7 @@ const STORAGE_KEYS = {
     PRECIOS: "ventanas_precios",
     DESCUNTOS: "ventanas_descuentos",
     OVERHEAD: "ventanas_overhead",
+    FOTOS_PRODUCTOS: "ventanas_fotos_productos",
     ADMIN_AUTH: "admin_auth",
 }
 
@@ -110,6 +111,13 @@ function validateConfiguracion(data: unknown) {
 function validatePrecios(data: unknown): ConfiguracionPrecios {
     const result = ConfiguracionPreciosSchema.safeParse(data)
     return result.success ? result.data : PRECIOS_DEFAULT
+}
+
+const FOTOS_PRODUCTOS_DEFAULT: FotosProductos = { cerraduras: {}, rodachinas: {} }
+
+function validateFotosProductos(data: unknown): FotosProductos {
+    const result = FotosProductosSchema.safeParse(data)
+    return result.success ? result.data : FOTOS_PRODUCTOS_DEFAULT
 }
 
 function validateOverhead(data: unknown): ConfiguracionOverhead {
@@ -222,3 +230,9 @@ export const obtenerOverhead = (): ConfiguracionOverhead =>
 
 export const guardarOverhead = (overhead: ConfiguracionOverhead) =>
     safeSet(STORAGE_KEYS.OVERHEAD, overhead)
+
+export const obtenerFotosProductos = (): FotosProductos =>
+    safeGet(STORAGE_KEYS.FOTOS_PRODUCTOS, FOTOS_PRODUCTOS_DEFAULT, validateFotosProductos)
+
+export const guardarFotosProductos = (fotos: FotosProductos) =>
+    safeSet(STORAGE_KEYS.FOTOS_PRODUCTOS, fotos)

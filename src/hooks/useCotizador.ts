@@ -6,13 +6,15 @@ import {
     guardarPrecios,
     obtenerOverhead,
     obtenerDescuentos,
+    obtenerFotosProductos,
 } from "@/lib/storage"
 import { intentarCosteo } from "@/lib/calculo/costeo"
-import type { Proyecto, ConfiguracionEmpresa, ConfiguracionPrecios } from "@/lib/types"
+import type { Proyecto, ConfiguracionEmpresa, ConfiguracionPrecios, FotosProductos } from "@/lib/types"
 
 export function useCotizador(proyecto: Proyecto | null) {
     const [config, setConfig] = useState<ConfiguracionEmpresa | null>(null)
     const [precios, setPrecios] = useState<ConfiguracionPrecios | null>(null)
+    const [fotos, setFotos] = useState<FotosProductos | undefined>(undefined)
 
     useEffect(() => {
         const configuracion = obtenerConfiguracion()
@@ -20,6 +22,8 @@ export function useCotizador(proyecto: Proyecto | null) {
 
         const preciosConfig = obtenerPrecios()
         setPrecios(preciosConfig)
+
+        setFotos(obtenerFotosProductos())
     }, [])
 
     const ventanas = proyecto?.ventanas
@@ -57,6 +61,7 @@ export function useCotizador(proyecto: Proyecto | null) {
     return {
         config,
         precios,
+        fotos,
         costosCalculados,
         errorCosteo,
         updateConfig,

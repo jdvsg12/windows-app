@@ -1,6 +1,6 @@
 import { describe, expect, it } from "vitest"
 
-import { armarDocumentoCotizacion, type EntradaDocumentoCotizacion } from "@/lib/pdf/cotizacion-modelo"
+import { armarDocumentoCotizacion, productosConFoto, type EntradaDocumentoCotizacion } from "@/lib/pdf/cotizacion-modelo"
 import { DocumentoCotizacionSchema, ProyectoSchema } from "@/lib/schemas"
 import type { ConfiguracionEmpresa, CostosCalculadosCotizador } from "@/lib/types"
 
@@ -148,5 +148,24 @@ describe("documento de cotización", () => {
     it("cumple su esquema, para poder guardarlo como versión o snapshot", () => {
         const documento = armarDocumentoCotizacion(entrada)
         expect(DocumentoCotizacionSchema.parse(documento)).toEqual(documento)
+    })
+
+    it("sin catálogo de fotos no hay productos", () => {
+        expect(armarDocumentoCotizacion(entrada).productos).toEqual([])
+    })
+
+    it("productos: una foto por tipo usado, en orden de aparición, con la leyenda del catálogo o el nombre del tipo", () => {
+        const fotos = {
+            cerraduras: { manija: { imagen: "data:manija", nombre: "" }, dummy: { imagen: "data:dummy", nombre: "" } },
+            rodachinas: { metalica: { imagen: "data:metalica", nombre: "Rodachina metálica con rodamiento" } },
+        }
+        expect(productosConFoto(proyecto, fotos)).toEqual([
+            { clave: "cerradura:manija", nombre: "Cerradura Manija", imagen: "data:manija" },
+            { clave: "rodachina:metalica", nombre: "Rodachina metálica con rodamiento", imagen: "data:metalica" },
+        ])
+    })
+
+    it("un tipo usado sin foto en el catálogo no aparece; tampoco las ventanas sin especificaciones", () => {
+        expect(productosConFoto(proyecto, { cerraduras: {}, rodachinas: {} })).toEqual([])
     })
 })
