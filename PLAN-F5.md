@@ -1,6 +1,6 @@
 # Plan F5 — PDF con `@react-pdf/renderer`
 
-> Aprobado · 2026-10-17 · PRs AWA-32 a AWA-39 (días 5 y 6 del plan)
+> Aprobado · 2026-10-17 · **Completado 2026-10-19** (AWA-32 a AWA-41; los números se corrieron: ver HANDOFF) · PRs AWA-32 a AWA-39 (días 5 y 6 del plan)
 
 ## Objetivo
 
