@@ -12,7 +12,7 @@ import { useAutosave } from "@/hooks/useAutosave"
 import { ConfiguracionEmpresaSchema } from "@/lib/schemas"
 import { useCargaImagen } from "@/hooks/useCargaImagen"
 import type { ConfiguracionEmpresa } from "@/lib/types"
-import { CampoImagen } from "./CampoImagen"
+import { CampoImagen } from "@/components/common/CampoImagen"
 
 interface ConfiguracionTabProps {
     config: ConfiguracionEmpresa

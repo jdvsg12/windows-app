@@ -19,6 +19,9 @@ import type {
     PiezaPlanCorteSchema,
     TotalesPlanCorteSchema,
     FilaCotizacionSchema,
+    FotoProductoSchema,
+    FotosProductosSchema,
+    ProductoCotizacionSchema,
     ProyectoSchema,
     SistemaVentanaSchema,
     TipoCerraduraSchema,
@@ -207,6 +210,9 @@ export type ConfiguracionEmpresa = z.infer<typeof ConfiguracionEmpresaSchema>
 
 export type FilaCotizacion = z.infer<typeof FilaCotizacionSchema>
 export type DocumentoCotizacion = z.infer<typeof DocumentoCotizacionSchema>
+export type FotoProducto = z.infer<typeof FotoProductoSchema>
+export type FotosProductos = z.infer<typeof FotosProductosSchema>
+export type ProductoCotizacion = z.infer<typeof ProductoCotizacionSchema>
 export type VersionCotizacion = z.infer<typeof VersionCotizacionSchema>
 export type DocumentoPlanCorte = z.infer<typeof DocumentoPlanCorteSchema>
 export type LaminaPlanCorte = z.infer<typeof LaminaPlanCorteSchema>

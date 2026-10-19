@@ -27,7 +27,7 @@ function CotizadorContent() {
     const proyectoId = searchParams.get("id")
 
     const { proyecto, update } = useProyecto(proyectoId)
-    const { config, precios, costosCalculados, errorCosteo, updateConfig, updatePrecios } = useCotizador(proyecto)
+    const { config, precios, fotos, costosCalculados, errorCosteo, updateConfig, updatePrecios } = useCotizador(proyecto)
     const { form: contenidoForm, valores: contenido, status: contenidoStatus } = useContenidoCotizacion(proyecto, update)
 
 
@@ -39,7 +39,7 @@ function CotizadorContent() {
     }
 
     // Lo mismo alimenta la vista previa y el PDF.
-    const documento = armarDocumentoCotizacion({ proyecto, empresa: config, costos: costosCalculados, contenido })
+    const documento = armarDocumentoCotizacion({ proyecto, empresa: config, costos: costosCalculados, contenido, fotos })
     const descargarDocumento = (paraDescargar: DocumentoCotizacion) =>
         descargarPdf(
             async () => (await import("@/components/pdf/CotizacionPdf")).crearCotizacionPdf(paraDescargar),
@@ -48,7 +48,7 @@ function CotizadorContent() {
     const handleGenerarPDF = async () => {
         if (await descargarDocumento(documento)) versiones.registrar(documento)
     }
-    const handleDescargarVersion = (version: VersionCotizacion) => descargarDocumento(documentoDeVersion(version, { logo: config.logo, firma: config.firma }))
+    const handleDescargarVersion = (version: VersionCotizacion) => descargarDocumento(documentoDeVersion(version, { logo: config.logo, firma: config.firma, fotos }))
 
     return (
         <div className="space-y-6">

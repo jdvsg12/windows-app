@@ -9,6 +9,7 @@ import { CondicionesPreview } from "./vista-previa/CondicionesPreview"
 import { DescripcionPreview } from "./vista-previa/DescripcionPreview"
 import { EncabezadoPreview } from "./vista-previa/EncabezadoPreview"
 import { FirmasPreview } from "./vista-previa/FirmasPreview"
+import { FotosProductosPreview } from "./vista-previa/FotosProductosPreview"
 import { ResumenPagoPreview } from "./vista-previa/ResumenPagoPreview"
 import { TablaVentanasPreview } from "./vista-previa/TablaVentanasPreview"
 
@@ -22,6 +23,7 @@ const tituloSeccion = "mb-3 border-b border-paper-panel-border pb-1 text-xs font
 export function VistaPreviaTab({ documento }: VistaPreviaTabProps) {
     const pago = documento.mostrarValores ? resumenPago(documento.total) : null
     const tieneDescripcion = parsearTextoEnriquecido(documento.descripcion).length > 0
+    const tieneFotos = documento.productos.some((producto) => producto.imagen)
 
     return (
         <Card>
@@ -29,10 +31,11 @@ export function VistaPreviaTab({ documento }: VistaPreviaTabProps) {
                 <EncabezadoPreview documento={documento} />
                 <ClientePreview documento={documento} />
 
-                {tieneDescripcion && (
+                {(tieneDescripcion || tieneFotos) && (
                     <section className="mb-6 text-sm">
                         <h3 className={tituloSeccion}>Criterios técnicos y especificaciones</h3>
                         <DescripcionPreview html={documento.descripcion} />
+                        <FotosProductosPreview productos={documento.productos} />
                     </section>
                 )}
 

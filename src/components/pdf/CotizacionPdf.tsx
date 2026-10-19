@@ -10,6 +10,7 @@ import { CondicionesPdf } from "./cotizacion/CondicionesPdf"
 import { EncabezadoCotizacionPdf } from "./cotizacion/EncabezadoCotizacionPdf"
 import { estilosCotizacion } from "./cotizacion/estilos"
 import { FirmasPdf } from "./cotizacion/FirmasPdf"
+import { FotosProductosPdf } from "./cotizacion/FotosProductosPdf"
 import { ResumenPagoPdf } from "./cotizacion/ResumenPagoPdf"
 import { DescripcionPdf } from "./DescripcionPdf"
 import { TablaVentanasPdf } from "./TablaVentanasPdf"
@@ -39,6 +40,7 @@ export function CotizacionPdf({ documento }: CotizacionPdfProps) {
     const { empresa } = documento
     const pago = documento.mostrarValores ? resumenPago(documento.total) : null
     const tieneDescripcion = parsearTextoEnriquecido(documento.descripcion).length > 0
+    const tieneFotos = documento.productos.some((producto) => producto.imagen)
 
     return (
         <Document title={`Cotización ${documento.proyecto}`} author={empresa.nombre} language="es">
@@ -46,10 +48,11 @@ export function CotizacionPdf({ documento }: CotizacionPdfProps) {
                 <EncabezadoCotizacionPdf documento={documento} />
                 <ClienteCotizacionPdf documento={documento} />
 
-                {tieneDescripcion && (
+                {(tieneDescripcion || tieneFotos) && (
                     <View style={estilosCotizacion.seccion}>
                         <Text style={estilosCotizacion.tituloSeccion}>Criterios técnicos y especificaciones</Text>
                         <DescripcionPdf html={documento.descripcion} />
+                        <FotosProductosPdf productos={documento.productos} />
                     </View>
                 )}
 

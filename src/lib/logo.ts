@@ -7,8 +7,9 @@ const MAX_DATA_URL_BYTES = 512 * 1024
 
 export type LogoResult = { dataUrl: string } | { error: string }
 
-// nombre goes into the error messages: "El logo", "La firma".
-export async function processLogoFile(file: File, nombre = "El logo"): Promise<LogoResult> {
+// nombre goes into the error messages: "El logo", "La firma". Product photos use a smaller
+// maxDimension: six of them live in localStorage next to the projects.
+export async function processLogoFile(file: File, nombre = "El logo", maxDimension = MAX_DIMENSION): Promise<LogoResult> {
     if (!file.type.startsWith("image/")) {
         return { error: `${nombre} debe ser una imagen (PNG, JPG, SVG, etc.)` }
     }
@@ -27,7 +28,7 @@ export async function processLogoFile(file: File, nombre = "El logo"): Promise<L
         return { error: "El archivo no es una imagen válida" }
     }
 
-    const scale = Math.min(1, MAX_DIMENSION / Math.max(image.naturalWidth, image.naturalHeight))
+    const scale = Math.min(1, maxDimension / Math.max(image.naturalWidth, image.naturalHeight))
     const width = Math.max(1, Math.round(image.naturalWidth * scale))
     const height = Math.max(1, Math.round(image.naturalHeight * scale))
 
