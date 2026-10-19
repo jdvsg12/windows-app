@@ -4,9 +4,10 @@ import type { DocumentoCotizacion, VersionCotizacion } from "./types"
 // que no rota. Funciones puras: el id y la fecha los pone quien llama.
 export const MAX_VERSIONES_RECIENTES = 3
 
-const sinLogo = (documento: DocumentoCotizacion): DocumentoCotizacion => ({
+// Logo y firma pesan cientos de KB cada uno: repetidos en cada versión llenarían el almacenamiento.
+const sinImagenes = (documento: DocumentoCotizacion): DocumentoCotizacion => ({
     ...documento,
-    empresa: { ...documento.empresa, logo: undefined },
+    empresa: { ...documento.empresa, logo: undefined, firma: undefined },
 })
 
 const mismoDocumento = (a: DocumentoCotizacion, b: DocumentoCotizacion) => JSON.stringify(a) === JSON.stringify(b)
@@ -25,7 +26,7 @@ export function registrarVersion(
     id: string,
     creada: string,
 ): VersionCotizacion[] {
-    const nuevo = sinLogo(documento)
+    const nuevo = sinImagenes(documento)
     const ultima = recortar(versiones)[0]
     // Descargar dos veces el mismo PDF no gasta una versión: solo actualiza la fecha.
     if (ultima && mismoDocumento(ultima.documento, nuevo)) {
@@ -43,8 +44,11 @@ export function quitarGuardada(versiones: readonly VersionCotizacion[]): Version
     return recortar(versiones.map((version) => ({ ...version, guardada: false })))
 }
 
-// Al volver a descargar se usa el logo actual: las versiones no lo guardan.
-export const documentoDeVersion = (version: VersionCotizacion, logo: string | undefined): DocumentoCotizacion => ({
+// Al volver a descargar se usan el logo y la firma actuales: las versiones no los guardan.
+export const documentoDeVersion = (
+    version: VersionCotizacion,
+    imagenes: { logo?: string; firma?: string },
+): DocumentoCotizacion => ({
     ...version.documento,
-    empresa: { ...version.documento.empresa, logo },
+    empresa: { ...version.documento.empresa, logo: imagenes.logo, firma: imagenes.firma },
 })

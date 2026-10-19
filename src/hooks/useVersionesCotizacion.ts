@@ -1,13 +1,13 @@
 "use client"
 
-import { useCallback } from "react"
+import { useCallback, useMemo } from "react"
 
 import type { DocumentoCotizacion, Proyecto } from "@/lib/types"
 import { marcarGuardada, quitarGuardada, registrarVersion } from "@/lib/versiones-cotizacion"
 
 // Las versiones viven en el proyecto: se borran con él y pasarán a IndexedDB junto con él.
 export function useVersionesCotizacion(proyecto: Proyecto | null, update: (cambios: Partial<Proyecto>) => void) {
-    const versiones = proyecto?.versionesCotizacion ?? []
+    const versiones = useMemo(() => proyecto?.versionesCotizacion ?? [], [proyecto])
 
     const registrar = useCallback(
         (documento: DocumentoCotizacion) =>

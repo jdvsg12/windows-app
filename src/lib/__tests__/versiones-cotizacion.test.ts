@@ -1,5 +1,6 @@
 import { describe, expect, it } from "vitest"
 
+import { VersionCotizacionSchema } from "@/lib/schemas"
 import type { DocumentoCotizacion, VersionCotizacion } from "@/lib/types"
 import {
     MAX_VERSIONES_RECIENTES,
@@ -21,9 +22,13 @@ const documento = (total: number): DocumentoCotizacion => ({
         cedula: "",
         datosBancarios: "",
         logo: "data:image/png;base64,AAAA",
+        firma: "data:image/png;base64,BBBB",
     },
     fecha: "17 de octubre de 2026",
     cliente: "Ana",
+    direccionObra: "",
+    tiempoEntrega: "25 días hábiles",
+    validez: "15 días hábiles",
     proyecto: "Casa",
     descripcion: "",
     mostrarMedidas: true,
@@ -48,6 +53,7 @@ describe("versiones del PDF de la cotización", () => {
         expect(versiones.map((v) => v.id)).toEqual(["v2", "v1"])
         expect(versiones[0]).toMatchObject({ guardada: false, creada: "2026-10-17T10:02:00.000Z" })
         expect(versiones[0].documento.empresa.logo).toBeUndefined()
+        expect(versiones[0].documento.empresa.firma).toBeUndefined()
         expect(versiones[0].documento.total).toBe(2)
     })
 
@@ -90,9 +96,19 @@ describe("versiones del PDF de la cotización", () => {
         expect(dos[0]).toMatchObject({ id: "a", creada: "2026-10-17T11:00:00.000Z" })
     })
 
-    it("al volver a descargar, el documento lleva el logo actual", () => {
+    it("al volver a descargar, el documento lleva el logo y la firma actuales", () => {
         const [version] = generar(1)
-        expect(documentoDeVersion(version, "data:logo-nuevo").empresa.logo).toBe("data:logo-nuevo")
-        expect(documentoDeVersion(version, undefined).total).toBe(1)
+        const documentoNuevo = documentoDeVersion(version, { logo: "data:logo-nuevo", firma: "data:firma-nueva" })
+        expect(documentoNuevo.empresa).toMatchObject({ logo: "data:logo-nuevo", firma: "data:firma-nueva" })
+        expect(documentoDeVersion(version, {}).total).toBe(1)
+    })
+
+    it("una versión guardada antes de AWA-41 sigue cargando, con las condiciones vacías", () => {
+        const [version] = generar(1)
+        const documentoViejo = Object.fromEntries(
+            Object.entries(version.documento).filter(([campo]) => !["direccionObra", "tiempoEntrega", "validez"].includes(campo)),
+        )
+        const cargada = VersionCotizacionSchema.parse({ ...version, documento: documentoViejo })
+        expect(cargada.documento).toMatchObject({ direccionObra: "", tiempoEntrega: "", validez: "" })
     })
 })

@@ -21,15 +21,23 @@ export function useAutosave<T>({ value, onSave, delayMs = 600, enabled = true }:
     const lastSerializedRef = useRef(serialized)
     const onSaveRef = useRef(onSave)
     onSaveRef.current = onSave
+    // Lo que espera el debounce. Si el formulario se desmonta antes (cambiar de pestaña), se
+    // guarda en ese momento: cancelarlo perdía lo último que se escribió.
+    const pendienteRef = useRef<{ value: T; serialized: string } | null>(null)
 
     useEffect(() => {
-        if (!enabled || serialized === lastSerializedRef.current) return
+        if (!enabled || serialized === lastSerializedRef.current) {
+            pendienteRef.current = null
+            return
+        }
 
+        pendienteRef.current = { value, serialized }
         setStatus("saving")
         const timeoutId = setTimeout(() => {
             // Marked only once it is really saved: a save cancelled by a newer edit (or by the
             // form turning invalid) must not make the same content look already saved later.
             lastSerializedRef.current = serialized
+            pendienteRef.current = null
             const result = onSaveRef.current(value)
             setStatus(result === false ? "error" : "saved")
         }, delayMs)
@@ -37,6 +45,17 @@ export function useAutosave<T>({ value, onSave, delayMs = 600, enabled = true }:
         return () => clearTimeout(timeoutId)
         // eslint-disable-next-line react-hooks/exhaustive-deps
     }, [serialized, enabled, delayMs])
+
+    useEffect(
+        () => () => {
+            const pendiente = pendienteRef.current
+            if (!pendiente) return
+            lastSerializedRef.current = pendiente.serialized
+            pendienteRef.current = null
+            onSaveRef.current(pendiente.value)
+        },
+        [],
+    )
 
     return status
 }

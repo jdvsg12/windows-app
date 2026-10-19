@@ -1,25 +1,22 @@
 "use client"
 
-import type React from "react"
 import { useForm } from "react-hook-form"
 import { zodResolver } from "@hookform/resolvers/zod"
 
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card"
 import { Form, FormControl, FormField, FormItem, FormLabel, FormMessage } from "@/components/ui/form"
 import { Input } from "@/components/ui/input"
-import { Label } from "@/components/ui/label"
 import { Textarea } from "@/components/ui/textarea"
 import { SaveIndicator } from "@/components/common/SaveIndicator"
 import { useAutosave } from "@/hooks/useAutosave"
 import { ConfiguracionEmpresaSchema } from "@/lib/schemas"
+import { useCargaImagen } from "@/hooks/useCargaImagen"
 import type { ConfiguracionEmpresa } from "@/lib/types"
+import { CampoImagen } from "./CampoImagen"
 
 interface ConfiguracionTabProps {
     config: ConfiguracionEmpresa
-    logo: string
     onSave: (config: Partial<ConfiguracionEmpresa>) => boolean | void
-    onLogoUpload: (e: React.ChangeEvent<HTMLInputElement>) => void
-    logoError?: string | null
 }
 
 interface CamposConfig {
@@ -38,13 +35,20 @@ const CAMPOS: readonly CamposConfig[] = [
     { id: "cedula", label: "Cédula Representante" },
 ]
 
-export function ConfiguracionTab({ config, logo, onSave, onLogoUpload, logoError }: ConfiguracionTabProps) {
+export function ConfiguracionTab({ config, onSave }: ConfiguracionTabProps) {
     const form = useForm<ConfiguracionEmpresa>({
         resolver: zodResolver(ConfiguracionEmpresaSchema),
         values: config,
     })
 
-    const status = useAutosave({ value: form.watch(), onSave })
+    // Las imágenes entran al formulario y las guarda el mismo autoguardado: guardarlas aparte
+    // pisaba lo que se acababa de escribir en otro campo y aún no se había guardado.
+    const ponerImagen = (campo: "logo" | "firma", valor: string | undefined) =>
+        form.setValue(campo, valor, { shouldDirty: true })
+    const logo = useCargaImagen("El logo", (dataUrl) => ponerImagen("logo", dataUrl))
+    const firma = useCargaImagen("La firma", (dataUrl) => ponerImagen("firma", dataUrl))
+    const valores = form.watch()
+    const status = useAutosave({ value: valores, onSave })
 
     return (
         <Card>
@@ -55,21 +59,25 @@ export function ConfiguracionTab({ config, logo, onSave, onLogoUpload, logoError
             <CardContent className="space-y-4">
                 <Form {...form}>
                     <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-                        <div className="space-y-2">
-                            <Label>Logo</Label>
-                            <div className="flex items-center gap-4">
-                                {logo && (
-                                    <div className="w-20 h-20 border rounded-md overflow-hidden">
-                                        <img src={logo || "/placeholder.svg"} alt={`${config.nombre} - logo`} className="w-full h-full object-contain" />
-                                    </div>
-                                )}
-                                <div className="flex-1">
-                                    <Input type="file" accept="image/*" onChange={onLogoUpload} />
-                                    <p className="text-xs text-muted-foreground mt-1">Máx. 512 KB, se reduce a 400x400 px</p>
-                                    {logoError && <p className="text-sm text-destructive mt-1">{logoError}</p>}
-                                </div>
-                            </div>
-                        </div>
+                        <CampoImagen
+                            id="config-logo"
+                            etiqueta="Logo"
+                            imagen={valores.logo}
+                            descripcion={`${valores.nombre} - logo`}
+                            ayuda="Máx. 512 KB, se reduce a 400x400 px"
+                            error={logo.error}
+                            onArchivo={logo.handleArchivo}
+                        />
+                        <CampoImagen
+                            id="config-firma"
+                            etiqueta="Firma"
+                            imagen={valores.firma}
+                            descripcion={`Firma de ${valores.representante}`}
+                            ayuda="Opcional. Una foto o escaneo de la firma sobre fondo blanco; va sobre la línea de firma."
+                            error={firma.error}
+                            onArchivo={firma.handleArchivo}
+                            onQuitar={() => ponerImagen("firma", undefined)}
+                        />
                         {CAMPOS.map(({ id, label }) => (
                             <FormField
                                 key={id}

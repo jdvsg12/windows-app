@@ -42,14 +42,21 @@ export const ContenidoCotizacionSchema = z.object({
     descripcion: z.string().default(""),
     mostrarMedidas: z.boolean().default(true),
     mostrarValores: z.boolean().default(true),
+    // Condiciones que lleva toda cotización del taller; texto libre ("25 días hábiles").
+    tiempoEntrega: z.string().default("25 días hábiles"),
+    validez: z.string().default("15 días hábiles"),
 })
 
 export const ContenidoCotizacionFormSchema = z.object({
     cliente: z.string(),
+    // Dirección de la obra: se guarda en Proyecto.direccion.
+    direccion: z.string(),
     fecha: z.string().regex(/^\d{4}-\d{2}-\d{2}$/),
     descripcion: z.string(),
     mostrarMedidas: z.boolean(),
     mostrarValores: z.boolean(),
+    tiempoEntrega: z.string(),
+    validez: z.string(),
 })
 
 export type ContenidoCotizacionFormValues = z.infer<typeof ContenidoCotizacionFormSchema>
@@ -64,6 +71,8 @@ export const ConfiguracionEmpresaSchema = z.object({
     representante: z.string(),
     cedula: z.string(),
     logo: z.string().optional(),
+    // Firma escaneada (data URL PNG/JPEG), opcional; va sobre la línea de firma.
+    firma: z.string().optional(),
     datosBancarios: z.string(),
 })
 
@@ -85,8 +94,12 @@ export const DocumentoCotizacionSchema = z.object({
     empresa: ConfiguracionEmpresaSchema,
     fecha: z.string(),
     cliente: z.string(),
+    // .default(): las versiones guardadas antes de AWA-41 no tienen estos campos.
+    direccionObra: z.string().default(""),
     proyecto: z.string(),
     descripcion: z.string(),
+    tiempoEntrega: z.string().default(""),
+    validez: z.string().default(""),
     mostrarMedidas: z.boolean(),
     mostrarValores: z.boolean(),
     filas: z.array(FilaCotizacionSchema),

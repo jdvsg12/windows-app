@@ -31,11 +31,14 @@ export function armarDocumentoCotizacion({
 
     return {
         empresa,
-        // Una fecha inválida no puede tumbar la vista previa: sale vacía.
-        fecha: isValid(fecha) ? format(fecha, "PPP", { locale: es }) : "",
+        // "Girardot, 17 de octubre de 2026". Una fecha inválida no puede tumbar la vista previa: sale sin fecha.
+        fecha: [empresa.ciudad.trim(), isValid(fecha) ? format(fecha, "PPP", { locale: es }) : ""].filter(Boolean).join(", "),
         cliente: contenido.cliente,
+        direccionObra: contenido.direccion,
         proyecto: proyecto.nombre,
         descripcion: contenido.descripcion,
+        tiempoEntrega: contenido.tiempoEntrega,
+        validez: contenido.validez,
         mostrarMedidas: contenido.mostrarMedidas,
         // Sin costeo no hay valores que mostrar, aunque la opción esté activa.
         mostrarValores: contenido.mostrarValores && costos !== null,

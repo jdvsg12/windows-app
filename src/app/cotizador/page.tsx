@@ -1,7 +1,6 @@
 "use client"
 
-import type React from "react"
-import { useState, useCallback, Suspense } from "react"
+import { Suspense } from "react"
 import { useRouter, useSearchParams } from "next/navigation"
 import { Button } from "@/components/ui/button"
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs"
@@ -11,7 +10,6 @@ import { useCotizador } from "@/hooks/useCotizador"
 import { useContenidoCotizacion } from "@/hooks/useContenidoCotizacion"
 import { useDescargaPdf } from "@/hooks/useDescargaPdf"
 import { useVersionesCotizacion } from "@/hooks/useVersionesCotizacion"
-import { processLogoFile } from "@/lib/logo"
 import { armarDocumentoCotizacion } from "@/lib/pdf/cotizacion-modelo"
 import { nombreArchivoPdf } from "@/lib/pdf/descargar"
 import { documentoDeVersion } from "@/lib/versiones-cotizacion"
@@ -32,21 +30,6 @@ function CotizadorContent() {
     const { config, precios, costosCalculados, errorCosteo, updateConfig, updatePrecios } = useCotizador(proyecto)
     const { form: contenidoForm, valores: contenido, status: contenidoStatus } = useContenidoCotizacion(proyecto, update)
 
-    const [logoError, setLogoError] = useState<string | null>(null)
-
-    const handleLogoUpload = useCallback(async (e: React.ChangeEvent<HTMLInputElement>) => {
-        const file = e.target.files?.[0]
-        e.target.value = ""
-        if (!file) return
-
-        const result = await processLogoFile(file)
-        if ("error" in result) {
-            setLogoError(result.error)
-            return
-        }
-        setLogoError(null)
-        updateConfig({ logo: result.dataUrl })
-    }, [updateConfig])
 
     const { descargar: descargarPdf, generando: generandoPdf, error: errorPdf } = useDescargaPdf()
     const versiones = useVersionesCotizacion(proyecto, update)
@@ -65,7 +48,7 @@ function CotizadorContent() {
     const handleGenerarPDF = async () => {
         if (await descargarDocumento(documento)) versiones.registrar(documento)
     }
-    const handleDescargarVersion = (version: VersionCotizacion) => descargarDocumento(documentoDeVersion(version, config.logo))
+    const handleDescargarVersion = (version: VersionCotizacion) => descargarDocumento(documentoDeVersion(version, { logo: config.logo, firma: config.firma }))
 
     return (
         <div className="space-y-6">
@@ -97,13 +80,7 @@ function CotizadorContent() {
                 </TabsList>
 
                 <TabsContent value="configuracion">
-                    <ConfiguracionTab
-                        config={config}
-                        logo={config.logo || ""}
-                        onSave={updateConfig}
-                        onLogoUpload={handleLogoUpload}
-                        logoError={logoError}
-                    />
+                    <ConfiguracionTab config={config} onSave={updateConfig} />
                 </TabsContent>
 
                 <TabsContent value="contenido">

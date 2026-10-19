@@ -71,10 +71,13 @@ const entrada: EntradaDocumentoCotizacion = {
     costos,
     contenido: {
         cliente: "Ana López de Pérez",
+        direccion: "Casa 106, Condominio El Peñón",
         fecha: "2026-10-17",
         descripcion: "<b>Ventanas</b> en aluminio",
         mostrarMedidas: true,
         mostrarValores: true,
+        tiempoEntrega: "25 días hábiles",
+        validez: "15 días hábiles",
     },
 }
 
@@ -84,7 +87,9 @@ describe("documento de cotización", () => {
         expect(documento.empresa).toBe(empresa)
         expect(documento.cliente).toBe("Ana López de Pérez")
         expect(documento.proyecto).toBe("Casa López")
-        expect(documento.fecha).toBe("17 de octubre de 2026")
+        expect(documento.fecha).toBe("Cali, 17 de octubre de 2026")
+        expect(documento.direccionObra).toBe("Casa 106, Condominio El Peñón")
+        expect(documento).toMatchObject({ tiempoEntrega: "25 días hábiles", validez: "15 días hábiles" })
         expect(documento.descripcion).toBe("<b>Ventanas</b> en aluminio")
     })
 
@@ -137,7 +142,7 @@ describe("documento de cotización", () => {
 
     it("sin fecha válida no falla: la fecha sale vacía", () => {
         const documento = armarDocumentoCotizacion({ ...entrada, contenido: { ...entrada.contenido, fecha: "" } })
-        expect(documento.fecha).toBe("")
+        expect(documento.fecha).toBe("Cali")
     })
 
     it("cumple su esquema, para poder guardarlo como versión o snapshot", () => {
