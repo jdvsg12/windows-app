@@ -1,92 +1,53 @@
 "use client"
 
 import { Card, CardContent } from "@/components/ui/card"
-import { formatArea } from "@/lib/format"
+import { resumenPago } from "@/lib/pdf/cotizacion-formato"
+import { parsearTextoEnriquecido } from "@/lib/pdf/texto-enriquecido"
 import type { DocumentoCotizacion } from "@/lib/types"
-import { DescripcionPreview } from "./DescripcionPreview"
-import { TablaVentanasPreview } from "./TablaVentanasPreview"
+import { ClientePreview } from "./vista-previa/ClientePreview"
+import { CondicionesPreview } from "./vista-previa/CondicionesPreview"
+import { DescripcionPreview } from "./vista-previa/DescripcionPreview"
+import { EncabezadoPreview } from "./vista-previa/EncabezadoPreview"
+import { FirmasPreview } from "./vista-previa/FirmasPreview"
+import { ResumenPagoPreview } from "./vista-previa/ResumenPagoPreview"
+import { TablaVentanasPreview } from "./vista-previa/TablaVentanasPreview"
 
 interface VistaPreviaTabProps {
     documento: DocumentoCotizacion
 }
 
-// Lee el mismo DocumentoCotizacion que el PDF (CotizacionPdf), así la vista previa no se desalinea.
+const tituloSeccion = "mb-3 border-b border-paper-panel-border pb-1 text-xs font-bold uppercase tracking-wider"
+
+// Lee el mismo DocumentoCotizacion que el PDF (CotizacionPdf) y repite sus secciones, así no se desalinean.
 export function VistaPreviaTab({ documento }: VistaPreviaTabProps) {
-    const { empresa } = documento
-    const mostrarAreaTotal = documento.mostrarMedidas && documento.areaTotal !== null
+    const pago = documento.mostrarValores ? resumenPago(documento.total) : null
+    const tieneDescripcion = parsearTextoEnriquecido(documento.descripcion).length > 0
 
     return (
         <Card>
-            <CardContent className="p-8 bg-paper text-paper-ink min-h-[800px]">
-                <div className="flex justify-between items-start mb-8 border-b-2 border-paper-ink pb-4">
-                    {empresa.logo ? (
-                        <div className="w-32 h-32">
-                            <img src={empresa.logo} alt={`${empresa.nombre} - logo`} className="w-full h-full object-contain" />
-                        </div>
-                    ) : (
-                        <div />
-                    )}
-                    <div className="text-right text-sm leading-relaxed">
-                        <p className="font-bold mb-1">{empresa.nombre}</p>
-                        <p>NIT: {empresa.nit}</p>
-                        <p>{empresa.direccion}</p>
-                        <p>CEL: {empresa.telefonos}</p>
-                        <p>e-mail: {empresa.email}</p>
-                        <p>{empresa.ciudad}</p>
-                    </div>
-                </div>
+            <CardContent className="min-h-[800px] bg-paper p-4 text-paper-ink sm:p-10">
+                <EncabezadoPreview documento={documento} />
+                <ClientePreview documento={documento} />
 
-                <p className="mb-6 text-right">{documento.fecha}</p>
-
-                <div className="mb-6">
-                    <p className="mb-1">Señor(a):</p>
-                    <p className="font-bold">{documento.cliente}</p>
-                    {documento.direccionObra && <p>{documento.direccionObra}</p>}
-                </div>
-
-                <h2 className="text-2xl font-bold text-center mb-6 underline">COTIZACIÓN</h2>
-
-                <DescripcionPreview html={documento.descripcion} />
-
-                <div className="mb-6">
-                    <h3 className="font-bold mb-4">Ventanas del Proyecto: {documento.proyecto}</h3>
-                    <TablaVentanasPreview documento={documento} />
-                    <p className="font-bold">Total de ventanas: {documento.filas.length}</p>
-                    {mostrarAreaTotal && <p className="mt-1">Área total: {formatArea(documento.areaTotal ?? undefined)}</p>}
-                </div>
-
-                {(documento.tiempoEntrega || documento.validez) && (
-                    <div className="mb-6">
-                        {documento.tiempoEntrega && (
-                            <p>
-                                <span className="font-bold">Tiempo de entrega:</span> {documento.tiempoEntrega}
-                            </p>
-                        )}
-                        {documento.validez && (
-                            <p>
-                                <span className="font-bold">Validez de la cotización:</span> {documento.validez}
-                            </p>
-                        )}
-                    </div>
+                {tieneDescripcion && (
+                    <section className="mb-6 text-sm">
+                        <h3 className={tituloSeccion}>Criterios técnicos y especificaciones</h3>
+                        <DescripcionPreview html={documento.descripcion} />
+                    </section>
                 )}
 
-                <div className="mb-6">
-                    <h3 className="font-bold mb-2">FORMA DE PAGO:</h3>
-                    <p>Anticipo 60%</p>
-                    <p>Saldo: PAGOS PARCIALES SEGÚN AVANCE DE LA OBRA</p>
-                </div>
+                <section className="mb-6">
+                    <h3 className="mb-2 text-xs font-bold uppercase tracking-wider">Ventanas del proyecto</h3>
+                    <TablaVentanasPreview documento={documento} />
+                </section>
 
-                <div className="mb-6">
-                    <h3 className="font-bold mb-2">DATOS BANCARIOS:</h3>
-                    <p className="whitespace-pre-wrap text-sm leading-relaxed">{empresa.datosBancarios}</p>
-                </div>
+                {pago && documento.total !== null && <ResumenPagoPreview total={documento.total} pago={pago} />}
+                <CondicionesPreview documento={documento} pago={pago} />
+                <FirmasPreview empresa={documento.empresa} />
 
-                <div className="mt-12 border-t border-paper-ink pt-4">
-                    {empresa.firma && <img src={empresa.firma} alt={`Firma de ${empresa.representante}`} className="h-16 w-auto object-contain" />}
-                    <p>___________________________</p>
-                    <p className="font-bold">{empresa.representante}</p>
-                    <p>C.C. {empresa.cedula}</p>
-                </div>
+                <footer className="mt-8 flex justify-between border-t border-paper-panel-border pt-2 text-[10px] text-paper-muted">
+                    <span>Documento generado digitalmente • {documento.empresa.nombre}</span>
+                </footer>
             </CardContent>
         </Card>
     )

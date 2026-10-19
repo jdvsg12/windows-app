@@ -38,9 +38,10 @@ test("la cotización lleva ciudad y fecha, dirección de la obra, total en la ta
     const vista = page.getByRole("tabpanel")
     await expect(vista.getByText(/^Girardot, \d+ de \w+ de \d{4}$/)).toBeVisible()
     await expect(vista.getByText("Casa 106, Condominio El Peñón")).toBeVisible()
-    await expect(vista.locator("tfoot tr")).toContainText(/TOTAL\s*\$[\d.]+/)
+    await expect(vista.locator("tfoot tr")).toContainText(/TOTAL.*\$[\d.]+/)
     await expect(vista.getByText("20 días hábiles")).toBeVisible()
-    await expect(vista.getByText("15 días hábiles")).toBeVisible()
+    // La validez sale arriba, junto a la fecha, y en las condiciones comerciales.
+    await expect(vista.getByText("15 días hábiles")).toHaveCount(2)
     await expect(vista.getByRole("img", { name: /^Firma de/ })).toBeVisible()
 
     // Todo se guarda en el proyecto y vuelve al recargar.

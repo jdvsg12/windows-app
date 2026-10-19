@@ -85,7 +85,14 @@ describe("tokens · contraste WCAG", () => {
 
     it("la tinta del papel impreso es casi negro sobre blanco", () => {
         expect(contraste("paper", "paper-ink")).toBeGreaterThanOrEqual(7)
-        expect(PAPER).toEqual({ fondo: "#FFFFFF", tinta: "#000000", regla: "#333333", sombreado: "#F0F0F0" })
+        // Lo que se lee en el papel (o se fotocopia) sigue en AA o más.
+        expect(contraste("paper-header", "paper-header-ink")).toBeGreaterThanOrEqual(7)
+        expect(contraste("paper", "paper-accent")).toBeGreaterThanOrEqual(7)
+        expect(contraste("paper-accent-soft", "paper-accent")).toBeGreaterThanOrEqual(4.5)
+        expect(contraste("paper", "paper-muted")).toBeGreaterThanOrEqual(4.5)
+        expect(contraste("paper-panel", "paper-muted")).toBeGreaterThanOrEqual(4.5)
+        expect(contraste("paper", "paper-ok")).toBeGreaterThanOrEqual(4.5)
+        expect(PAPER).toMatchObject({ fondo: "#FFFFFF", tinta: "#000000", regla: "#333333", sombreado: "#F0F0F0" })
     })
 
     const familias = [
