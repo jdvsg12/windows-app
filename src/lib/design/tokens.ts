@@ -35,6 +35,19 @@ export const HSL_TOKENS = {
     "paper-ink": "0 0% 0%",
     "paper-rule": "0 0% 20%",
     "paper-shade": "0 0% 94%",
+    // Banda oscura: encabezados de tabla y la etiqueta COTIZACIÓN.
+    "paper-header": "215 28% 12%",
+    "paper-header-ink": "0 0% 100%",
+    // Azul acero de la marca: total y detalles.
+    "paper-accent": "212 64% 30%",
+    "paper-accent-soft": "212 60% 95%",
+    // Etiquetas y texto secundario.
+    "paper-muted": "215 16% 38%",
+    // Recuadros (cliente, resumen, banco).
+    "paper-panel": "210 25% 97%",
+    "paper-panel-border": "214 20% 82%",
+    // Validez de la oferta.
+    "paper-ok": "152 62% 26%",
 
     // Profiles, one hue each. The monogram (piezas.ts) is the second, non-color indicator.
     "piece-cabezal-bg": "210 70% 93%",
@@ -86,4 +99,12 @@ export const PAPER = {
     tinta: hexToken("paper-ink"),
     regla: hexToken("paper-rule"),
     sombreado: hexToken("paper-shade"),
+    banda: hexToken("paper-header"),
+    tintaBanda: hexToken("paper-header-ink"),
+    acento: hexToken("paper-accent"),
+    acentoSuave: hexToken("paper-accent-soft"),
+    apagado: hexToken("paper-muted"),
+    panel: hexToken("paper-panel"),
+    bordePanel: hexToken("paper-panel-border"),
+    ok: hexToken("paper-ok"),
 } as const

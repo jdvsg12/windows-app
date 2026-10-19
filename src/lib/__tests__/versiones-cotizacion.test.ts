@@ -34,6 +34,7 @@ const documento = (total: number): DocumentoCotizacion => ({
     mostrarMedidas: true,
     mostrarValores: true,
     filas: [],
+    productos: [{ clave: "cerradura:impacto", nombre: "Cerradura Impacto", imagen: "data:image/png;base64,CCCC" }],
     areaTotal: 1,
     total,
 })
@@ -54,6 +55,7 @@ describe("versiones del PDF de la cotización", () => {
         expect(versiones[0]).toMatchObject({ guardada: false, creada: "2026-10-17T10:02:00.000Z" })
         expect(versiones[0].documento.empresa.logo).toBeUndefined()
         expect(versiones[0].documento.empresa.firma).toBeUndefined()
+        expect(versiones[0].documento.productos).toEqual([{ clave: "cerradura:impacto", nombre: "Cerradura Impacto" }])
         expect(versiones[0].documento.total).toBe(2)
     })
 
@@ -103,12 +105,21 @@ describe("versiones del PDF de la cotización", () => {
         expect(documentoDeVersion(version, {}).total).toBe(1)
     })
 
+    it("al volver a descargar, cada producto lleva la foto actual del catálogo (o ninguna si se quitó)", () => {
+        const [version] = generar(1)
+        const conFoto = documentoDeVersion(version, {
+            fotos: { cerraduras: { impacto: { imagen: "data:foto-nueva", nombre: "" } }, rodachinas: {} },
+        })
+        expect(conFoto.productos).toEqual([{ clave: "cerradura:impacto", nombre: "Cerradura Impacto", imagen: "data:foto-nueva" }])
+        expect(documentoDeVersion(version, {}).productos[0].imagen).toBeUndefined()
+    })
+
     it("una versión guardada antes de AWA-41 sigue cargando, con las condiciones vacías", () => {
         const [version] = generar(1)
         const documentoViejo = Object.fromEntries(
-            Object.entries(version.documento).filter(([campo]) => !["direccionObra", "tiempoEntrega", "validez"].includes(campo)),
+            Object.entries(version.documento).filter(([campo]) => !["direccionObra", "tiempoEntrega", "validez", "productos"].includes(campo)),
         )
         const cargada = VersionCotizacionSchema.parse({ ...version, documento: documentoViejo })
-        expect(cargada.documento).toMatchObject({ direccionObra: "", tiempoEntrega: "", validez: "" })
+        expect(cargada.documento).toMatchObject({ direccionObra: "", tiempoEntrega: "", validez: "", productos: [] })
     })
 })

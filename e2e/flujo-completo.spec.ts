@@ -132,11 +132,11 @@ test("flujo completo: un proyecto con 3 ventanas llena cada pestaña, la cotizac
         const fila = filas.nth(indice)
         await expect(fila).toContainText(ventana.nombre)
         await expect(fila).toContainText(ventana.especificaciones)
-        await expect(fila).toContainText(ventana.ancho)
+        // En la cotización las medidas van en metros: 1500 mm → "1,50 m".
+        await expect(fila).toContainText(`${(Number(ventana.ancho) / 1000).toFixed(2).replace(".", ",")} m`)
         await expect(fila).toContainText("$")
     }
-    await expect(vista.getByText("Total de ventanas: 3")).toBeVisible()
-    await expect(vista.locator("tfoot tr")).toContainText(/TOTAL\s*\$[\d.]+/)
+    await expect(vista.locator("tfoot tr")).toContainText(/TOTAL 3 ventanas.*\$[\d.]+/i)
 
     const descargaCotizacion = page.waitForEvent("download")
     await page.getByRole("button", { name: "Descargar PDF" }).click()

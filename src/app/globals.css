@@ -41,6 +41,14 @@
   --paper-ink: 0 0% 0%;
   --paper-rule: 0 0% 20%;
   --paper-shade: 0 0% 94%;
+  --paper-header: 215 28% 12%;
+  --paper-header-ink: 0 0% 100%;
+  --paper-accent: 212 64% 30%;
+  --paper-accent-soft: 212 60% 95%;
+  --paper-muted: 215 16% 38%;
+  --paper-panel: 210 25% 97%;
+  --paper-panel-border: 214 20% 82%;
+  --paper-ok: 152 62% 26%;
 
   /* Profiles: one hue each, plus a monogram as the non-color indicator. */
   --piece-cabezal-bg: 210 70% 93%;
@@ -154,6 +162,14 @@
   --color-paper-ink: hsl(var(--paper-ink));
   --color-paper-rule: hsl(var(--paper-rule));
   --color-paper-shade: hsl(var(--paper-shade));
+  --color-paper-header: hsl(var(--paper-header));
+  --color-paper-header-ink: hsl(var(--paper-header-ink));
+  --color-paper-accent: hsl(var(--paper-accent));
+  --color-paper-accent-soft: hsl(var(--paper-accent-soft));
+  --color-paper-muted: hsl(var(--paper-muted));
+  --color-paper-panel: hsl(var(--paper-panel));
+  --color-paper-panel-border: hsl(var(--paper-panel-border));
+  --color-paper-ok: hsl(var(--paper-ok));
 
   --color-piece-cabezal: hsl(var(--piece-cabezal-bg));
   --color-piece-cabezal-border: hsl(var(--piece-cabezal-border));

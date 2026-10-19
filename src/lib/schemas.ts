@@ -76,6 +76,26 @@ export const ConfiguracionEmpresaSchema = z.object({
     datosBancarios: z.string(),
 })
 
+// Catálogo de fotos de producto (Admin → Fotos): una por tipo de cerradura y de rodachina.
+// La cotización muestra las de los tipos que usan sus ventanas.
+export const FotoProductoSchema = z.object({
+    imagen: z.string(),
+    // Leyenda bajo la foto ("Rodachina pabose española"); vacía = el nombre del tipo.
+    nombre: z.string().default(""),
+})
+
+export const FotosProductosSchema = z.object({
+    cerraduras: z.record(TipoCerraduraSchema, FotoProductoSchema).default({}),
+    rodachinas: z.record(TipoRodachinaSchema, FotoProductoSchema).default({}),
+})
+
+// Lo que el PDF muestra de cada producto usado. Las versiones guardadas no llevan la imagen.
+export const ProductoCotizacionSchema = z.object({
+    clave: z.string(),
+    nombre: z.string(),
+    imagen: z.string().optional(),
+})
+
 // Lo que se imprime en una cotización (vista previa y PDF), ya resuelto: etiquetas en texto y
 // opciones aplicadas. Es lo que se guarda en cada versión del PDF y en el snapshot al emitir.
 export const FilaCotizacionSchema = z.object({
@@ -103,6 +123,7 @@ export const DocumentoCotizacionSchema = z.object({
     mostrarMedidas: z.boolean(),
     mostrarValores: z.boolean(),
     filas: z.array(FilaCotizacionSchema),
+    productos: z.array(ProductoCotizacionSchema).default([]),
     areaTotal: z.number().nullable(),
     total: z.number().nullable(),
 })

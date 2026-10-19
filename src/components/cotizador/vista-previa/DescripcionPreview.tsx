@@ -54,7 +54,7 @@ export function DescripcionPreview({ html }: DescripcionPreviewProps) {
     if (bloques.length === 0) return null
 
     return (
-        <div className="mb-6 leading-relaxed">
+        <div className="leading-relaxed">
             {bloques.map((bloque, indice) => (
                 <BloquePreview key={indice} bloque={bloque} />
             ))}

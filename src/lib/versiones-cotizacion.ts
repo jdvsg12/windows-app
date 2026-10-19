@@ -1,13 +1,14 @@
-import type { DocumentoCotizacion, VersionCotizacion } from "./types"
+import type { DocumentoCotizacion, FotosProductos, VersionCotizacion } from "./types"
 
 // Versionado de los PDF de cotización (D11): las 3 últimas generadas más una "guardada",
 // que no rota. Funciones puras: el id y la fecha los pone quien llama.
 export const MAX_VERSIONES_RECIENTES = 3
 
-// Logo y firma pesan cientos de KB cada uno: repetidos en cada versión llenarían el almacenamiento.
+// Logo, firma y fotos pesan cientos de KB: repetidos en cada versión llenarían el almacenamiento.
 const sinImagenes = (documento: DocumentoCotizacion): DocumentoCotizacion => ({
     ...documento,
     empresa: { ...documento.empresa, logo: undefined, firma: undefined },
+    productos: documento.productos.map(({ clave, nombre }) => ({ clave, nombre })),
 })
 
 const mismoDocumento = (a: DocumentoCotizacion, b: DocumentoCotizacion) => JSON.stringify(a) === JSON.stringify(b)
@@ -44,11 +45,21 @@ export function quitarGuardada(versiones: readonly VersionCotizacion[]): Version
     return recortar(versiones.map((version) => ({ ...version, guardada: false })))
 }
 
-// Al volver a descargar se usan el logo y la firma actuales: las versiones no los guardan.
+// Al volver a descargar se usan el logo, la firma y las fotos actuales: las versiones no los guardan.
+// Un producto cuya foto se quitó del catálogo sale sin foto.
 export const documentoDeVersion = (
     version: VersionCotizacion,
-    imagenes: { logo?: string; firma?: string },
-): DocumentoCotizacion => ({
-    ...version.documento,
-    empresa: { ...version.documento.empresa, logo: imagenes.logo, firma: imagenes.firma },
-})
+    imagenes: { logo?: string; firma?: string; fotos?: FotosProductos },
+): DocumentoCotizacion => {
+    const fotoActual = (clave: string): string | undefined => {
+        const [familia, tipo] = clave.split(":")
+        const catalogo: Record<string, { imagen: string } | undefined> =
+            familia === "cerradura" ? (imagenes.fotos?.cerraduras ?? {}) : (imagenes.fotos?.rodachinas ?? {})
+        return catalogo[tipo]?.imagen
+    }
+    return {
+        ...version.documento,
+        empresa: { ...version.documento.empresa, logo: imagenes.logo, firma: imagenes.firma },
+        productos: version.documento.productos.map((producto) => ({ ...producto, imagen: fotoActual(producto.clave) })),
+    }
+}

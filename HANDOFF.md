@@ -1,6 +1,6 @@
 # Handoff — windows-app
 
-> Última actualización: 2026-10-17 (cierre del día 4 del plan: AWA-26 a AWA-29; F3 completa)
+> Última actualización: 2026-10-19 (días 5 y 6: F5 completa, AWA-32 a AWA-41; release AWA-43 abierto)
 
 Este archivo es el punto de entrada para retomar el trabajo: qué se hizo, qué falta y cómo se trabaja de ahora en adelante. Se actualiza en cada sesión relevante, no solo al cerrar una fase.
 
@@ -20,6 +20,8 @@ Este archivo es el punto de entrada para retomar el trabajo: qué se hizo, qué 
 - Commits en inglés, imperativo presente (`feat:`, `fix:`, `refactor:`, `chore:`, `docs:`, `test:`), según `AGENTS.md`. Un commit = un cambio lógico.
 - **Nunca sobrescribir `localStorage`/IndexedDB del navegador del usuario.** Pruebas visuales en un puerto aislado (`pnpm dev -p 3100` = otro origen), datos de prueba borrados al terminar la verificación. Next solo permite un `next dev` por carpeta: para usar el 3100 hay que parar el del 3000 y volver a levantarlo al terminar.
 - **Antes de mergear un PR nuevo, sincronizar la rama contra el `stage` más reciente** (rebase/merge) y confirmar que el CI pasa ahí.
+- 🔴 **No apilar PRs (base = otra rama de tarea).** Todo PR va **contra `stage`**, aunque dependa de otro abierto (su diff muestra también los commits del otro hasta que entre). Lo que pasó con la pila AWA-33 → 34 → 35: al mergear #35 GitHub borró su rama, **cerró #36 sin mergear** (se quedó sin base) y #37 se mergeó en la rama de AWA-34 en vez de en `stage`; hubo que reabrir todo como #38.
+- Después de que el usuario dice "mergeado", **comprobar con `gh pr view <n> --json state`** antes de construir encima: varias veces seguía abierto (`gh pr list` también puede mostrar un estado viejo).
 - **Antes de cambiar el comportamiento del motor, capturar las salidas actuales en tests** (caracterización). Si un snapshot cambia, revisar el diff: solo debe cambiar lo que se quiso cambiar.
 
 ### Comandos de verificación
@@ -27,30 +29,36 @@ Este archivo es el punto de entrada para retomar el trabajo: qué se hizo, qué 
 | Comando | Qué corre |
 |---|---|
 | `pnpm exec tsc --noEmit` | Tipos |
-| `pnpm lint` | ESLint (hoy: 0 errores, 2 avisos de `<img>` ya existentes) |
-| `pnpm test` | Vitest: 347 tests en 13 archivos (con AWA-24) |
-| `pnpm test:e2e` | Playwright: 13 tests × escritorio y móvil (Pixel 7). Levanta su propio build en el puerto **3200** y cada test usa un navegador limpio: nunca toca el servidor ni los datos del desarrollador |
+| `pnpm lint` | ESLint (hoy: 0 errores, 3 avisos de `<img>` en vistas con imágenes data URL) |
+| `pnpm test` | Vitest: 421 tests en 19 archivos |
+| `pnpm test:e2e` | Playwright: 21 tests × escritorio y móvil (Pixel 7) = 42, en 8 archivos. Levanta su propio build en el puerto **3200** y cada test usa un navegador limpio: nunca toca el servidor ni los datos del desarrollador. El build revisa tipos de `e2e/` también: un spec temporal con errores tumba el servidor de pruebas |
 | `pnpm build` | Build de producción |
 
 ---
 
-## Estado actual (2026-10-17)
+## Estado actual (2026-10-19)
 
-- **`main`** tiene el release AWA-27 (#29): todo hasta AWA-26, incluido el arreglo crítico del transporte (AWA-22).
-- **`stage`** tiene además AWA-28 (#30). **Falta un release `stage → main`** (AWA-31) para llevar AWA-28 y AWA-29 a producción.
-- **Abierto, esperando revisión:** AWA-29 (#31, especificaciones en la cotización y el PDF) y AWA-30 (este HANDOFF).
-- **Con AWA-29, F3 queda completa** (salvo las referencias nuevas, que entran cuando lleguen sus fórmulas).
-- **Siguiente:** release AWA-31 y el plan detallado de F5 para aprobación (bloquea el día 5).
+- **`main`** tiene el release AWA-31 (#33): todo hasta AWA-30 (F3 completa).
+- **`stage`** tiene además AWA-32 a AWA-41 (**F5 completa** + arreglos). CI en verde.
+- **Abierto:** AWA-42 (este HANDOFF) y **AWA-43, release `stage → main`**. Revisar staging antes de mergear el release (ver "Cómo continuar").
+- **Siguiente bloque:** descuento de proveedor (necesita una respuesta del usuario) y local-first (repositorios + IndexedDB).
 
-### Hecho en el día 4 (2026-10-11 / 17)
+### Hecho en los días 5 y 6 (2026-10-17 / 19) — F5 PDF
 
 | PR | Tarea | Qué quedó |
 |---|---|---|
-| #26 AWA-24 · #27 AWA-25 | Heliconias + HANDOFF del día 3 | Mergeados |
-| #28 AWA-26 | Ganchos de grano e inventario de restos | `VidrioCorte.permitirGiro: false` = vidrio con grano o diseño: el empaquetador nunca lo gira, y una pieza que solo cabe girada es error. `OpcionesOptimizacionVidrio.restosInventario`: los restos guardados se usan antes de abrir láminas nuevas (el más chico que sirva primero). **La app todavía no pasa ninguno de los dos** (no hay opción de vidrio con diseño ni inventario guardado): ningún plan cambió |
-| #29 AWA-27 | Release `stage → main` | Producción al día hasta AWA-26 |
-| #30 AWA-28 | Precios del cotizador completos | `preciosCerradura` / `preciosRodachina` por tipo (con `.default({})`); **un tipo sin precio propio usa el `precioCerradura` / `precioRodachina` de siempre**, así que ninguna cotización cambió. El costeo cobra las cerraduras y rodachinas de cada ventana a su precio (`accesoriosPorVentana`, `precioPorTipo` en `lib/precios.ts`). El cotizador tiene la sección "Precios según lo elegido en cada ventana" (recargo por color de aluminio, vidrio color × calibre, sandblasting, cerradura y rodachina) reutilizando los componentes de Admin. Playwright lo cubre |
-| #31 AWA-29 | Especificaciones en la cotización y el PDF (abierto) | Vista previa y PDF `jspdf` muestran, bajo el tipo de cada ventana: aluminio, cerradura, rodachina, calibre, color de vidrio y sandblasting. Helper compartido `especificacionesVentana` en `lib/types.ts` (también lo usan las tarjetas). Las ventanas sin especificaciones no muestran la línea. Cambio mínimo en el PDF a propósito: F5 lo reescribe. **Falta descargar el PDF en staging y revisarlo** |
+| #33 AWA-31 | Release `stage → main` | Producción al día hasta AWA-30 |
+| #34 AWA-32 | Base de react-pdf | `@react-pdf/renderer` 4.9.0 cargado con `import()` solo al descargar; Geist local en `public/fonts/geist` (sin CDN); `DocumentoCotizacion` (Zod) + `armarDocumentoCotizacion`: **una sola fuente** para vista previa, PDF, versiones y el futuro snapshot. `PLAN-F5.md` con las 4 decisiones |
+| #35 AWA-33 | Cotización en react-pdf | PDF vectorial con texto seleccionable; encabezado de tabla repetido, filas que no se parten, "Página X de Y". ⚠️ react-pdf 4.9: `lineHeight` en la página oculta los textos con `render` y en un `View` se aplica doble: no se usa |
+| #38 AWA-34 + 35 | Formato del editor + vista previa desde el modelo | `parsearTextoEnriquecido` (puro, sin DOM, probado con HTML real del editor): negrita, cursiva (Geist 1.7.2 con cursivas reales), listas, alineación. La vista previa usa el mismo modelo y el mismo intérprete (se quitó `dangerouslySetInnerHTML`). **Se eliminaron `jspdf` y `html2canvas`** (críticas 2 → 0). Arreglo: `useContenidoCotizacion` devolvía `{}` en el primer render. *(Reabierto de #36/#37, ver la regla de no apilar)* |
+| #39 AWA-36 | Plan de corte en PDF | Botón "Descargar plan de corte" en Optimización. Una página por lámina (vertical u horizontal según la lámina), agrupadas por tipo de vidrio, dibujo a escala: piezas por tipo de hoja con código `V3-M1` y medida, restos (R) y desperdicio (S), leyenda. `useDescargaPdf` genérico |
+| #40 AWA-37 | Prueba del flujo completo + 🔴 `cotizador?id=null` | Playwright crea un proyecto de 3 ventanas con todas las especificaciones y revisa cada pantalla y los dos PDF. Bug: desde un proyecto, el enlace "Calculadora" dejaba abierto el proyecto anterior y "Cotizar" iba a `/cotizador?id=null` |
+| #41 AWA-38 | Plan de corte completo | Tabla de piezas bajo cada dibujo; **barras de perfil** (por color y perfil, a escala, con sobrante, coma decimal); lista maestra ordenada por ventana; totales (láminas por tipo, piezas, m², bordeado, cantos, merma, barras y metros por color). `LONGITUD_BARRA` pasa a `calculo/comun.ts` |
+| #42 AWA-39 | Versiones del PDF | Se guardan las **3 últimas + 1 "guardada"** por proyecto (`Proyecto.versionesCotizacion`), **los datos y no el archivo**, sin logo ni firma (peso). Volver a descargar regenera igual que entonces, con el logo actual. `useProyecto.update` ahora trabaja sobre el proyecto más reciente |
+| #43 AWA-40 | `xlsx` → SheetJS 0.20.3 oficial | Tarball de `cdn.sheetjs.com` con hash fijado en el lockfile; se carga al exportar. Prueba e2e que relee el Excel |
+| #44 AWA-41 | Mejoras de la cotización (desde la cotización de Word C075 del taller) | "Girardot, 18 de octubre de 2026"; dirección de la obra; **tiempo de entrega** y **validez** (por defecto 25 y 15 días hábiles); fila TOTAL en la tabla; **firma escaneada** opcional en Configuración. 🔴 Arreglos: el autoguardado **perdía lo último escrito al cambiar de pestaña** (se cancelaba al desmontar) y subir el logo pisaba un campo recién escrito |
+
+Días 1 a 4 (AWA-12 a AWA-30): especificaciones de ventana y precios de vidrio, upgrade de Next, tipos desde Zod, `useCalculo`, merma, códigos de pieza, Heliconias, precios por tipo. El detalle está en las tablas siguientes y en el historial de git.
 
 ### Hecho en los días 2 y 3 (2026-10-10 / 11)
 
@@ -67,9 +75,10 @@ Este archivo es el punto de entrada para retomar el trabajo: qué se hizo, qué 
 
 ### Pendientes que siguen abiertos
 
-- ✅ Precios del cotizador incompletos: resuelto en AWA-28.
-  - ⚠️ Sigue igual: cambiar un precio desde el cotizador cambia el precio **global**, no el de esa cotización. Se resuelve con el snapshot al emitir (D9, AWA-45).
-  - Los precios por tipo de cerradura y rodachina arrancan vacíos (= precio general). **Falta que el usuario cargue los precios reales** en Admin → Precios.
+- ⚠️ Cambiar un precio desde el cotizador cambia el precio **global**, no el de esa cotización. Se resuelve con el snapshot al emitir (D9, AWA-48).
+- Los precios por tipo de cerradura y rodachina arrancan vacíos (= precio general). **Falta que el usuario cargue los precios reales** en Admin → Precios.
+- **Offline real:** generar PDF/Excel no usa red, pero la app no tiene service worker: sin red solo funciona si la página (y los chunks de react-pdf/SheetJS y las fuentes) ya estaban cargados. Instalarla como PWA es una tarea aparte.
+- `eslint-config-next` está en `dependencies` y debe ir en `devDependencies`: hoy hace que `pnpm audit --prod` muestre 23 avisos altos que son solo de herramientas de build/lint.
 - Playwright no corre en el CI de GitHub Actions (falta el paso que instala el navegador).
 - Si la lámina de diferencia en Heliconias importa en obras reales: botón "Optimizar a fondo" que corra la búsqueda exhaustiva en un Web Worker.
 - `DatosEmpresa` y `DatosBancarios` en `types.ts` no se usan (código muerto).
@@ -86,8 +95,9 @@ Este archivo es el punto de entrada para retomar el trabajo: qué se hizo, qué 
 3. **Contraseña de admin (`admin123`)** — decisión del usuario: se deja "para probar" hasta F4 (Supabase auth). No está resuelto.
 4. **Revocar el token de GitHub viejo** que estaba en la URL del remoto — pendiente, lo hace el usuario.
 5. ✅ **Next.js** actualizado a 16.3.8 (AWA-14), cierra el RCE de 16.0.11.
-6. **`jspdf`** (crítica, HTML injection): solo cliente y datos propios; F5 lo reemplaza por `@react-pdf/renderer`.
-7. **`xlsx`** sin parche; la app solo escribe archivos. Evaluar SheetJS oficial (0.20.3) o aceptar el riesgo (AWA-39).
+6. ✅ **`jspdf` y `html2canvas`** eliminados (AWA-35, PR #38): el PDF es `@react-pdf/renderer`. `pnpm audit --prod` sin críticas.
+7. ✅ **`xlsx`** reemplazado por SheetJS 0.20.3 oficial (AWA-40).
+8. ✅ La descripción de la cotización ya no se inyecta como HTML en la vista previa (AWA-35): un `<img onerror>` pegado no se ejecuta.
 
 ### Entornos Vercel
 - Confirmar que `stage` tenga un dominio fijo de pruebas en vez de URLs de preview que cambian en cada push.
@@ -97,24 +107,24 @@ Este archivo es el punto de entrada para retomar el trabajo: qué se hizo, qué 
 
 ## Plan de escalamiento — avance
 
-Referencia: el prompt de arquitectura (decisiones D1–D13, fases F1–F5 y módulo optimizador de vidrio). Leyenda: ✅ hecho · 🟡 parcial · ⬜ pendiente. Verificado contra el código en `stage` (+ AWA-24).
+Referencia: el prompt de arquitectura (decisiones D1–D13, fases F1–F5 y módulo optimizador de vidrio). Leyenda: ✅ hecho · 🟡 parcial · ⬜ pendiente. Verificado contra el código en `stage` (2026-10-19).
 
 ### Decisiones cerradas
 
 | | Decisión | Estado | Evidencia / qué falta |
 |---|---|---|---|
 | D1 | Solo 80-25 habilitada | ✅ | `lib/calculo/registro.ts`; el formulario deshabilita las no validadas |
-| D2 | Offline-first, motor y PDF en cliente | 🟡 | Motor puro isomorfo en `lib/calculo/` ✅. El PDF sigue en `jspdf`/`html2canvas` (F5) |
+| D2 | Offline-first, motor y PDF en cliente | 🟡 | Motor puro ✅; PDF y Excel en el cliente sin red ✅. Falta service worker para abrir la app sin red |
 | D3 | Vercel + Supabase us-east | 🟡 | Vercel ✅ (con SSO). Supabase ⬜ (F4) |
 | D4 | Marca ALUVE en tokens, sin modo oscuro | ✅ | `globals.css` + `lib/design/tokens.ts`, con tests |
 | D5 | Touch targets ≥44 px con `pointer: coarse` | ✅ | `globals.css`; desde AWA-17 también los botones dentro de un `*Trigger asChild` |
 | D6 | Paleta de piezas por tipo de perfil + segundo indicador | ✅ | `lib/design/piezas.ts` (códigos F/M, R/S) + códigos `V3-M1` (AWA-23) |
-| D7 | Autosave con debounce + indicador | 🟡 | ConfiguracionTab, datos del proyecto y ContenidoTab ✅. Estado "offline" ⬜ (AWA-46) |
-| D8 | Costeo por absorción en el tiempo | 🟡 | Cascada única en `costeo.ts` ✅, vidrio por tipo y recargo por color ✅. Precio por tipo de cerradura/rodachina ✅ (AWA-28). ⬜ descuento de proveedor (AWA-41) |
-| D9 | Snapshot al emitir cotización | ⬜ | AWA-45 |
+| D7 | Autosave con debounce + indicador | 🟡 | ConfiguracionTab, datos del proyecto y ContenidoTab ✅; guarda lo pendiente al cambiar de pestaña (AWA-41). Estado "offline" ⬜ (AWA-49) |
+| D8 | Costeo por absorción en el tiempo | 🟡 | Cascada única en `costeo.ts` ✅, vidrio por tipo y recargo por color ✅. Precio por tipo de cerradura/rodachina ✅ (AWA-28). ⬜ descuento de proveedor (AWA-44) |
+| D9 | Snapshot al emitir cotización | ⬜ | AWA-48, junto con el número de cotización (decisión del usuario: se asigna al emitir) |
 | D10 | Roles owner/operario | ⬜ | F4 (sigue `admin123`) |
-| D11 | PDF con `@react-pdf/renderer` | ⬜ | F5 |
-| D12 | Vitest como dev dep | ✅ | 366 tests (con AWA-29) + Playwright para e2e (4 specs) |
+| D11 | PDF con `@react-pdf/renderer` | ✅ | Cotización, plan de corte y versiones (F5) |
+| D12 | Vitest como dev dep | ✅ | 421 tests + Playwright (8 specs, 42 casos) |
 | D13 | Logo ≤512 KB y ≤400 px | ✅ | `lib/logo.ts` |
 
 ### Fases
@@ -135,7 +145,9 @@ Referencia: el prompt de arquitectura (decisiones D1–D13, fases F1–F5 y mód
 
 **F4 — Supabase · ⬜ sin empezar** — esquema con `organization_id` + RLS, auth y roles (quitar `admin123`), sincronización, logo en Storage, tests de RLS + seed del piloto.
 
-**F5 — PDF con react-pdf · ⬜ sin empezar** — cotización y archivos de corte en `@react-pdf/renderer`, versionado, mapeo del editor de texto enriquecido, vista previa. Cierra la vulnerabilidad de `jspdf`.
+**F5 — PDF con react-pdf · ✅ completa (AWA-32 a AWA-41)**
+- ✅ Cotización en react-pdf, formato del editor, vista previa desde el mismo modelo, versiones (3 + guardada), plan de corte de vidrio y perfiles, `xlsx` oficial, mejoras tomadas de la cotización de Word del taller.
+- Decisiones en `PLAN-F5.md`: vista previa en HTML (el visor de PDF no se ve en Android), versiones como datos, vidrio y perfiles en el mismo PDF, texto de forma de pago fijo.
 
 ### Módulo optimizador de corte de vidrio
 
@@ -155,46 +167,48 @@ Referencia: el prompt de arquitectura (decisiones D1–D13, fases F1–F5 y mód
 | Láminas separadas por color/calibre | ✅ | Costeo y pestaña Optimización (AWA-13) |
 | Gancho para dirección/grano del vidrio | ✅ | `permitirGiro` (AWA-26); falta la opción en la ventana |
 | Gancho para inventario de restos | ✅ | `restosInventario` (AWA-26); falta guardar el inventario |
-| PDF del plan de corte | ⬜ | F5 (AWA-36/37) |
-| Snapshot del plan de corte al emitir | ⬜ | AWA-45 |
+| PDF del plan de corte | ✅ | `PlanCortePdf` (AWA-36/38): una página por lámina, tablas, perfiles, lista maestra, totales |
+| Snapshot del plan de corte al emitir | ⬜ | AWA-48 (`DocumentoPlanCorte` ya tiene esquema Zod) |
 
 ---
 
-## Plan de trabajo — 4 PRs por día (revisado 2026-10-17)
+## Plan de trabajo (revisado 2026-10-19)
 
 Decisiones del usuario que siguen vigentes:
 - **Referencias nuevas (50-20, 70-44, 70-38)** fuera del calendario fijo: cada una entra cuando llegan sus fórmulas, descuentos y casos (~3 PRs por referencia).
 - **Supabase va de último** (objetivo: varios usuarios). Lo local-first que no lo necesita se adelanta.
+- **Número de cotización** (como el "C075" de Word): se asigna **al emitir**, con el snapshot; el usuario elige el número inicial.
 
-Días 1 a 4 cumplidos (AWA-12 a AWA-29, ver "Hecho"). Los números se corrieron dos veces más: AWA-30 es esta actualización del HANDOFF y AWA-31 el release que cierra el día 4, así que todo lo que sigue sube 2.
+Días 1 a 6 cumplidos. Los números se corrieron otra vez (AWA-37 fue la prueba del flujo completo y AWA-41 las mejoras de la cotización):
 
-| Día | PRs | Bloque |
-|---|---|---|
-| 4 | ✅ **AWA-26** ganchos de grano e inventario de restos · ✅ **AWA-27** release · ✅ **AWA-28** precios del cotizador completos · 🟡 **AWA-29** especificaciones en la cotización (#31 abierto) · **AWA-30** este HANDOFF · **AWA-31** release `stage → main` | Cierre de F3 |
-| 5 | **AWA-32** base de `@react-pdf/renderer` · **AWA-33** cotización en react-pdf · **AWA-34** mapeo del editor de texto enriquecido · **AWA-35** vista previa con el visor; se quitan `jspdf`/`html2canvas` | F5 PDF |
-| 6 | **AWA-36** PDF del plan de corte: una página por lámina · **AWA-37** tablas por lámina + lista maestra · **AWA-38** versionado de PDF · **AWA-39** reemplazo o actualización de `xlsx` | F5 plan de corte |
-| 7 | **AWA-40** release `stage → main` · **AWA-41** descuento de proveedor (D8) · **AWA-42** interfaz de repositorios · **AWA-43** repositorio IndexedDB | Descuentos + local-first |
-| 8 | **AWA-44** migración `localStorage → IndexedDB` con respaldo · **AWA-45** emitir cotización con snapshot (D9) · **AWA-46** indicador offline (D7) · **AWA-47** release `stage → main` | Cierre local-first |
+| Bloque | PRs |
+|---|---|
+| Cierre F5 | **AWA-42** este HANDOFF · **AWA-43** release `stage → main` |
+| Descuentos | **AWA-44** descuento de proveedor (D8) — necesita la respuesta del usuario |
+| Local-first | **AWA-45** interfaz de repositorios (`storage.ts` detrás, sin cambiar comportamiento) · **AWA-46** repositorio IndexedDB · **AWA-47** migración `localStorage → IndexedDB` con respaldo JSON y validación Zod |
+| Emitir | **AWA-48** emitir cotización: snapshot (precios, plan de corte) + número consecutivo · **AWA-49** indicador offline en el autoguardado (D7) · **AWA-50** release |
 
-Después, sin fecha fija: referencias nuevas según lleguen; **F4 Supabase — multiusuario** (~12 PRs); Playwright en el CI.
+Después, sin fecha fija: referencias nuevas según lleguen; **F4 Supabase — multiusuario** (~12 PRs); PWA / service worker; Playwright en el CI; arreglos chicos de "Pendientes".
 
 Bloqueos que dependen del usuario:
-- Cargar en Admin → Precios el precio real de cada tipo de cerradura y rodachina (hoy todos usan el precio general).
-- Confirmar las listas de colores de vidrio y de aluminio, y si el recargo % por color sirve o hace falta precio por perfil y color.
-- En qué extremo va la hoja fija (ya no bloquea los códigos de pieza; sí el dibujo de la ventana).
-- **Antes del día 5:** aprobar el plan detallado de F5.
-- **Antes del día 7:** cómo funciona el descuento de proveedor (¿% general, por perfil, por proveedor?).
+- **Antes de AWA-44:** cómo funciona el descuento de proveedor (¿% general, por perfil, por proveedor?).
+- **Antes de AWA-48:** número inicial de las cotizaciones y su formato (¿`C-0076`?).
+- Cargar en Admin → Precios el precio real de cada tipo de cerradura y rodachina.
+- Confirmar las listas de colores de vidrio y de aluminio, y si el recargo % por color sirve.
+- En qué extremo va la hoja fija (solo para un futuro dibujo de la ventana).
 - **Para F4:** crear el proyecto de Supabase (us-east) y definir el alta de usuarios.
 - Manual: revocar el token viejo de GitHub.
 
 ## Cómo continuar
 
-1. Revisar y mergear #31 (AWA-29) y el PR de AWA-30. Descargar el PDF en staging y revisar la línea de especificaciones.
-2. Release **AWA-31** `stage → main` (lleva AWA-28, AWA-29 y AWA-30).
-3. Escribir el plan detallado de F5 y pedir aprobación antes de arrancar **AWA-32**.
-4. Arreglos chicos si hay tiempo (un PR cada uno): X de los diálogos a 44 px, quitar `DatosEmpresa`/`DatosBancarios`, Playwright en el CI.
+1. Mergear AWA-42 (este HANDOFF).
+2. **Antes del release AWA-43**, revisar en el deploy de `stage`: descargar una cotización (con logo, firma, entrega y validez) y un plan de corte; exportar el Excel; volver a descargar una versión guardada.
+3. Mergear el release AWA-43 → producción.
+4. Responder cómo funciona el descuento de proveedor para arrancar AWA-44.
 
-### Notas de entorno (sesión 2026-10-17)
+### Notas de entorno (sesión 2026-10-19)
 - Máquina del usuario: `pnpm`, `gh` y Node 20 en el PATH. `gh` tiene dos cuentas (`jdvsg12` y `dev2-prog`); este repo usa **`jdvsg12`**: el remoto lleva el usuario en la URL y `.envrc` (direnv, ignorado por git) fija `GH_TOKEN` de esa cuenta. Desde Claude Code, `direnv exec . gh …`. Para `git push`, el helper de credenciales por defecto entra como `dev2-prog` (403): usar `direnv exec . git -c credential.helper= -c 'credential.helper=!gh auth git-credential' push …`.
 - Puertos: **3000** = servidor de desarrollo del usuario (`.claude/launch.json`, config `dev`), **3100** = pruebas visuales aisladas (config `dev-test`), **3200** = Playwright.
 - El navegador de Playwright (chromium v1248) ya está en `~/.cache/ms-playwright`.
+- Para revisar un PDF generado: `pdftotext`, `pdffonts` y `pdftoppm` (poppler) están instalados; el panel del navegador no muestra PDFs en iframes.
+- `pkill -f next-server` mata **cualquier** servidor Next, incluido el `pnpm dev` del usuario en el 3000: no usarlo; parar solo el proceso propio.

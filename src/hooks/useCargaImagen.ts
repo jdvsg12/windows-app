@@ -6,7 +6,7 @@ import { useCallback, useState } from "react"
 import { processLogoFile } from "@/lib/logo"
 
 // Carga de una imagen de la empresa (logo, firma): la valida, la reduce y entrega el data URL.
-export function useCargaImagen(nombre: string, onCargada: (dataUrl: string) => void) {
+export function useCargaImagen(nombre: string, onCargada: (dataUrl: string) => void, maxDimension?: number) {
     const [error, setError] = useState<string | null>(null)
 
     const handleArchivo = useCallback(
@@ -15,7 +15,7 @@ export function useCargaImagen(nombre: string, onCargada: (dataUrl: string) => v
             evento.target.value = ""
             if (!archivo) return
 
-            const resultado = await processLogoFile(archivo, nombre)
+            const resultado = await processLogoFile(archivo, nombre, maxDimension)
             if ("error" in resultado) {
                 setError(resultado.error)
                 return
@@ -23,7 +23,7 @@ export function useCargaImagen(nombre: string, onCargada: (dataUrl: string) => v
             setError(null)
             onCargada(resultado.dataUrl)
         },
-        [nombre, onCargada],
+        [nombre, onCargada, maxDimension],
     )
 
     return { handleArchivo, error }

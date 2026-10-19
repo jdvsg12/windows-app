@@ -29,7 +29,7 @@ test("versiones del PDF: quedan las 3 últimas, la guardada no rota y se pueden 
 
     for (const cliente of ["Cliente 1", "Cliente 2", "Cliente 3", "Cliente 4"]) await descargarConCliente(page, cliente)
     await page.getByRole("tab", { name: "Vista Previa" }).click()
-    const versiones = page.getByRole("listitem")
+    const versiones = page.getByRole("list", { name: "Versiones del PDF" }).getByRole("listitem")
     await expect(versiones).toHaveCount(3)
     await expect(versiones.nth(0)).toContainText("Cliente 4")
     await expect(versiones.nth(2)).toContainText("Cliente 2")
