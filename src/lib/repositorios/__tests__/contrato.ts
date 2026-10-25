@@ -17,6 +17,7 @@ export function proyectoDePrueba(id: string, nombre = `Obra ${id}`): Proyecto {
         transporte: 0,
         contenidoCotizacion: ContenidoCotizacionSchema.parse({}),
         versionesCotizacion: [],
+        puertas: [],
     }
 }
 
