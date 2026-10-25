@@ -18,6 +18,7 @@ import type {
     PiezaListaMaestraSchema,
     PiezaPlanCorteSchema,
     TotalesPlanCorteSchema,
+    ParametrosPuertaAluminaSchema,
     FilaCotizacionSchema,
     FotoProductoSchema,
     FotosProductosSchema,
@@ -220,6 +221,7 @@ export type PiezaPlanCorte = z.infer<typeof PiezaPlanCorteSchema>
 export type PerfilPlanCorte = z.infer<typeof PerfilPlanCorteSchema>
 export type PiezaListaMaestra = z.infer<typeof PiezaListaMaestraSchema>
 export type TotalesPlanCorte = z.infer<typeof TotalesPlanCorteSchema>
+export type ParametrosPuertaAlumina = z.infer<typeof ParametrosPuertaAluminaSchema>
 
 // Descripción del editor de texto enriquecido, ya interpretada para el PDF.
 export interface TramoTexto {

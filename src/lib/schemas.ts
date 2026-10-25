@@ -285,6 +285,26 @@ export const ConfiguracionOverheadSchema = z.object({
     admin: z.number(),
 })
 
+// Parámetros de la puerta abatible Alumina (sistema europeo), en mm. Los valores por defecto son los
+// del taller; los del pisavidrio y el vidrio son provisionales hasta la ficha técnica de Alumina.
+// Cada campo con .default(): un parámetro que se agregue después no invalida lo ya guardado.
+const descuentoSchema = (predeterminado: number) => z.number().min(0).default(predeterminado)
+
+export const ParametrosPuertaAluminaSchema = z.object({
+    // Hoja (bastidor VP-1102) desde el vano.
+    descuentoAnchoHoja: descuentoSchema(58),
+    descuentoAltoHoja: descuentoSchema(40),
+    // Pisavidrio cuadrado desde la hoja.
+    descuentoPisavidrioHorizontal: descuentoSchema(198),
+    descuentoPisavidrioVertical: descuentoSchema(216),
+    // Vidrio desde la hoja.
+    descuentoAnchoVidrio: descuentoSchema(190),
+    descuentoAltoVidrio: descuentoSchema(190),
+    tornillosInstalacion: z.number().int().min(0).default(8),
+    // Espesor del disco al cortar los perfiles de la puerta.
+    espesorSierra: z.number().min(0).default(4),
+})
+
 const dimensionSchema = (label: string) =>
     z
         .string()
