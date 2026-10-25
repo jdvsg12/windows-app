@@ -1,6 +1,6 @@
 import { useEffect, useState } from "react"
 
-import { obtenerOverhead, guardarOverhead } from "@/lib/storage"
+import { repositorios } from "@/lib/storage"
 import type { ConfiguracionOverhead } from "@/lib/types"
 import { useSaveFeedback } from "./useSaveFeedback"
 
@@ -21,17 +21,23 @@ export function useOverheadForm() {
     const { saved, markSaved } = useSaveFeedback()
 
     useEffect(() => {
-        setFormData(obtenerOverhead())
-        setLoading(false)
+        let cancelado = false
+        repositorios.overhead.obtener().then((guardado) => {
+            if (cancelado) return
+            setFormData(guardado)
+            setLoading(false)
+        })
+        return () => {
+            cancelado = true
+        }
     }, [])
 
     const handleChange = <K extends keyof ConfiguracionOverhead>(field: K, value: ConfiguracionOverhead[K]) => {
         setFormData((prev) => ({ ...prev, [field]: value }))
     }
 
-    const handleSave = () => {
-        guardarOverhead(formData)
-        markSaved()
+    const handleSave = async () => {
+        if (await repositorios.overhead.guardar(formData)) markSaved()
     }
 
     const handleReset = () => setFormData(OVERHEAD_DEFAULT)

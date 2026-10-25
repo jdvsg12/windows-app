@@ -1,29 +1,41 @@
 import { useState, useEffect, useMemo, useCallback } from "react"
-import {
-    obtenerConfiguracion,
-    guardarConfiguracion,
-    obtenerPrecios,
-    guardarPrecios,
-    obtenerOverhead,
-    obtenerDescuentos,
-    obtenerFotosProductos,
-} from "@/lib/storage"
+import { repositorios } from "@/lib/storage"
 import { intentarCosteo } from "@/lib/calculo/costeo"
-import type { Proyecto, ConfiguracionEmpresa, ConfiguracionPrecios, FotosProductos } from "@/lib/types"
+import type {
+    Proyecto,
+    ConfiguracionEmpresa,
+    ConfiguracionOverhead,
+    ConfiguracionPrecios,
+    DescuentosPorSistema,
+    FotosProductos,
+} from "@/lib/types"
 
 export function useCotizador(proyecto: Proyecto | null) {
     const [config, setConfig] = useState<ConfiguracionEmpresa | null>(null)
     const [precios, setPrecios] = useState<ConfiguracionPrecios | null>(null)
     const [fotos, setFotos] = useState<FotosProductos | undefined>(undefined)
+    const [descuentos, setDescuentos] = useState<DescuentosPorSistema | null>(null)
+    const [overhead, setOverhead] = useState<ConfiguracionOverhead | null>(null)
 
     useEffect(() => {
-        const configuracion = obtenerConfiguracion()
-        setConfig(configuracion)
-
-        const preciosConfig = obtenerPrecios()
-        setPrecios(preciosConfig)
-
-        setFotos(obtenerFotosProductos())
+        let cancelado = false
+        Promise.all([
+            repositorios.configuracion.obtener(),
+            repositorios.precios.obtener(),
+            repositorios.fotosProductos.obtener(),
+            repositorios.descuentos.obtener(),
+            repositorios.overhead.obtener(),
+        ]).then(([configuracion, preciosConfig, fotosGuardadas, descuentosGuardados, overheadGuardado]) => {
+            if (cancelado) return
+            setConfig(configuracion)
+            setPrecios(preciosConfig)
+            setFotos(fotosGuardadas)
+            setDescuentos(descuentosGuardados)
+            setOverhead(overheadGuardado)
+        })
+        return () => {
+            cancelado = true
+        }
     }, [])
 
     const ventanas = proyecto?.ventanas
@@ -33,29 +45,29 @@ export function useCotizador(proyecto: Proyecto | null) {
     // (cliente, descripción…) actualiza el proyecto pero no recalcula costos.
     const { costos: costosCalculados, error: errorCosteo } = useMemo(
         () =>
-            ventanas && precios && transporte !== undefined && duracionMeses !== undefined
+            ventanas && precios && descuentos && overhead && transporte !== undefined && duracionMeses !== undefined
                 ? intentarCosteo({
                       ventanas,
-                      descuentos: obtenerDescuentos(),
+                      descuentos,
                       precios,
-                      overhead: obtenerOverhead(),
+                      overhead,
                       transporteProyecto: transporte,
                       duracionMesesProyecto: duracionMeses,
                   })
                 : { costos: null, error: null },
-        [ventanas, precios, transporte, duracionMeses]
+        [ventanas, precios, descuentos, overhead, transporte, duracionMeses]
     )
 
     const updateConfig = useCallback((updates: Partial<ConfiguracionEmpresa>) => {
-        if (!config) return false
+        if (!config) return Promise.resolve(false)
         const newConfig = { ...config, ...updates }
         setConfig(newConfig)
-        return guardarConfiguracion(newConfig)
+        return repositorios.configuracion.guardar(newConfig)
     }, [config])
 
     const updatePrecios = useCallback((newPrecios: ConfiguracionPrecios) => {
         setPrecios(newPrecios)
-        guardarPrecios(newPrecios)
+        void repositorios.precios.guardar(newPrecios)
     }, [])
 
     return {

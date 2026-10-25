@@ -1,10 +1,6 @@
 import { useState, useEffect, useCallback, useRef } from "react"
 import { useRouter } from "next/navigation"
-import {
-    obtenerProyectoPorId,
-    actualizarProyecto,
-    eliminarProyecto,
-} from "@/lib/storage"
+import { eliminarProyecto, repositorios } from "@/lib/storage"
 import type { Proyecto } from "@/lib/types"
 
 export function useProyecto(proyectoId: string | null) {
@@ -18,13 +14,19 @@ export function useProyecto(proyectoId: string | null) {
             return
         }
 
-        const proj = obtenerProyectoPorId(proyectoId)
-        if (proj) {
-            setProyecto(proj)
-        } else {
-            router.push("/")
+        let cancelado = false
+        repositorios.proyectos.obtener(proyectoId).then((proj) => {
+            if (cancelado) return
+            if (proj) {
+                setProyecto(proj)
+            } else {
+                router.push("/")
+            }
+            setIsLoading(false)
+        })
+        return () => {
+            cancelado = true
         }
-        setIsLoading(false)
     }, [proyectoId, router])
 
     // Siempre sobre el proyecto más reciente: quien llama después de un await (el PDF tarda) no
@@ -34,18 +36,18 @@ export function useProyecto(proyectoId: string | null) {
         ultimo.current = proyecto
     }, [proyecto])
 
-    const update = useCallback((updates: Partial<Proyecto>): boolean => {
-        if (!ultimo.current) return false
+    // El estado cambia al instante; la promesa dice si quedó guardado (para el indicador).
+    const update = useCallback((updates: Partial<Proyecto>): Promise<boolean> => {
+        if (!ultimo.current) return Promise.resolve(false)
         const updated = { ...ultimo.current, ...updates }
         ultimo.current = updated
-        const guardado = actualizarProyecto(updated)
         setProyecto(updated)
-        return guardado
+        return repositorios.proyectos.actualizar(updated)
     }, [])
 
-    const remove = useCallback(() => {
+    const remove = useCallback(async () => {
         if (!proyecto) return
-        eliminarProyecto(proyecto.id)
+        await eliminarProyecto(proyecto.id)
         setProyecto(null)
         router.push("/")
     }, [proyecto, router])

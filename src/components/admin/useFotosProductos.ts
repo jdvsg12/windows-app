@@ -3,7 +3,7 @@
 import { useCallback, useEffect, useState } from "react"
 
 import { useAutosave } from "@/hooks/useAutosave"
-import { guardarFotosProductos, obtenerFotosProductos } from "@/lib/storage"
+import { repositorios } from "@/lib/storage"
 import type { FotoProducto, FotosProductos } from "@/lib/types"
 
 export type FamiliaProducto = keyof FotosProductos
@@ -12,11 +12,17 @@ export function useFotosProductos() {
     const [fotos, setFotos] = useState<FotosProductos | null>(null)
 
     useEffect(() => {
-        setFotos(obtenerFotosProductos())
+        let cancelado = false
+        repositorios.fotosProductos.obtener().then((guardadas) => {
+            if (!cancelado) setFotos(guardadas)
+        })
+        return () => {
+            cancelado = true
+        }
     }, [])
 
     // Fotos y leyendas se guardan solas, como el resto de formularios de la app.
-    const status = useAutosave({ value: fotos, onSave: (actual) => (actual ? guardarFotosProductos(actual) : undefined), enabled: fotos !== null })
+    const status = useAutosave({ value: fotos, onSave: (actual) => (actual ? repositorios.fotosProductos.guardar(actual) : undefined), enabled: fotos !== null })
 
     // tipo es un valor de CERRADURAS o RODACHINAS; el catálogo se trata como un mapa por tipo.
     const cambiar = useCallback(

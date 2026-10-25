@@ -23,8 +23,8 @@ export function CreateProjectForm({ onCreated, onCancel, submitLabel = "Crear" }
         defaultValues: { nombre: "" },
     })
 
-    const handleSubmit = ({ nombre }: CreateProjectInput) => {
-        onCreated(crearProyecto(nombre))
+    const handleSubmit = async ({ nombre }: CreateProjectInput) => {
+        onCreated(await crearProyecto(nombre))
     }
 
     return (

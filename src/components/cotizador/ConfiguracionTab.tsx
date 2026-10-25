@@ -16,7 +16,7 @@ import { CampoImagen } from "@/components/common/CampoImagen"
 
 interface ConfiguracionTabProps {
     config: ConfiguracionEmpresa
-    onSave: (config: Partial<ConfiguracionEmpresa>) => boolean | void
+    onSave: (config: Partial<ConfiguracionEmpresa>) => Promise<boolean>
 }
 
 interface CamposConfig {
