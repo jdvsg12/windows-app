@@ -11,7 +11,7 @@ import { CreateProjectForm } from "@/components/common/CreateProjectForm"
 import { PageSkeleton } from "@/components/common/PageSkeleton"
 import { FileSpreadsheet, Ruler, Package, Grid3X3, DollarSign } from "lucide-react"
 import { useVentanas } from "@/hooks/useVentanas"
-import { VentanasTab, MaterialesTab, OptimizacionTab, DeleteProjectDialog } from "@/components/calculators"
+import { ProductosTab, MaterialesTab, OptimizacionTab, DeleteProjectDialog } from "@/components/calculators"
 import {
     getCalibreVidrioLabel,
     getCerraduraLabel,
@@ -38,6 +38,9 @@ function CalculadorPage() {
     const {
         proyecto,
         ventanas,
+        puertas,
+        parametrosPuerta,
+        planPuertas,
         optimizacion,
         accesorios,
         vidrios,
@@ -47,6 +50,8 @@ function CalculadorPage() {
         tamanoLamina,
         agregarVentana,
         eliminarVentana,
+        agregarPuerta,
+        eliminarPuerta,
         eliminarProyectoActual,
         actualizarDatosProyecto,
         actualizarTamanoLamina,
@@ -117,6 +122,11 @@ function CalculadorPage() {
                         <Badge variant="secondary" className="text-sm">
                             {ventanas.length} ventanas
                         </Badge>
+                        {puertas.length > 0 && (
+                            <Badge variant="secondary" className="text-sm">
+                                {puertas.length} {puertas.length === 1 ? "puerta" : "puertas"}
+                            </Badge>
+                        )}
                         {ventanas.length > 0 && (
                             <Button variant="outline" onClick={exportarExcel}>
                                 <FileSpreadsheet className="h-4 w-4 mr-2" />
@@ -141,11 +151,11 @@ function CalculadorPage() {
             />
 
             {/* Tabs */}
-            <Tabs defaultValue="ventanas" className="space-y-4">
+            <Tabs defaultValue="productos" className="space-y-4">
                 <TabsList>
-                    <TabsTrigger value="ventanas" className="gap-2">
+                    <TabsTrigger value="productos" className="gap-2">
                         <Grid3X3 className="h-4 w-4" />
-                        Ventanas
+                        Productos
                     </TabsTrigger>
                     <TabsTrigger value="materiales" className="gap-2">
                         <Package className="h-4 w-4" />
@@ -157,12 +167,16 @@ function CalculadorPage() {
                     </TabsTrigger>
                 </TabsList>
 
-                <TabsContent value="ventanas">
-                    <VentanasTab
+                <TabsContent value="productos">
+                    <ProductosTab
                         proyecto={proyecto}
                         ventanas={ventanas}
-                        onAgregar={agregarVentana}
-                        onEliminar={eliminarVentana}
+                        puertas={puertas}
+                        parametrosPuerta={parametrosPuerta}
+                        onAgregarVentana={agregarVentana}
+                        onEliminarVentana={eliminarVentana}
+                        onAgregarPuerta={agregarPuerta}
+                        onEliminarPuerta={eliminarPuerta}
                         onActualizarDatosProyecto={actualizarDatosProyecto}
                     />
                 </TabsContent>
@@ -171,6 +185,7 @@ function CalculadorPage() {
                     <MaterialesTab
                         accesorios={accesorios}
                         vidrios={vidrios}
+                        planPuertas={planPuertas}
                     />
                 </TabsContent>
 
@@ -183,6 +198,8 @@ function CalculadorPage() {
                         errorLaminas={errorLaminas}
                         tamanoLamina={tamanoLamina}
                         onTamanoLaminaChange={actualizarTamanoLamina}
+                        planPuertas={planPuertas}
+                        espesorSierra={parametrosPuerta.espesorSierra}
                     />
                 </TabsContent>
             </Tabs>

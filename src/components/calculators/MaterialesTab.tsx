@@ -4,26 +4,40 @@ import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card"
 import { StatCard } from "@/components/common/StatCard"
 import { formatArea, formatCount } from "@/lib/format"
 import { Cog, DoorOpen, Lock, Ruler } from "lucide-react"
+import type { DespiecePuerta } from "@/lib/calculo/motor-puerta-alumina"
+import type { PlanPuertas, PuertaCalculada } from "@/lib/calculo/plan-puertas"
 import type { Accesorios, VidrioCorte } from "@/lib/types"
+import { DespiecePuertaCard } from "./DespiecePuertaCard"
+import { ErroresPuertas } from "./ErroresPuertas"
+import { HerrajesPuertasCard } from "./HerrajesPuertasCard"
 
 interface Props {
     accesorios: Accesorios | null
     vidrios: VidrioCorte[]
+    planPuertas: PlanPuertas
 }
 
-export function MaterialesTab({ accesorios, vidrios }: Props) {
+const conDespiece = (calculada: PuertaCalculada): calculada is PuertaCalculada & { despiece: DespiecePuerta } =>
+    calculada.despiece !== null
+
+export function MaterialesTab({ accesorios, vidrios, planPuertas }: Props) {
+    const puertas = planPuertas.puertas.filter(conDespiece)
     return (
         <div className="space-y-4">
-            <div className="grid grid-cols-2 md:grid-cols-4 gap-4">
-                <StatCard label="Rodachinas" value={accesorios?.rodachinas || 0} icon={Cog} />
-                <StatCard
-                    label="Guías"
-                    value={(accesorios?.guiasSuperior || 0) + (accesorios?.guiasInferior || 0)}
-                    icon={DoorOpen}
-                />
-                <StatCard label="Cerraduras" value={accesorios?.cerraduras || 0} icon={Lock} />
-                <StatCard label="Empaque" value={formatCount(accesorios?.empaqueTotal)} unit="m" icon={Ruler} />
-            </div>
+            {accesorios && (
+                <div className="grid grid-cols-2 md:grid-cols-4 gap-4">
+                    <StatCard label="Rodachinas" value={accesorios.rodachinas} icon={Cog} />
+                    <StatCard label="Guías" value={accesorios.guiasSuperior + accesorios.guiasInferior} icon={DoorOpen} />
+                    <StatCard label="Cerraduras" value={accesorios.cerraduras} icon={Lock} />
+                    <StatCard label="Empaque" value={formatCount(accesorios.empaqueTotal)} unit="m" icon={Ruler} />
+                </div>
+            )}
+
+            <ErroresPuertas errores={planPuertas.errores} />
+            {puertas.map((calculada) => (
+                <DespiecePuertaCard key={calculada.puerta.id} calculada={calculada} />
+            ))}
+            {planPuertas.accesorios && <HerrajesPuertasCard accesorios={planPuertas.accesorios} />}
 
             <Card>
                 <CardHeader>

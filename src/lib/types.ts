@@ -18,6 +18,8 @@ import type {
     PiezaListaMaestraSchema,
     PiezaPlanCorteSchema,
     TotalesPlanCorteSchema,
+    ParametrosPuertaAluminaSchema,
+    PuertaSchema,
     FilaCotizacionSchema,
     FotoProductoSchema,
     FotosProductosSchema,
@@ -191,6 +193,16 @@ export interface DatosBancarios {
 
 // Medidas en mm.
 export type Ventana = z.infer<typeof VentanaSchema>
+// Medidas del vano en mm.
+export type Puerta = z.infer<typeof PuertaSchema>
+
+export const especificacionesPuerta = (puerta: Puerta): string[] =>
+    [
+        `Aluminio ${getColorAluminioLabel(puerta.colorAluminio)}`,
+        `Vidrio ${getCalibreVidrioLabel(puerta.calibreVidrio)}`,
+        getColorVidrioLabel(puerta.colorVidrio),
+        puerta.sandblasting && "Sandblasting",
+    ].filter((item): item is string => Boolean(item))
 
 export interface Corte {
     tipo: string
@@ -220,6 +232,7 @@ export type PiezaPlanCorte = z.infer<typeof PiezaPlanCorteSchema>
 export type PerfilPlanCorte = z.infer<typeof PerfilPlanCorteSchema>
 export type PiezaListaMaestra = z.infer<typeof PiezaListaMaestraSchema>
 export type TotalesPlanCorte = z.infer<typeof TotalesPlanCorteSchema>
+export type ParametrosPuertaAlumina = z.infer<typeof ParametrosPuertaAluminaSchema>
 
 // Descripción del editor de texto enriquecido, ya interpretada para el PDF.
 export interface TramoTexto {

@@ -4,6 +4,7 @@ import type {
     ConfiguracionPrecios,
     DescuentosPorSistema,
     FotosProductos,
+    ParametrosPuertaAlumina,
     Proyecto,
 } from "../types"
 
@@ -34,4 +35,5 @@ export interface Repositorios {
     descuentos: RepositorioDocumento<DescuentosPorSistema>
     overhead: RepositorioDocumento<ConfiguracionOverhead>
     fotosProductos: RepositorioDocumento<FotosProductos>
+    parametrosPuertaAlumina: RepositorioDocumento<ParametrosPuertaAlumina>
 }

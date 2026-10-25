@@ -17,6 +17,7 @@ export function proyectoDePrueba(id: string, nombre = `Obra ${id}`): Proyecto {
         transporte: 0,
         contenidoCotizacion: ContenidoCotizacionSchema.parse({}),
         versionesCotizacion: [],
+        puertas: [],
     }
 }
 
@@ -88,7 +89,7 @@ export function describirContratoRepositorios(nombre: string, crear: () => Repos
         })
 
         describe("documentos", () => {
-            const claves = ["configuracion", "precios", "descuentos", "overhead", "fotosProductos"] as const
+            const claves = ["configuracion", "precios", "descuentos", "overhead", "fotosProductos", "parametrosPuertaAlumina"] as const
 
             it.each(claves)("%s: sin nada guardado devuelve el predeterminado", async (clave) => {
                 expect(await repos[clave].obtener()).toEqual(DOCUMENTOS[clave].predeterminado)
@@ -105,12 +106,16 @@ export function describirContratoRepositorios(nombre: string, crear: () => Repos
                 expect(await repos.descuentos.guardar(descuentos)).toBe(true)
                 expect(await repos.configuracion.guardar({ ...DOCUMENTOS.configuracion.predeterminado, nombre: "ALUVE" })).toBe(true)
                 expect(await repos.overhead.guardar({ ...DOCUMENTOS.overhead.predeterminado, arriendo: 500000 })).toBe(true)
+                expect(
+                    await repos.parametrosPuertaAlumina.guardar({ ...DOCUMENTOS.parametrosPuertaAlumina.predeterminado, descuentoPisavidrioVertical: 210 }),
+                ).toBe(true)
 
                 expect(await repos.precios.obtener()).toEqual(precios)
                 expect(await repos.fotosProductos.obtener()).toEqual(fotos)
                 expect(await repos.descuentos.obtener()).toEqual(descuentos)
                 expect((await repos.configuracion.obtener()).nombre).toBe("ALUVE")
                 expect((await repos.overhead.obtener()).arriendo).toBe(500000)
+                expect((await repos.parametrosPuertaAlumina.obtener()).descuentoPisavidrioVertical).toBe(210)
             })
         })
     })

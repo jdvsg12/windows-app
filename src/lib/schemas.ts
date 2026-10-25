@@ -34,6 +34,22 @@ export const VentanaSchema = z.object({
     sandblasting: z.boolean().optional(),
 })
 
+// Puerta abatible: hoy solo la de Alumina, sistema europeo (motor-puerta-alumina.ts). Medidas del vano
+// en mm. Sin cerradura ni rodachina: sus herrajes son fijos por puerta.
+export const ProductoPuertaSchema = z.enum(["alumina_europeo"])
+
+export const PuertaSchema = z.object({
+    id: z.string(),
+    nombre: z.string(),
+    producto: ProductoPuertaSchema,
+    ancho: z.number().positive(),
+    alto: z.number().positive(),
+    colorAluminio: ColorAluminioSchema,
+    calibreVidrio: CalibreVidrioSchema,
+    colorVidrio: ColorVidrioSchema,
+    sandblasting: z.boolean(),
+})
+
 // Lo que el usuario escribe en la pestaña Contenido del cotizador. Todo con .default():
 // los proyectos guardados antes de AWA-16 no tienen este bloque.
 export const ContenidoCotizacionSchema = z.object({
@@ -155,6 +171,8 @@ export const ProyectoSchema = z.object({
     contenidoCotizacion: ContenidoCotizacionSchema.default({}),
     // .catch([]): una versión dañada no puede tumbar el proyecto; se pierden las versiones, no la obra.
     versionesCotizacion: z.array(VersionCotizacionSchema).default([]).catch([]),
+    // .default([]): los proyectos de antes de las puertas no tienen el campo.
+    puertas: z.array(PuertaSchema).default([]).catch([]),
 })
 
 
@@ -285,6 +303,26 @@ export const ConfiguracionOverheadSchema = z.object({
     admin: z.number(),
 })
 
+// Parámetros de la puerta abatible Alumina (sistema europeo), en mm. Los valores por defecto son los
+// del taller; los del pisavidrio y el vidrio son provisionales hasta la ficha técnica de Alumina.
+// Cada campo con .default(): un parámetro que se agregue después no invalida lo ya guardado.
+const descuentoSchema = (predeterminado: number) => z.number().min(0).default(predeterminado)
+
+export const ParametrosPuertaAluminaSchema = z.object({
+    // Hoja (bastidor VP-1102) desde el vano.
+    descuentoAnchoHoja: descuentoSchema(58),
+    descuentoAltoHoja: descuentoSchema(40),
+    // Pisavidrio cuadrado desde la hoja.
+    descuentoPisavidrioHorizontal: descuentoSchema(198),
+    descuentoPisavidrioVertical: descuentoSchema(216),
+    // Vidrio desde la hoja.
+    descuentoAnchoVidrio: descuentoSchema(190),
+    descuentoAltoVidrio: descuentoSchema(190),
+    tornillosInstalacion: z.number().int().min(0).default(8),
+    // Espesor del disco al cortar los perfiles de la puerta.
+    espesorSierra: z.number().min(0).default(4),
+})
+
 const dimensionSchema = (label: string) =>
     z
         .string()
@@ -308,6 +346,18 @@ export const VentanaFormSchema = z.object({
 })
 
 export type VentanaFormValues = z.infer<typeof VentanaFormSchema>
+
+export const PuertaFormSchema = z.object({
+    nombre: z.string().trim().min(1, "Ingresa un nombre"),
+    ancho: dimensionSchema("ancho"),
+    alto: dimensionSchema("alto"),
+    colorAluminio: ColorAluminioSchema,
+    calibreVidrio: z.enum(["4", "5", "6"]),
+    colorVidrio: ColorVidrioSchema,
+    sandblasting: z.boolean(),
+})
+
+export type PuertaFormValues = z.infer<typeof PuertaFormSchema>
 
 export const CreateProjectSchema = z.object({
     nombre: z.string().trim().min(1, "Ingresa un nombre"),

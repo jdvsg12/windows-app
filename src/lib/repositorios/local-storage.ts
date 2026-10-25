@@ -56,5 +56,6 @@ export function crearRepositoriosLocalStorage(obtenerAlmacen: ObtenerAlmacen): R
         descuentos: documento(DOCUMENTOS.descuentos),
         overhead: documento(DOCUMENTOS.overhead),
         fotosProductos: documento(DOCUMENTOS.fotosProductos),
+        parametrosPuertaAlumina: documento(DOCUMENTOS.parametrosPuertaAlumina),
     }
 }

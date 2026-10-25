@@ -7,11 +7,13 @@ import { StatCard } from "@/components/common/StatCard"
 import { PiezaBadge } from "./PiezaBadge"
 import { MetricasVidrioResumen } from "./MetricasVidrioResumen"
 import { DescargarPlanCorte } from "./DescargarPlanCorte"
+import { BarrasPuertasCard } from "./BarrasPuertasCard"
 import { ESTILOS_HOJA, etiquetaPieza, obtenerEstiloPerfil, obtenerTipoHoja } from "@/lib/design/piezas"
 import { cn } from "@/lib/utils"
 import { formatMeters } from "@/lib/format"
 import { Layers, Ruler, SquareStack } from "lucide-react"
 import type { MetricasVidrio } from "@/lib/calculo/vidrio"
+import type { PlanPuertas } from "@/lib/calculo/plan-puertas"
 import type { OptimizacionPerfil, LaminaVidrio, TamanoLamina } from "@/lib/types"
 import { TAMANOS_LAMINA } from "@/lib/types"
 
@@ -23,57 +25,76 @@ interface Props {
     errorLaminas: string | null
     tamanoLamina: TamanoLamina
     onTamanoLaminaChange: (tamano: TamanoLamina) => void
+    planPuertas: PlanPuertas
+    espesorSierra: number
 }
 
 const ESTILO_RESTO = { codigo: "R", clases: "bg-resto border-resto-border text-resto-fg" }
 const ESTILO_DESPERDICIO = { codigo: "S", clases: "bg-desperdicio border-desperdicio-border text-desperdicio-fg" }
 
-export function OptimizacionTab({ proyecto, optimizacion, laminasVidrio, metricasVidrio, errorLaminas, tamanoLamina, onTamanoLaminaChange }: Props) {
+export function OptimizacionTab({
+    proyecto,
+    optimizacion,
+    laminasVidrio,
+    metricasVidrio,
+    errorLaminas,
+    tamanoLamina,
+    onTamanoLaminaChange,
+    planPuertas,
+    espesorSierra,
+}: Props) {
+    const barrasPuertas = planPuertas.barras.reduce((suma, { resultado }) => suma + resultado.barras.length, 0)
+    const metrosPuertas = planPuertas.barras.reduce((suma, { resultado }) => suma + resultado.consumoNeto, 0) / 1000
+    const hayPerfilesVentana = Object.keys(optimizacion).length > 0
     return (
         <div className="space-y-4">
             <div className="grid grid-cols-2 md:grid-cols-3 gap-4">
                 <StatCard
                     label="Barras 6m"
-                    value={Object.values(optimizacion).reduce((sum, opt) => sum + opt.barras.length, 0)}
+                    value={Object.values(optimizacion).reduce((sum, opt) => sum + opt.barras.length, 0) + barrasPuertas}
                     icon={Ruler}
                 />
                 <StatCard
                     label="Metros Totales"
-                    value={formatMeters(Object.values(optimizacion).reduce((sum, opt) => sum + opt.metrosUsados, 0))}
+                    value={formatMeters(Object.values(optimizacion).reduce((sum, opt) => sum + opt.metrosUsados, 0) + metrosPuertas)}
                     icon={Layers}
                 />
                 <StatCard label="Láminas Vidrio" value={laminasVidrio.length} icon={SquareStack} />
             </div>
 
-            <Card>
-                <CardHeader>
-                    <CardTitle>Corte de Perfiles</CardTitle>
-                </CardHeader>
-                <CardContent className="space-y-4">
-                    {Object.entries(optimizacion).map(([tipo, opt]) => (
-                        <div key={tipo} className="border-b last:border-0 pb-4 last:pb-0">
-                            <div className="flex justify-between items-center mb-2">
-                                <div className="flex items-center gap-2">
-                                    <PiezaBadge estilo={obtenerEstiloPerfil(tipo)} />
-                                    <h3 className="font-medium">{tipo}</h3>
-                                </div>
-                                <span className="text-sm text-muted-foreground">{opt.barras.length} barras</span>
-                            </div>
-                            <div className="space-y-1">
-                                {opt.barras.map((barra, i) => (
-                                    <div key={i} className="flex gap-1">
-                                        {barra.map((medida, j) => (
-                                            <div key={j} className={cn("border px-2 py-1 rounded text-xs", obtenerEstiloPerfil(tipo).clases)} style={{ width: `${(medida / 6) * 100}%` }}>
-                                                {medida.toFixed(3)}m
-                                            </div>
-                                        ))}
+            {hayPerfilesVentana && (
+                <Card>
+                    <CardHeader>
+                        <CardTitle>Corte de Perfiles</CardTitle>
+                    </CardHeader>
+                    <CardContent className="space-y-4">
+                        {Object.entries(optimizacion).map(([tipo, opt]) => (
+                            <div key={tipo} className="border-b last:border-0 pb-4 last:pb-0">
+                                <div className="flex justify-between items-center mb-2">
+                                    <div className="flex items-center gap-2">
+                                        <PiezaBadge estilo={obtenerEstiloPerfil(tipo)} />
+                                        <h3 className="font-medium">{tipo}</h3>
                                     </div>
-                                ))}
+                                    <span className="text-sm text-muted-foreground">{opt.barras.length} barras</span>
+                                </div>
+                                <div className="space-y-1">
+                                    {opt.barras.map((barra, i) => (
+                                        <div key={i} className="flex gap-1">
+                                            {barra.map((medida, j) => (
+                                                <div key={j} className={cn("border px-2 py-1 rounded text-xs", obtenerEstiloPerfil(tipo).clases)} style={{ width: `${(medida / 6) * 100}%` }}>
+                                                    {medida.toFixed(3)}m
+                                                </div>
+                                            ))}
+                                        </div>
+                                    ))}
+                                </div>
                             </div>
-                        </div>
-                    ))}
-                </CardContent>
-            </Card>
+                        ))}
+                    </CardContent>
+                </Card>
+            )}
+
+            <BarrasPuertasCard barras={planPuertas.barras} espesorSierra={espesorSierra} />
 
             {errorLaminas && (
                 <Card className="border-destructive">

@@ -5,6 +5,7 @@ import {
     ConfiguracionOverheadSchema,
     ConfiguracionPreciosSchema,
     FotosProductosSchema,
+    ParametrosPuertaAluminaSchema,
     ProyectoSchema,
 } from "../schemas"
 import {
@@ -14,6 +15,7 @@ import {
     type ConfiguracionPrecios,
     type DescuentosPorSistema,
     type FotosProductos,
+    type ParametrosPuertaAlumina,
     type Proyecto,
 } from "../types"
 
@@ -88,6 +90,7 @@ const OVERHEAD_DEFAULT: ConfiguracionOverhead = {
 }
 
 const FOTOS_PRODUCTOS_DEFAULT: FotosProductos = { cerraduras: {}, rodachinas: {} }
+const PARAMETROS_PUERTA_ALUMINA_DEFAULT: ParametrosPuertaAlumina = ParametrosPuertaAluminaSchema.parse({})
 
 function conEsquema<T>(esquema: z.ZodType<T, z.ZodTypeDef, unknown>, predeterminado: T) {
     return (dato: unknown): T => {
@@ -108,6 +111,7 @@ export const DOCUMENTOS: {
     descuentos: DefinicionDocumento<DescuentosPorSistema>
     overhead: DefinicionDocumento<ConfiguracionOverhead>
     fotosProductos: DefinicionDocumento<FotosProductos>
+    parametrosPuertaAlumina: DefinicionDocumento<ParametrosPuertaAlumina>
 } = {
     configuracion: {
         clave: "ventanas_configuracion",
@@ -134,5 +138,10 @@ export const DOCUMENTOS: {
         clave: "ventanas_fotos_productos",
         predeterminado: FOTOS_PRODUCTOS_DEFAULT,
         validar: conEsquema<FotosProductos>(FotosProductosSchema, FOTOS_PRODUCTOS_DEFAULT),
+    },
+    parametrosPuertaAlumina: {
+        clave: "ventanas_parametros_puerta_alumina",
+        predeterminado: PARAMETROS_PUERTA_ALUMINA_DEFAULT,
+        validar: conEsquema<ParametrosPuertaAlumina>(ParametrosPuertaAluminaSchema, PARAMETROS_PUERTA_ALUMINA_DEFAULT),
     },
 }
