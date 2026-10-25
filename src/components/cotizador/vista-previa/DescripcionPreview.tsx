@@ -28,7 +28,21 @@ function TramosPreview({ tramos }: TramosPreviewProps) {
     ))
 }
 
+const ALINEACION_IMAGEN: Record<AlineacionTexto, string> = {
+    left: "justify-start",
+    center: "justify-center",
+    right: "justify-end",
+}
+
 function BloquePreview({ bloque }: BloquePreviewProps) {
+    if (bloque.tipo === "imagen") {
+        // Misma caja máxima que el PDF (280 × 200 pt), en px.
+        return (
+            <div className={cn("my-2 flex", ALINEACION_IMAGEN[bloque.alineacion])}>
+                <img src={bloque.src} alt="Imagen de referencia" className="max-h-[200px] max-w-[280px] object-contain" />
+            </div>
+        )
+    }
     if (bloque.tipo === "parrafo") {
         return (
             <p className={cn("whitespace-pre-wrap", ALINEACION[bloque.alineacion])}>

@@ -11,7 +11,8 @@ import type { Proyecto } from "@/lib/types"
 // en vivo para que la vista previa y el PDF no esperen al guardado.
 export function useContenidoCotizacion(
     proyecto: Proyecto | null,
-    onSave: (cambios: Partial<Proyecto>) => void,
+    // false: no se guardó (almacenamiento lleno); el indicador muestra el error.
+    onSave: (cambios: Partial<Proyecto>) => boolean,
 ) {
     const valoresGuardados = useMemo(
         () => (proyecto ? valoresContenido(proyecto, new Date()) : undefined),
