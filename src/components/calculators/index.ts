@@ -1,5 +1,4 @@
-export { VentanasTab } from "./VentanasTab"
+export { ProductosTab } from "./ProductosTab"
 export { MaterialesTab } from "./MaterialesTab"
 export { OptimizacionTab } from "./OptimizacionTab"
 export { DeleteProjectDialog } from "./DeleteProjectDialog"
-export { DeleteWindowDialog } from "./DeleteWindowDialog"

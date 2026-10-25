@@ -53,6 +53,9 @@ export function agruparPorColorAluminio(ventanas: readonly Ventana[]): GrupoColo
     )
 }
 
+export const etiquetaTipoVidrio = (color: ColorVidrio, calibre: CalibreVidrio): string =>
+    `${getColorVidrioLabel(color)} ${getCalibreVidrioLabel(calibre)}`
+
 export function agruparPorTipoVidrio(ventanas: readonly Ventana[]): GrupoTipoVidrio[] {
     return agrupar(
         ventanas,
@@ -65,7 +68,7 @@ export function agruparPorTipoVidrio(ventanas: readonly Ventana[]): GrupoTipoVid
                 clave,
                 color,
                 calibre,
-                etiqueta: `${getColorVidrioLabel(color)} ${getCalibreVidrioLabel(calibre)}`,
+                etiqueta: etiquetaTipoVidrio(color, calibre),
                 ventanas: [v],
             }
         }

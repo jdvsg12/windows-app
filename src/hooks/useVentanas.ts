@@ -3,7 +3,9 @@ import { useRouter } from "next/navigation"
 import { eliminarProyecto, repositorios } from "@/lib/storage"
 import { DOCUMENTOS } from "@/lib/repositorios/documentos"
 import { useCalculo } from "@/hooks/useCalculo"
-import type { Proyecto, Ventana, TamanoLamina } from "@/lib/types"
+import type { Proyecto, Puerta, Ventana, TamanoLamina } from "@/lib/types"
+
+const SIN_PUERTAS: Puerta[] = []
 
 export function useVentanas(proyectoId: string | null) {
     const router = useRouter()
@@ -14,13 +16,19 @@ export function useVentanas(proyectoId: string | null) {
     // Los predeterminados valen hasta que llega lo guardado (el mismo tick que el proyecto).
     const [precios, setPrecios] = useState(DOCUMENTOS.precios.predeterminado)
     const [descuentos, setDescuentos] = useState(DOCUMENTOS.descuentos.predeterminado)
+    const [parametrosPuerta, setParametrosPuerta] = useState(DOCUMENTOS.parametrosPuertaAlumina.predeterminado)
 
     useEffect(() => {
         let cancelado = false
-        Promise.all([repositorios.precios.obtener(), repositorios.descuentos.obtener()]).then(([guardados, descuentosGuardados]) => {
+        Promise.all([
+            repositorios.precios.obtener(),
+            repositorios.descuentos.obtener(),
+            repositorios.parametrosPuertaAlumina.obtener(),
+        ]).then(([guardados, descuentosGuardados, parametrosGuardados]) => {
             if (cancelado) return
             setPrecios(guardados)
             setDescuentos(descuentosGuardados)
+            setParametrosPuerta(parametrosGuardados)
         })
         return () => {
             cancelado = true
@@ -42,7 +50,8 @@ export function useVentanas(proyectoId: string | null) {
         }
     }, [proyectoId])
 
-    const { optimizacion, accesorios, vidrios, laminasVidrio, metricasVidrio, errorLaminas } = useCalculo(ventanas, precios, descuentos)
+    const puertas = proyecto?.puertas ?? SIN_PUERTAS
+    const plan = useCalculo(ventanas, precios, descuentos, puertas, parametrosPuerta)
 
     const agregarVentana = useCallback((datos: Omit<Ventana, "id">, editandoId: string | null) => {
         if (!proyecto) return { nuevasVentanas: ventanas, editando: false }
@@ -96,6 +105,23 @@ export function useVentanas(proyectoId: string | null) {
     }, [proyecto])
 
     // Sobre los precios guardados, no la copia local: otra pestaña (Admin) pudo cambiarlos.
+    // Las puertas viven en el proyecto, igual que las ventanas.
+    const agregarPuerta = useCallback((datos: Omit<Puerta, "id">, editandoId: string | null) => {
+        if (!proyecto) return
+        const nueva: Puerta = { ...datos, id: editandoId || crypto.randomUUID() }
+        const nuevasPuertas = editandoId ? puertas.map((puerta) => (puerta.id === editandoId ? nueva : puerta)) : [...puertas, nueva]
+        const proyectoActualizado = { ...proyecto, puertas: nuevasPuertas }
+        void repositorios.proyectos.actualizar(proyectoActualizado)
+        setProyecto(proyectoActualizado)
+    }, [proyecto, puertas])
+
+    const eliminarPuerta = useCallback((id: string) => {
+        if (!proyecto) return
+        const proyectoActualizado = { ...proyecto, puertas: puertas.filter((puerta) => puerta.id !== id) }
+        void repositorios.proyectos.actualizar(proyectoActualizado)
+        setProyecto(proyectoActualizado)
+    }, [proyecto, puertas])
+
     const actualizarTamanoLamina = useCallback(async (tamanoLamina: TamanoLamina) => {
         const nuevosPrecios = { ...(await repositorios.precios.obtener()), tamanoLamina }
         setPrecios(nuevosPrecios)
@@ -105,15 +131,20 @@ export function useVentanas(proyectoId: string | null) {
     return {
         proyecto,
         ventanas,
-        optimizacion,
-        accesorios,
-        vidrios,
-        laminasVidrio,
-        metricasVidrio,
-        errorLaminas,
+        puertas,
+        parametrosPuerta,
+        optimizacion: plan.optimizacion,
+        accesorios: plan.accesorios,
+        vidrios: plan.vidrios,
+        laminasVidrio: plan.laminasVidrio,
+        metricasVidrio: plan.metricasVidrio,
+        errorLaminas: plan.errorLaminas,
+        planPuertas: plan.puertas,
         tamanoLamina: precios.tamanoLamina,
         agregarVentana,
         eliminarVentana,
+        agregarPuerta,
+        eliminarPuerta,
         eliminarProyectoActual,
         actualizarCliente,
         actualizarDatosProyecto,

@@ -54,6 +54,7 @@ export const crearProyecto = async (nombre: string, cliente?: string, direccion?
         transporte: 0,
         contenidoCotizacion: ContenidoCotizacionSchema.parse({}),
         versionesCotizacion: [],
+        puertas: [],
     }
     await repositorios.proyectos.agregar(nuevoProyecto)
     guardarProyectoActual(nuevoProyecto.id)

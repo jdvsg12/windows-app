@@ -19,6 +19,7 @@ import type {
     PiezaPlanCorteSchema,
     TotalesPlanCorteSchema,
     ParametrosPuertaAluminaSchema,
+    PuertaSchema,
     FilaCotizacionSchema,
     FotoProductoSchema,
     FotosProductosSchema,
@@ -192,6 +193,16 @@ export interface DatosBancarios {
 
 // Medidas en mm.
 export type Ventana = z.infer<typeof VentanaSchema>
+// Medidas del vano en mm.
+export type Puerta = z.infer<typeof PuertaSchema>
+
+export const especificacionesPuerta = (puerta: Puerta): string[] =>
+    [
+        `Aluminio ${getColorAluminioLabel(puerta.colorAluminio)}`,
+        `Vidrio ${getCalibreVidrioLabel(puerta.calibreVidrio)}`,
+        getColorVidrioLabel(puerta.colorVidrio),
+        puerta.sandblasting && "Sandblasting",
+    ].filter((item): item is string => Boolean(item))
 
 export interface Corte {
     tipo: string

@@ -1,3 +1,4 @@
+import type { ReferenciaPerfilPuerta } from "@/lib/calculo/motor-puerta-alumina"
 import type { VidrioCorte } from "@/lib/types"
 
 // Visual identity of pieces. Class names are written out in full so Tailwind can see them.
@@ -45,6 +46,14 @@ export function obtenerEstiloPerfil(clave: string): EstiloPieza {
     const tipo = clave.split(" - ").at(-1) ?? clave
     return esPerfilTipo(tipo) ? ESTILOS_PERFIL[tipo] : ESTILO_PERFIL_DESCONOCIDO
 }
+
+// Perfiles de la puerta Alumina: reutilizan los colores de pieza de las ventanas por su función
+// (marco, hoja, pisavidrio); el monograma es la referencia, así el color nunca es la única pista.
+export const ESTILOS_PERFIL_PUERTA = {
+    "U-57": { codigo: "U57", clases: ESTILOS_PERFIL.Cabezal.clases },
+    "VP-1102": { codigo: "VP", clases: ESTILOS_PERFIL["Horizontal Superior"].clases },
+    "PISAVIDRIO-CUADRADO": { codigo: "PV", clases: ESTILOS_PERFIL.Traslape.clases },
+} as const satisfies Record<ReferenciaPerfilPuerta, EstiloPieza>
 
 export type HojaTipo = "fija" | "movil"
 

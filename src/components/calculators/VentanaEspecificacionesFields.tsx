@@ -1,45 +1,12 @@
 "use client"
 
-import type { Control, FieldPath } from "react-hook-form"
+import type { Control } from "react-hook-form"
 
 import { Checkbox } from "@/components/ui/checkbox"
-import { FormControl, FormField, FormItem, FormLabel, FormMessage } from "@/components/ui/form"
-import { NativeSelect } from "@/components/common/NativeSelect"
+import { FormControl, FormField, FormItem, FormLabel } from "@/components/ui/form"
+import { SelectField } from "@/components/common/SelectField"
 import type { VentanaFormValues } from "@/lib/schemas"
 import { CALIBRES_VIDRIO, CERRADURAS, COLORES_ALUMINIO, COLORES_VIDRIO, RODACHINAS } from "@/lib/types"
-
-type CampoSelect = Extract<FieldPath<VentanaFormValues>, "colorAluminio" | "cerradura" | "rodachina" | "calibreVidrio" | "colorVidrio">
-
-interface SelectFieldProps {
-    control: Control<VentanaFormValues>
-    name: CampoSelect
-    label: string
-    opciones: readonly { value: string | number; label: string }[]
-}
-
-function SelectField({ control, name, label, opciones }: SelectFieldProps) {
-    return (
-        <FormField
-            control={control}
-            name={name}
-            render={({ field }) => (
-                <FormItem>
-                    <FormLabel>{label}</FormLabel>
-                    <FormControl>
-                        <NativeSelect {...field}>
-                            {opciones.map(({ value, label: optionLabel }) => (
-                                <option key={value} value={String(value)}>
-                                    {optionLabel}
-                                </option>
-                            ))}
-                        </NativeSelect>
-                    </FormControl>
-                    <FormMessage />
-                </FormItem>
-            )}
-        />
-    )
-}
 
 interface VentanaEspecificacionesFieldsProps {
     control: Control<VentanaFormValues>

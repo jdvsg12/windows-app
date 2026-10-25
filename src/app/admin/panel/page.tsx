@@ -10,6 +10,7 @@ import { PreciosPanel } from "@/components/admin/PreciosPanel"
 import { DescuentosPanel } from "@/components/admin/DescuentosPanel"
 import { OverheadPanel } from "@/components/admin/OverheadPanel"
 import { FotosProductosPanel } from "@/components/admin/FotosProductosPanel"
+import { ParametrosPuertaPanel } from "@/components/admin/ParametrosPuertaPanel"
 import { isAdminAuthenticated, setAdminAuthenticated } from "@/lib/storage"
 
 export default function AdminPanelPage() {
@@ -43,7 +44,7 @@ export default function AdminPanelPage() {
                     <div>
                         <h1 className="text-title font-bold tracking-tight">Panel de Administración</h1>
                         <p className="text-sm text-muted-foreground">
-                            Configuración de precios, descuentos y fotos de producto
+                            Configuración de precios, descuentos, puertas y fotos de producto
                         </p>
                     </div>
                 </div>
@@ -54,10 +55,11 @@ export default function AdminPanelPage() {
             </div>
 
             <Tabs defaultValue="precios" className="w-full">
-                <TabsList className="grid h-auto w-full max-w-2xl grid-cols-2 sm:grid-cols-4">
+                <TabsList className="grid h-auto w-full max-w-3xl grid-cols-2 sm:grid-cols-5">
                     <TabsTrigger value="precios">Precios Materiales</TabsTrigger>
                     <TabsTrigger value="descuentos">Descuentos por Sistema</TabsTrigger>
                     <TabsTrigger value="overhead">Overhead</TabsTrigger>
+                    <TabsTrigger value="puerta-alumina">Puerta Alumina</TabsTrigger>
                     <TabsTrigger value="fotos">Fotos de producto</TabsTrigger>
                 </TabsList>
                 <TabsContent value="precios" className="mt-6">
@@ -68,6 +70,9 @@ export default function AdminPanelPage() {
                 </TabsContent>
                 <TabsContent value="overhead" className="mt-6">
                     <OverheadPanel />
+                </TabsContent>
+                <TabsContent value="puerta-alumina" className="mt-6">
+                    <ParametrosPuertaPanel />
                 </TabsContent>
                 <TabsContent value="fotos" className="mt-6">
                     <FotosProductosPanel />
