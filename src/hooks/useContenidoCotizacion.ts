@@ -12,7 +12,7 @@ import type { Proyecto } from "@/lib/types"
 export function useContenidoCotizacion(
     proyecto: Proyecto | null,
     // false: no se guardó (almacenamiento lleno); el indicador muestra el error.
-    onSave: (cambios: Partial<Proyecto>) => boolean,
+    onSave: (cambios: Partial<Proyecto>) => Promise<boolean>,
 ) {
     const valoresGuardados = useMemo(
         () => (proyecto ? valoresContenido(proyecto, new Date()) : undefined),

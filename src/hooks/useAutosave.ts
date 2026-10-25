@@ -4,7 +4,8 @@ export type AutosaveStatus = "idle" | "saving" | "saved" | "error"
 
 interface UseAutosaveOptions<T> {
     value: T
-    onSave: (value: T) => boolean | void
+    // false (or a promise of false) = not saved: the indicator shows the error.
+    onSave: (value: T) => boolean | void | Promise<boolean | void>
     delayMs?: number
     enabled?: boolean
 }
@@ -24,6 +25,9 @@ export function useAutosave<T>({ value, onSave, delayMs = 600, enabled = true }:
     // Lo que espera el debounce. Si el formulario se desmonta antes (cambiar de pestaña), se
     // guarda en ese momento: cancelarlo perdía lo último que se escribió.
     const pendienteRef = useRef<{ value: T; serialized: string } | null>(null)
+    // Only the latest save may set the status: an older one resolving late must not turn a
+    // "saving" back into "saved".
+    const ultimoGuardadoRef = useRef(0)
 
     useEffect(() => {
         if (!enabled || serialized === lastSerializedRef.current) {
@@ -38,8 +42,15 @@ export function useAutosave<T>({ value, onSave, delayMs = 600, enabled = true }:
             // form turning invalid) must not make the same content look already saved later.
             lastSerializedRef.current = serialized
             pendienteRef.current = null
-            const result = onSaveRef.current(value)
-            setStatus(result === false ? "error" : "saved")
+            const guardado = ++ultimoGuardadoRef.current
+            Promise.resolve(onSaveRef.current(value)).then(
+                (result) => {
+                    if (guardado === ultimoGuardadoRef.current) setStatus(result === false ? "error" : "saved")
+                },
+                () => {
+                    if (guardado === ultimoGuardadoRef.current) setStatus("error")
+                },
+            )
         }, delayMs)
 
         return () => clearTimeout(timeoutId)
@@ -52,7 +63,7 @@ export function useAutosave<T>({ value, onSave, delayMs = 600, enabled = true }:
             if (!pendiente) return
             lastSerializedRef.current = pendiente.serialized
             pendienteRef.current = null
-            onSaveRef.current(pendiente.value)
+            void onSaveRef.current(pendiente.value)
         },
         [],
     )

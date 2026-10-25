@@ -1,6 +1,6 @@
 import { useEffect, useState } from "react"
 
-import { obtenerDescuentos, guardarDescuentos } from "@/lib/storage"
+import { repositorios } from "@/lib/storage"
 import { DESCUNTOS_DEFAULT, type DescuentosPorSistema, type DescuentosSistema, type SistemaVentana } from "@/lib/types"
 import { useSaveFeedback } from "./useSaveFeedback"
 
@@ -13,8 +13,15 @@ export function useDescuentosForm() {
     const { saved, markSaved } = useSaveFeedback()
 
     useEffect(() => {
-        setDescuentos(obtenerDescuentos())
-        setLoading(false)
+        let cancelado = false
+        repositorios.descuentos.obtener().then((guardado) => {
+            if (cancelado) return
+            setDescuentos(guardado)
+            setLoading(false)
+        })
+        return () => {
+            cancelado = true
+        }
     }, [])
 
     const handleChange = (field: keyof DescuentosSistema, value: number) => {
@@ -24,9 +31,8 @@ export function useDescuentosForm() {
         }))
     }
 
-    const handleSave = () => {
-        guardarDescuentos(descuentos)
-        markSaved()
+    const handleSave = async () => {
+        if (await repositorios.descuentos.guardar(descuentos)) markSaved()
     }
 
     const handleReset = () => {
