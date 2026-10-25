@@ -183,13 +183,13 @@ export const crearProyecto = (nombre: string, cliente?: string, direccion?: stri
     return nuevoProyecto
 }
 
-export const actualizarProyecto = (proyecto: Proyecto) => {
+// false si no se pudo guardar (por ejemplo, el almacenamiento del navegador está lleno).
+export const actualizarProyecto = (proyecto: Proyecto): boolean => {
     const proyectos = obtenerProyectos()
     const index = proyectos.findIndex((p) => p.id === proyecto.id)
-    if (index !== -1) {
-        proyectos[index] = proyecto
-        guardarProyectos(proyectos)
-    }
+    if (index === -1) return false
+    proyectos[index] = proyecto
+    return guardarProyectos(proyectos)
 }
 
 export const eliminarProyecto = (id: string) => {

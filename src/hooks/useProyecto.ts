@@ -34,12 +34,13 @@ export function useProyecto(proyectoId: string | null) {
         ultimo.current = proyecto
     }, [proyecto])
 
-    const update = useCallback((updates: Partial<Proyecto>) => {
-        if (!ultimo.current) return
+    const update = useCallback((updates: Partial<Proyecto>): boolean => {
+        if (!ultimo.current) return false
         const updated = { ...ultimo.current, ...updates }
         ultimo.current = updated
-        actualizarProyecto(updated)
+        const guardado = actualizarProyecto(updated)
         setProyecto(updated)
+        return guardado
     }, [])
 
     const remove = useCallback(() => {

@@ -238,6 +238,8 @@ export interface ItemLista {
 export type BloqueTexto =
     | { tipo: "parrafo"; alineacion: AlineacionTexto; tramos: TramoTexto[] }
     | { tipo: "lista"; ordenada: boolean; items: ItemLista[] }
+    // Imagen de referencia pegada en el editor; ancho y alto en px cuando el <img> los trae.
+    | { tipo: "imagen"; alineacion: AlineacionTexto; src: string; ancho?: number; alto?: number }
 
 // El esquema acepta cualquier clave en estos mapas (ver ConfiguracionPreciosSchema);
 // en el código se restringen a las claves válidas.
