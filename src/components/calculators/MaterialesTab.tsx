@@ -1,70 +1,57 @@
 "use client"
 
-import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card"
-import { StatCard } from "@/components/common/StatCard"
-import { formatArea, formatCount } from "@/lib/format"
-import { Cog, DoorOpen, Lock, Ruler } from "lucide-react"
-import type { DespiecePuerta } from "@/lib/calculo/motor-puerta-alumina"
-import type { PlanPuertas, PuertaCalculada } from "@/lib/calculo/plan-puertas"
-import type { Accesorios, VidrioCorte } from "@/lib/types"
-import { DespiecePuertaCard } from "./DespiecePuertaCard"
+import { Package } from "lucide-react"
+
+import { Card, CardContent } from "@/components/ui/card"
+import { EmptyState } from "@/components/common/EmptyState"
+import { textoListaCompra, type ListaCompra } from "@/lib/lista-compra"
+import type { VidrioCorte } from "@/lib/types"
+import { AccesoriosCompra } from "./AccesoriosCompra"
 import { ErroresPuertas } from "./ErroresPuertas"
-import { HerrajesPuertasCard } from "./HerrajesPuertasCard"
+import { PerfilesCompra } from "./PerfilesCompra"
+import { ResumenCompra } from "./ResumenCompra"
+import { VidriosCompra } from "./VidriosCompra"
 
 interface Props {
-    accesorios: Accesorios | null
+    proyecto: string
+    listaCompra: ListaCompra
     vidrios: VidrioCorte[]
-    planPuertas: PlanPuertas
+    erroresPuertas: readonly string[]
+    tamanoLamina: string
 }
 
-const conDespiece = (calculada: PuertaCalculada): calculada is PuertaCalculada & { despiece: DespiecePuerta } =>
-    calculada.despiece !== null
+// Lista de compra del proyecto. El despiece de cada pieza está en Optimización.
+export function MaterialesTab({ proyecto, listaCompra, vidrios, erroresPuertas, tamanoLamina }: Props) {
+    const vacia = listaCompra.grupos.length === 0 && listaCompra.accesorios.length === 0 && vidrios.length === 0
+    const laminas = listaCompra.laminas.reduce((total, grupo) => total + grupo.laminas, 0)
 
-export function MaterialesTab({ accesorios, vidrios, planPuertas }: Props) {
-    const puertas = planPuertas.puertas.filter(conDespiece)
     return (
-        <div className="space-y-4">
-            {accesorios && (
-                <div className="grid grid-cols-2 md:grid-cols-4 gap-4">
-                    <StatCard label="Rodachinas" value={accesorios.rodachinas} icon={Cog} />
-                    <StatCard label="Guías" value={accesorios.guiasSuperior + accesorios.guiasInferior} icon={DoorOpen} />
-                    <StatCard label="Cerraduras" value={accesorios.cerraduras} icon={Lock} />
-                    <StatCard label="Empaque" value={formatCount(accesorios.empaqueTotal)} unit="m" icon={Ruler} />
-                </div>
+        <div className="space-y-7">
+            <ErroresPuertas errores={erroresPuertas} />
+            {vacia ? (
+                <Card>
+                    <CardContent>
+                        <EmptyState
+                            size="compact"
+                            icon={Package}
+                            title="Todavía no hay nada que comprar"
+                            description="Agrega ventanas o puertas en la pestaña Productos y aquí aparece lo que hay que comprar."
+                        />
+                    </CardContent>
+                </Card>
+            ) : (
+                <>
+                    <ResumenCompra
+                        barras={listaCompra.totalBarras}
+                        accesorios={listaCompra.accesorios.length}
+                        laminas={laminas}
+                        texto={textoListaCompra(listaCompra, proyecto, tamanoLamina)}
+                    />
+                    <PerfilesCompra grupos={listaCompra.grupos} />
+                    <AccesoriosCompra accesorios={listaCompra.accesorios} />
+                    <VidriosCompra vidrios={vidrios} laminas={listaCompra.laminas} tamanoLamina={tamanoLamina} />
+                </>
             )}
-
-            <ErroresPuertas errores={planPuertas.errores} />
-            {puertas.map((calculada) => (
-                <DespiecePuertaCard key={calculada.puerta.id} calculada={calculada} />
-            ))}
-            {planPuertas.accesorios && <HerrajesPuertasCard accesorios={planPuertas.accesorios} />}
-
-            <Card>
-                <CardHeader>
-                    <CardTitle>Vidrios</CardTitle>
-                </CardHeader>
-                <CardContent>
-                    <div className="space-y-3">
-                        {vidrios.map((v, i) => (
-                            <div key={i} className="flex items-center justify-between p-3 bg-muted rounded-lg">
-                                <div>
-                                    <p className="font-medium">
-                                        {v.codigo && <span className="mr-2 font-mono">{v.codigo}</span>}
-                                        {v.ventana} - {v.tipo}
-                                    </p>
-                                    <p className="text-sm text-muted-foreground">
-                                        {v.ancho.toFixed(0)} × {v.alto.toFixed(0)} mm
-                                        {v.grupo && ` · ${v.grupo}`}
-                                    </p>
-                                </div>
-                                <div className="text-right">
-                                    <p className="font-medium">{formatArea(v.area, 3)}</p>
-                                </div>
-                            </div>
-                        ))}
-                    </div>
-                </CardContent>
-            </Card>
         </div>
     )
 }

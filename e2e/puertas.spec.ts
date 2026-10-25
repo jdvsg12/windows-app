@@ -36,21 +36,27 @@ test("puerta Alumina: se elige en el selector, valida el vano y sale en Material
     await page.reload()
     await expect(page.getByRole("heading", { name: "P1 Entrada" })).toBeVisible()
 
+    // Materiales es la lista de compra: barras por referencia y herrajes con su foto.
     await page.getByRole("tab", { name: "Materiales" }).click()
-    const despiece = page.getByRole("table")
-    await expect(despiece.getByRole("row", { name: /Marco vertical izquierdo U-57 · Marco 1 1\.984 mm 45° \/ 90°/ })).toBeVisible()
-    await expect(despiece.getByRole("row", { name: /Hoja horizontal superior VP-1102 · Bastidor de la hoja 1 596 mm 45° \/ 45°/ })).toBeVisible()
-    await expect(despiece.getByRole("row", { name: /Pisavidrio vertical derecho Pisavidrio cuadrado 1 1\.728 mm 90° \/ 90°/ })).toBeVisible()
-    await expect(despiece.getByRole("row", { name: /Vidrio .* 406 mm × 1\.754 mm/ })).toBeVisible()
+    await expect(page.getByText("Lo que hay que comprar")).toBeVisible()
+    const marco = page.getByRole("article").filter({ has: page.getByRole("heading", { name: "U-57 · Marco" }) })
+    await expect(marco).toContainText("1barra")
+    await expect(marco.getByRole("img", { name: "Sección del perfil U-57" })).toBeVisible()
+    const bisagra = page.getByRole("listitem").filter({ hasText: "Bisagra Omega" })
+    await expect(bisagra).toContainText("P1")
+    await expect(bisagra).toContainText("4unidades")
     await expect(page.getByRole("img", { name: "Escuadra de ensamble" })).toBeVisible()
-    await expect(page.getByRole("listitem").filter({ hasText: "Bisagra Omega" })).toContainText("4")
-    await expect(page.getByText("Entrada - Puerta")).toBeVisible()
+    await expect(page.getByRole("row", { name: /P1 Entrada - Puerta Incoloro 4 mm 406 mm × 1\.754 mm/ })).toBeVisible()
 
+    // Optimización: las barras y, debajo, cada pieza con sus cortes.
     await page.getByRole("tab", { name: "Optimización" }).click()
     await expect(page.getByText("Corte de perfiles de puertas")).toBeVisible()
     await expect(page.getByText(/1 barra; consumo 4\.622 mm, sobrante 1\.366 mm/)).toBeVisible()
     await expect(page.getByText(/1 barra; consumo 5\.080 mm, sobrante 904 mm/)).toBeVisible()
     await expect(page.getByText(/1 barra; consumo 4\.252 mm, sobrante 1\.732 mm/)).toBeVisible()
+    await expect(page.getByRole("listitem").filter({ hasText: "Marco vertical izquierdo" })).toContainText("1.984 mm, cortes 45° / 90°")
+    await expect(page.getByRole("listitem").filter({ hasText: "Hoja horizontal superior" })).toContainText("596 mm, cortes 45° / 45°")
+    await expect(page.getByRole("listitem").filter({ hasText: "Pisavidrio vertical derecho" })).toContainText("1.728 mm, cortes 90° / 90°")
 })
 
 test("puerta Alumina: editar desde su tarjeta y cambiar descuentos en Admin", async ({ page }) => {
@@ -78,6 +84,6 @@ test("puerta Alumina: editar desde su tarjeta y cambiar descuentos en Admin", as
     await expect(page.getByRole("button", { name: "Guardado!" })).toBeVisible()
 
     await page.goto(url)
-    await page.getByRole("tab", { name: "Materiales" }).click()
-    await expect(page.getByRole("row", { name: /Pisavidrio vertical izquierdo Pisavidrio cuadrado 1 1\.734 mm/ })).toBeVisible()
+    await page.getByRole("tab", { name: "Optimización" }).click()
+    await expect(page.getByRole("listitem").filter({ hasText: "Pisavidrio vertical izquierdo" })).toContainText("1.734 mm, cortes 90° / 90°")
 })

@@ -94,7 +94,7 @@ export function OptimizacionTab({
                 </Card>
             )}
 
-            <BarrasPuertasCard barras={planPuertas.barras} espesorSierra={espesorSierra} />
+            <BarrasPuertasCard barras={planPuertas.barras} puertas={planPuertas.puertas} espesorSierra={espesorSierra} />
 
             {errorLaminas && (
                 <Card className="border-destructive">

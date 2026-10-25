@@ -93,9 +93,10 @@ test("flujo completo: un proyecto con 3 ventanas llena cada pestaña, la cotizac
     }
     await expect(page.getByText("Sin especificaciones")).toHaveCount(0)
 
-    // Materiales: una cerradura por ventana y los vidrios de las tres.
+    // Materiales: la lista de compra, con perfiles 80-25 por referencia y los vidrios de las tres.
     await page.getByRole("tab", { name: "Materiales" }).click()
-    await expect(page.getByText("Cerraduras")).toBeVisible()
+    await expect(page.getByText("Lo que hay que comprar")).toBeVisible()
+    await expect(page.getByRole("heading", { name: "Cabezal 8025" }).first()).toBeVisible()
     await expect(page.getByText("Vidrios", { exact: true })).toBeVisible()
 
     // Optimización: piezas de las tres ventanas, láminas por tipo de vidrio (3 tipos distintos).

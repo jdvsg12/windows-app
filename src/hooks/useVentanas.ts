@@ -1,8 +1,9 @@
-import { useState, useEffect, useCallback } from "react"
+import { useState, useEffect, useCallback, useMemo } from "react"
 import { useRouter } from "next/navigation"
 import { eliminarProyecto, repositorios } from "@/lib/storage"
 import { DOCUMENTOS } from "@/lib/repositorios/documentos"
 import { useCalculo } from "@/hooks/useCalculo"
+import { armarListaCompra } from "@/lib/lista-compra"
 import type { Proyecto, Puerta, Ventana, TamanoLamina } from "@/lib/types"
 
 const SIN_PUERTAS: Puerta[] = []
@@ -52,6 +53,7 @@ export function useVentanas(proyectoId: string | null) {
 
     const puertas = proyecto?.puertas ?? SIN_PUERTAS
     const plan = useCalculo(ventanas, precios, descuentos, puertas, parametrosPuerta)
+    const listaCompra = useMemo(() => armarListaCompra({ ventanas, puertas, descuentos, plan }), [ventanas, puertas, descuentos, plan])
 
     const agregarVentana = useCallback((datos: Omit<Ventana, "id">, editandoId: string | null) => {
         if (!proyecto) return { nuevasVentanas: ventanas, editando: false }
@@ -140,6 +142,7 @@ export function useVentanas(proyectoId: string | null) {
         metricasVidrio: plan.metricasVidrio,
         errorLaminas: plan.errorLaminas,
         planPuertas: plan.puertas,
+        listaCompra,
         tamanoLamina: precios.tamanoLamina,
         agregarVentana,
         eliminarVentana,

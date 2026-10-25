@@ -19,6 +19,7 @@ import {
     getColorVidrioLabel,
     getRodachinaLabel,
     getTipoVentanaLabel,
+    TAMANOS_LAMINA,
     type Proyecto,
 } from "@/lib/types"
 
@@ -41,8 +42,8 @@ function CalculadorPage() {
         puertas,
         parametrosPuerta,
         planPuertas,
+        listaCompra,
         optimizacion,
-        accesorios,
         vidrios,
         laminasVidrio,
         metricasVidrio,
@@ -183,9 +184,11 @@ function CalculadorPage() {
 
                 <TabsContent value="materiales">
                     <MaterialesTab
-                        accesorios={accesorios}
+                        proyecto={proyecto.nombre}
+                        listaCompra={listaCompra}
                         vidrios={vidrios}
-                        planPuertas={planPuertas}
+                        erroresPuertas={planPuertas.errores}
+                        tamanoLamina={TAMANOS_LAMINA[tamanoLamina].label}
                     />
                 </TabsContent>
 
