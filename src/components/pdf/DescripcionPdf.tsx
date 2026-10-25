@@ -1,9 +1,18 @@
-import { Text, View } from "@react-pdf/renderer"
+import { Image, Text, View } from "@react-pdf/renderer"
 
 import { parsearTextoEnriquecido } from "@/lib/pdf/texto-enriquecido"
-import type { BloqueTexto, TramoTexto } from "@/lib/types"
+import type { AlineacionTexto, BloqueTexto, TramoTexto } from "@/lib/types"
 
 const SANGRIA_NIVEL = 14
+// Caja máxima de una imagen de referencia, en puntos: deja ver el detalle sin comerse la página.
+const IMAGEN_MAX_ANCHO = 280
+const IMAGEN_MAX_ALTO = 200
+
+const ALINEACION_IMAGEN: Record<AlineacionTexto, "flex-start" | "center" | "flex-end"> = {
+    left: "flex-start",
+    center: "center",
+    right: "flex-end",
+}
 
 interface DescripcionPdfProps {
     html: string
@@ -32,7 +41,22 @@ function marcadorDe(bloque: Extract<BloqueTexto, { tipo: "lista" }>, indice: num
     return `${posicion}.`
 }
 
+// Con las medidas del <img> se escala sin deformar; sin ellas (imágenes pegadas antes de AWA-47)
+// basta el alto: react-pdf calcula el ancho por la proporción de la imagen.
+function tamanoImagen(bloque: Extract<BloqueTexto, { tipo: "imagen" }>) {
+    if (!bloque.ancho || !bloque.alto) return { height: IMAGEN_MAX_ALTO * 0.8 }
+    const escala = Math.min(1, IMAGEN_MAX_ANCHO / bloque.ancho, IMAGEN_MAX_ALTO / bloque.alto)
+    return { width: bloque.ancho * escala, height: bloque.alto * escala }
+}
+
 function BloquePdf({ bloque }: BloquePdfProps) {
+    if (bloque.tipo === "imagen") {
+        return (
+            <View style={{ alignItems: ALINEACION_IMAGEN[bloque.alineacion], marginVertical: 4 }} wrap={false}>
+                <Image src={bloque.src} style={{ ...tamanoImagen(bloque), objectFit: "contain" }} />
+            </View>
+        )
+    }
     if (bloque.tipo === "parrafo") {
         // Una línea vacía del editor: un espacio para que ocupe su alto.
         return (

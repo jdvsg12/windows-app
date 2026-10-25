@@ -2,8 +2,8 @@ import type { AlineacionTexto, BloqueTexto, ItemLista, TramoTexto } from "../typ
 
 // Interpreta el HTML del editor de la cotización (contentEditable + execCommand) sin DOM, para
 // poder probarlo en Node. Entiende lo que produce el editor —negrita, cursiva, listas, alineación,
-// párrafos en <div>, saltos <br> y "\n"— y lo más común de un texto pegado (<p>, <strong>, <em>,
-// <span style>). Cualquier otra etiqueta se descarta y su texto se conserva.
+// párrafos en <div>, saltos <br> y "\n", imágenes pegadas— y lo más común de un texto pegado (<p>,
+// <strong>, <em>, <span style>). Cualquier otra etiqueta se descarta y su texto se conserva.
 
 interface Marco {
     etiqueta: string
@@ -15,6 +15,10 @@ interface Marco {
 const BLOQUES = new Set(["div", "p", "h1", "h2", "h3", "h4", "h5", "h6", "blockquote", "pre", "section", "article", "header", "footer", "table", "tr"])
 const VACIAS = new Set(["br", "hr", "img", "input", "meta", "link", "wbr", "col", "area", "source"])
 const IGNORADAS = new Set(["style", "script", "head", "title", "template"])
+
+// Solo imágenes embebidas en PNG o JPEG: las dos que el PDF puede dibujar, y sin red (una URL
+// externa no carga sin conexión ni en el PDF).
+const IMAGEN_EMBEBIDA = /^data:image\/(?:png|jpe?g);base64,[a-z0-9+/=\s]+$/i
 
 const ENTIDADES: Record<string, string> = { nbsp: " ", amp: "&", lt: "<", gt: ">", quot: '"', apos: "'" }
 
@@ -34,6 +38,16 @@ function estiloDe(atributos: string, propiedad: string): string | undefined {
     const style = /style\s*=\s*("([^"]*)"|'([^']*)')/i.exec(atributos)
     const declaraciones = style?.[2] ?? style?.[3] ?? ""
     return new RegExp(`(?:^|;)\\s*${propiedad}\\s*:\\s*([^;]+)`, "i").exec(declaraciones)?.[1].trim().toLowerCase()
+}
+
+function atributo(atributos: string, nombre: string): string | undefined {
+    const coincidencia = new RegExp(`(?:^|\\s)${nombre}\\s*=\\s*("([^"]*)"|'([^']*)'|([^\\s"'>]+))`, "i").exec(atributos)
+    return coincidencia?.[2] ?? coincidencia?.[3] ?? coincidencia?.[4]
+}
+
+function medida(atributos: string, nombre: string): number | undefined {
+    const valor = Number(atributo(atributos, nombre))
+    return Number.isFinite(valor) && valor > 0 ? valor : undefined
 }
 
 function marcoHijo(padre: Marco, etiqueta: string, atributos: string): Marco {
@@ -79,6 +93,8 @@ export function parsearTextoEnriquecido(html: string): BloqueTexto[] {
     let nivelLista = -1
     let item: ItemLista | null = null
     let ignorando = 0
+    // Una imagen dentro de una lista sale justo después de la lista: un bloque no cabe en un ítem.
+    let imagenesEnLista: BloqueTexto[] = []
 
     const marco = () => marcos[marcos.length - 1]
 
@@ -142,6 +158,24 @@ export function parsearTextoEnriquecido(html: string): BloqueTexto[] {
             else if (!lista) bloques.push({ tipo: "parrafo", alineacion: marco().alineacion, tramos: [] })
             continue
         }
+        if (etiqueta === "img") {
+            const src = atributo(atributos, "src")?.trim()
+            if (cierre || !src || !IMAGEN_EMBEBIDA.test(src)) continue
+            const imagen: BloqueTexto = {
+                tipo: "imagen",
+                alineacion: marco().alineacion,
+                src,
+                ancho: medida(atributos, "width"),
+                alto: medida(atributos, "height"),
+            }
+            if (lista) {
+                imagenesEnLista.push(imagen)
+            } else {
+                cerrarParrafo()
+                bloques.push(imagen)
+            }
+            continue
+        }
         if (etiqueta === "hr") {
             limiteDeBloque()
             continue
@@ -174,7 +208,11 @@ export function parsearTextoEnriquecido(html: string): BloqueTexto[] {
         } else if ((etiqueta === "ul" || etiqueta === "ol") && lista) {
             cerrarItem()
             nivelLista--
-            if (nivelLista < 0) lista = null
+            if (nivelLista < 0) {
+                lista = null
+                bloques.push(...imagenesEnLista)
+                imagenesEnLista = []
+            }
         } else if (BLOQUES.has(etiqueta)) {
             limiteDeBloque()
         }
@@ -182,9 +220,11 @@ export function parsearTextoEnriquecido(html: string): BloqueTexto[] {
 
     cerrarItem()
     cerrarParrafo()
+    bloques.push(...imagenesEnLista)
 
-    const conContenido = (bloque: BloqueTexto) => (bloque.tipo === "parrafo" ? bloque.tramos.length > 0 : bloque.items.length > 0)
+    const conContenido = (bloque: BloqueTexto) =>
+        bloque.tipo === "imagen" || (bloque.tipo === "parrafo" ? bloque.tramos.length > 0 : bloque.items.length > 0)
     const inicio = bloques.findIndex(conContenido)
     const fin = bloques.findLastIndex(conContenido)
-    return inicio === -1 ? [] : bloques.slice(inicio, fin + 1).filter((bloque) => bloque.tipo === "parrafo" || bloque.items.length > 0)
+    return inicio === -1 ? [] : bloques.slice(inicio, fin + 1).filter((bloque) => bloque.tipo !== "lista" || bloque.items.length > 0)
 }

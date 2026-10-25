@@ -9,7 +9,7 @@ import { PageHeader } from "@/components/common/PageHeader"
 import { StatCard } from "@/components/common/StatCard"
 import { EmptyState } from "@/components/common/EmptyState"
 import { CreateProjectForm } from "@/components/common/CreateProjectForm"
-import { obtenerProyectos } from "@/lib/storage"
+import { repositorios } from "@/lib/storage"
 import { calcularAreaTotalM2 } from "@/lib/calculo/comun"
 import { formatCount, formatDate } from "@/lib/format"
 import { Plus, FolderOpen, Ruler, Layers, LayoutGrid } from "lucide-react"
@@ -20,7 +20,13 @@ export default function Home() {
     const [showCreateForm, setShowCreateForm] = useState(false)
 
     useEffect(() => {
-        setProyectos(obtenerProyectos())
+        let cancelado = false
+        repositorios.proyectos.listar().then((guardados) => {
+            if (!cancelado) setProyectos(guardados)
+        })
+        return () => {
+            cancelado = true
+        }
     }, [])
 
     const handleProjectCreated = (nuevo: Proyecto) => {

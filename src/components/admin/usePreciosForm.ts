@@ -1,6 +1,6 @@
 import { useEffect, useState } from "react"
 
-import { obtenerPrecios, guardarPrecios } from "@/lib/storage"
+import { repositorios } from "@/lib/storage"
 import { conPrecioOpcional } from "@/lib/precios"
 import type {
     ClaveVidrio,
@@ -102,8 +102,15 @@ export function usePreciosForm() {
     const { saved, markSaved } = useSaveFeedback()
 
     useEffect(() => {
-        setFormData(toFormData(obtenerPrecios()))
-        setLoading(false)
+        let cancelado = false
+        repositorios.precios.obtener().then((guardado) => {
+            if (cancelado) return
+            setFormData(toFormData(guardado))
+            setLoading(false)
+        })
+        return () => {
+            cancelado = true
+        }
     }, [])
 
     const handleChange = <K extends keyof PreciosFormData>(field: K, value: PreciosFormData[K]) => {
@@ -128,9 +135,8 @@ export function usePreciosForm() {
 
     // Merge over the stored prices so fields this form doesn't edit
     // (e.g. costosAdicionales, managed in the cotizador) are preserved.
-    const handleSave = () => {
-        guardarPrecios({ ...obtenerPrecios(), ...formData })
-        markSaved()
+    const handleSave = async () => {
+        if (await repositorios.precios.guardar({ ...(await repositorios.precios.obtener()), ...formData })) markSaved()
     }
 
     const handleReset = () => setFormData(PRECIOS_DEFAULT)

@@ -116,4 +116,39 @@ describe("texto enriquecido del editor para el PDF", () => {
             { tipo: "parrafo", alineacion: "left", tramos: [negrita("a < b")] },
         ])
     })
+
+    describe("imágenes pegadas", () => {
+        const PNG = "data:image/png;base64,iVBORw0KGgo="
+        const JPEG = "data:image/jpeg;base64,/9j/4AAQ"
+
+        it("una imagen corta el párrafo y conserva su alineación y medidas", () => {
+            const html = `Ventana tipo <img src="${PNG}" width="600" height="400" alt="ref">sala<div style="text-align: center;"><img src='${JPEG}'></div>`
+            expect(parsearTextoEnriquecido(html)).toEqual([
+                { tipo: "parrafo", alineacion: "left", tramos: [normal("Ventana tipo")] },
+                { tipo: "imagen", alineacion: "left", src: PNG, ancho: 600, alto: 400 },
+                { tipo: "parrafo", alineacion: "left", tramos: [normal("sala")] },
+                { tipo: "imagen", alineacion: "center", src: JPEG, ancho: undefined, alto: undefined },
+            ])
+        })
+
+        it("una descripción con solo una imagen tiene contenido", () => {
+            expect(parsearTextoEnriquecido(`<div><br></div><img src="${PNG}"><div><br></div>`)).toEqual([
+                { tipo: "imagen", alineacion: "left", src: PNG, ancho: undefined, alto: undefined },
+            ])
+        })
+
+        it("descarta imágenes externas o en formatos que el PDF no dibuja", () => {
+            const html = '<img src="https://ejemplo.com/ventana.png"><img src="data:image/webp;base64,UklGR"><img src="data:image/svg+xml;base64,PHN2Zz4=">Texto'
+            expect(parsearTextoEnriquecido(html)).toEqual([{ tipo: "parrafo", alineacion: "left", tramos: [normal("Texto")] }])
+        })
+
+        it("una imagen dentro de una lista sale después de la lista", () => {
+            const html = `<ul><li>Uno<img src="${PNG}"></li><li>Dos</li></ul>Fin`
+            expect(parsearTextoEnriquecido(html)).toEqual([
+                { tipo: "lista", ordenada: false, items: [{ tramos: [normal("Uno")], nivel: 0 }, { tramos: [normal("Dos")], nivel: 0 }] },
+                { tipo: "imagen", alineacion: "left", src: PNG, ancho: undefined, alto: undefined },
+                { tipo: "parrafo", alineacion: "left", tramos: [normal("Fin")] },
+            ])
+        })
+    })
 })
